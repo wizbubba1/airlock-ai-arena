@@ -1,6 +1,7 @@
 import { chooseAction, chooseVote, meetingSpeech } from './agents';
 import { agentIds, graph, profiles, rooms } from './content';
 import { SeededRng } from './rng';
+import { ruleset } from './ruleset';
 import type {
   ActionIntent,
   AgentId,
@@ -13,13 +14,9 @@ import type {
   TranscriptEvent,
 } from './types';
 
-const taskCount = 8;
-const actionTicksPerCycle = 8;
-const maxTicks = 56;
-
 export function createMatch(seed = 'airlock-season-zero'): MatchState {
   const rng = new SeededRng(seed);
-  const saboteurs = new Set(rng.shuffle(agentIds).slice(0, 2));
+  const saboteurs = new Set(rng.shuffle(agentIds).slice(0, ruleset.saboteurCount));
   const shuffledRooms = rng.shuffle(rooms);
 
   const agents = Object.fromEntries(
@@ -34,7 +31,7 @@ export function createMatch(seed = 'airlock-season-zero'): MatchState {
         tasks,
         completedTasks: 0,
         killCooldown: role === 'saboteur' ? 0 : 999,
-        suspicion: Object.fromEntries(agentIds.map((other) => [other, other === id ? 0 : 0.12])) as Record<AgentId, number>,
+        suspicion: Object.fromEntries(agentIds.map((other) => [other, other === id ? 0 : ruleset.initialSuspicion])) as Record<AgentId, number>,
       };
       return [id, agent];
     }),
@@ -60,7 +57,7 @@ export function createMatch(seed = 'airlock-season-zero'): MatchState {
 
 export function runMatch(seed = 'airlock-season-zero'): MatchState {
   const state = createMatch(seed);
-  while (state.phase !== 'ended' && state.tick < maxTicks) {
+  while (state.phase !== 'ended' && state.tick < ruleset.maxTicks) {
     if (state.phase === 'action') {
       runActionTick(state);
     }
@@ -91,7 +88,7 @@ export function runActionTick(state: MatchState): MatchState {
     }
 
     if (intent.kind === 'task' && agent.role === 'technician' && agent.tasks.includes(agent.room)) {
-      if (rng.next() > 0.68) {
+      if (rng.next() < ruleset.taskCompletionChance) {
         agent.tasks = agent.tasks.filter((room) => room !== agent.room);
         agent.completedTasks += 1;
         addEvent(state, 'task', `${profiles[id].name} completed a task in ${agent.room}.`, `${profiles[id].name} logged a repair in ${label(agent.room)}.`, id);
@@ -105,7 +102,7 @@ export function runActionTick(state: MatchState): MatchState {
       const target = state.agents[intent.target];
       if (target?.alive && target.room === agent.room && target.role === 'technician') {
         target.alive = false;
-        agent.killCooldown = 3;
+        agent.killCooldown = ruleset.killCooldownTicks;
         state.bodies.push({ victim: intent.target, room: agent.room, tick: state.tick, reported: false });
         addEvent(state, 'kill', `${profiles[id].name} eliminated ${profiles[intent.target].name} in ${agent.room}.`, `A pressure alarm flickered in ${label(agent.room)}.`, id);
         spreadRoomSuspicion(state, agent.room, id);
@@ -130,7 +127,7 @@ export function runActionTick(state: MatchState): MatchState {
   updateMarket(state);
   checkWin(state);
 
-  if (state.phase === 'action' && state.tick % actionTicksPerCycle === 0) {
+  if (state.phase === 'action' && state.tick % ruleset.actionTicksPerCycle === 0) {
     addEvent(state, 'system', 'Scheduled station council called.', 'Scheduled station council called.');
     runMeeting(state);
   }
@@ -145,7 +142,7 @@ function runMeeting(state: MatchState): void {
   state.meetingCount += 1;
   addEvent(state, 'market', 'Live suspicion market closes for vote commit.', 'Pick window locked before council statements.');
 
-  for (const round of [1, 2]) {
+  for (let round = 1; round <= ruleset.meetingSpeechRounds; round += 1) {
     for (const id of agentIds) {
       if (!state.agents[id].alive) continue;
       const speech = meetingSpeech(state, id, round);
@@ -205,7 +202,7 @@ function updateMarket(state: MatchState): void {
       if (!agent.alive) return [id, 0];
       const suspicionAverage =
         agentIds.reduce((sum, observer) => sum + state.agents[observer].suspicion[id], 0) / agentIds.length;
-      return [id, Math.max(0.03, Math.min(0.78, suspicionAverage))];
+      return [id, Math.max(ruleset.marketFloor, Math.min(ruleset.marketCeiling, suspicionAverage))];
     }),
   ) as Record<AgentId, number>;
   const total = Object.values(prices).reduce((sum, value) => sum + value, 0);
@@ -260,7 +257,7 @@ function addEvent(
 
 function buildTasks(rng: SeededRng, offset: number): RoomId[] {
   const shuffled = rng.shuffle(rooms);
-  return Array.from({ length: taskCount }, (_, index) => shuffled[(index + offset) % shuffled.length]);
+  return Array.from({ length: ruleset.taskCount }, (_, index) => shuffled[(index + offset) % shuffled.length]);
 }
 
 function spreadRoomSuspicion(state: MatchState, room: RoomId, actor: AgentId): void {
@@ -268,7 +265,7 @@ function spreadRoomSuspicion(state: MatchState, room: RoomId, actor: AgentId): v
   for (const witness of witnesses) {
     for (const suspect of agentIds) {
       if (state.agents[suspect].alive && suspect !== witness && state.agents[suspect].room === room) {
-        state.agents[witness].suspicion[suspect] += 0.3;
+        state.agents[witness].suspicion[suspect] += ruleset.roomKillSuspicionDelta;
       }
     }
   }
@@ -277,7 +274,7 @@ function spreadRoomSuspicion(state: MatchState, room: RoomId, actor: AgentId): v
 function lowerWorkerSuspicion(state: MatchState, worker: AgentId): void {
   for (const observer of agentIds) {
     if (!state.agents[observer].alive || observer === worker) continue;
-    state.agents[observer].suspicion[worker] = Math.max(0.02, state.agents[observer].suspicion[worker] - 0.04);
+    state.agents[observer].suspicion[worker] = Math.max(ruleset.minSuspicion, state.agents[observer].suspicion[worker] + ruleset.completedWorkSuspicionDelta);
   }
 }
 
@@ -286,8 +283,8 @@ function adjustAfterEjection(state: MatchState, ejected: AgentId): void {
   for (const observer of agentIds) {
     for (const suspect of agentIds) {
       if (suspect === ejected) continue;
-      state.agents[observer].suspicion[suspect] += wasSaboteur && state.agents[suspect].role === 'saboteur' ? 0.08 : -0.015;
-      state.agents[observer].suspicion[suspect] = Math.max(0.02, state.agents[observer].suspicion[suspect]);
+      state.agents[observer].suspicion[suspect] += wasSaboteur && state.agents[suspect].role === 'saboteur' ? ruleset.saboteurPartnerRevealDelta : ruleset.clearedEjectionDelta;
+      state.agents[observer].suspicion[suspect] = Math.max(ruleset.minSuspicion, state.agents[observer].suspicion[suspect]);
     }
   }
 }

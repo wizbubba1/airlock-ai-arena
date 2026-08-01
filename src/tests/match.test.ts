@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { agentIds, auditDigests, buildAuditBundle, buildMatchReport, buildTickCommitments, profiles, runMatch } from '../engine';
+import { agentIds, auditDigests, buildAuditBundle, buildMatchReport, buildTickCommitments, profiles, ruleset, runMatch } from '../engine';
 
 describe('AIRLOCK deterministic engine', () => {
   it('replays the same seed into the same transcript', () => {
@@ -80,6 +80,13 @@ describe('AIRLOCK deterministic engine', () => {
       voices.add(policy.voice);
     }
     expect(voices.size).toBeGreaterThanOrEqual(6);
+  });
+
+  it('exposes the versioned ruleset in audit artifacts', () => {
+    const bundle = buildAuditBundle(runMatch('ruleset-artifact'), 'ruleset-artifact');
+    expect(bundle.commitments.ruleset).toBe(ruleset.id);
+    expect(bundle.commitments.rulesetManifest.taskCount).toBe(ruleset.taskCount);
+    expect(bundle.commitments.rulesetManifest.maxTicks).toBe(ruleset.maxTicks);
   });
 
   it('keeps private roles out of public transcript until the terminal event stream', () => {

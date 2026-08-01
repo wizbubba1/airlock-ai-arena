@@ -1,5 +1,6 @@
 import { agentIds } from './content';
 import { auditDigests, digest } from './audit';
+import { ruleset } from './ruleset';
 import type { MatchState } from './types';
 
 export function buildAuditBundle(match: MatchState, seed: string) {
@@ -10,6 +11,7 @@ export function buildAuditBundle(match: MatchState, seed: string) {
     seed,
     commitments: {
       ruleset: 'stage0.v0.1',
+      rulesetManifest: ruleset,
       engine: 'deterministic-typescript-state-machine',
       randomness: `seed:${seed}`,
       transcriptEvents: match.transcript.length,

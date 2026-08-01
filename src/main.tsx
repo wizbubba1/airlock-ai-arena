@@ -16,7 +16,7 @@ import {
   Trophy,
   XCircle,
 } from 'lucide-react';
-import { agentIds, auditDigests, buildAuditBundle, graph, profiles, runMatch } from './engine';
+import { agentIds, auditDigests, buildAuditBundle, graph, profiles, ruleset, runMatch } from './engine';
 import type { AgentId, TranscriptEvent } from './engine';
 import './styles.css';
 
@@ -191,7 +191,7 @@ function App() {
             </div>
             <div>
               <dt>Ruleset</dt>
-              <dd>stage0.v0.1</dd>
+              <dd>{ruleset.id}</dd>
             </div>
           </dl>
           <pre>{JSON.stringify(auditBundle.commitments, null, 2)}</pre>

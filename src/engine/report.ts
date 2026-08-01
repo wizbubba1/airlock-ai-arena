@@ -1,5 +1,6 @@
 import { agentIds, profiles } from './content';
 import { buildAuditBundle } from './bundle';
+import { ruleset } from './ruleset';
 import type { MatchState } from './types';
 
 export function buildMatchReport(match: MatchState, seed: string): string {
@@ -31,6 +32,8 @@ export function buildMatchReport(match: MatchState, seed: string): string {
     `| Transcript events | ${bundle.commitments.transcriptEvents} |`,
     `| Market snapshots | ${bundle.commitments.marketSnapshots} |`,
     `| Tick commitments | ${bundle.commitments.tickCommitmentCount} |`,
+    `| Max ticks | ${ruleset.maxTicks} |`,
+    `| Tasks per Technician | ${ruleset.taskCount} |`,
     ``,
     `## Role Reveal`,
     ``,
