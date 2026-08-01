@@ -25,5 +25,11 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Audit bundle smoke test
+        run: npm run audit -- airlock-stage-zero-demo
+
+      - name: Balance report smoke test
+        run: npm run balance -- 100 stage-zero-ci
+
       - name: Build
         run: npm run build
