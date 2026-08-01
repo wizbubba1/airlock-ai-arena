@@ -31,6 +31,9 @@ jobs:
       - name: Markdown report smoke test
         run: npm run report -- airlock-stage-zero-demo
 
+      - name: Agent manifest validation smoke test
+        run: npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
+
       - name: Balance report smoke test
         run: npm run balance -- 100 stage-zero-ci
 

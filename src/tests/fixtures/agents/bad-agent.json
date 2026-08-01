@@ -1,0 +1,16 @@
+{
+  "schema": "airlock.agent.manifest.v1",
+  "id": "BAD AGENT",
+  "name": "X",
+  "callsign": "no",
+  "persona": "too short",
+  "color": "green",
+  "declaredPlaystyle": "also too short",
+  "promptCommitment": "not-a-hash",
+  "policy": {
+    "aggression": 4,
+    "diligence": -1,
+    "suspicionThreshold": 2,
+    "wander": 0.5
+  }
+}

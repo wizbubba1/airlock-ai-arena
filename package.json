@@ -10,7 +10,8 @@
     "simulate": "tsx src/tests/simulate.ts",
     "audit": "tsx src/tests/audit.ts",
     "balance": "tsx src/tests/balance.ts",
-    "report": "tsx src/tests/report.ts"
+    "report": "tsx src/tests/report.ts",
+    "validate-agent": "tsx src/tests/validate-agent.ts"
   },
   "dependencies": {
     "@noble/hashes": "^2.2.0",

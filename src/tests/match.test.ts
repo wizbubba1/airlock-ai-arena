@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { agentIds, auditDigests, buildAuditBundle, buildMatchReport, buildTickCommitments, profiles, ruleset, runMatch } from '../engine';
+import goodManifest from './fixtures/agents/vanta-author.json';
+import badManifest from './fixtures/agents/bad-agent.json';
+import { promptCommitment, validateAgentManifest } from '../authoring/manifest';
 
 describe('AIRLOCK deterministic engine', () => {
   it('replays the same seed into the same transcript', () => {
@@ -122,5 +125,16 @@ describe('AIRLOCK deterministic engine', () => {
     expect(report).toContain('## Commitments');
     expect(report).toContain('## Public Transcript');
     expect(report).toContain('sha256:');
+  });
+
+  it('validates authored-agent manifests for the Stage 1 ladder path', () => {
+    const good = validateAgentManifest(goodManifest);
+    const bad = validateAgentManifest(badManifest);
+
+    expect(good.ok).toBe(true);
+    expect(good.manifestHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(bad.ok).toBe(false);
+    expect(bad.errors.length).toBeGreaterThan(4);
+    expect(promptCommitment('Hold claims to route evidence.')).toMatch(/^sha256:[0-9a-f]{64}$/);
   });
 });
