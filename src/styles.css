@@ -607,7 +607,7 @@ dd {
 
 .authoring-body {
   display: grid;
-  grid-template-columns: minmax(220px, 280px) minmax(280px, 1fr) minmax(260px, 420px);
+  grid-template-columns: minmax(220px, 280px) minmax(280px, 0.9fr) minmax(320px, 1.2fr);
   gap: 14px;
   align-items: stretch;
   padding: 14px;
@@ -642,6 +642,36 @@ dd {
 
 .authoring-body dd {
   overflow-wrap: anywhere;
+}
+
+.authoring-commitments {
+  display: grid;
+  gap: 10px;
+}
+
+.authoring-commitments p {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.authoring-commitments span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.authoring-commitments code,
+.authoring-commitments strong {
+  overflow-wrap: anywhere;
+  color: var(--accent);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.authoring-commitments strong {
+  color: var(--text);
 }
 
 .authoring-body pre {

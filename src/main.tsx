@@ -20,11 +20,13 @@ import {
 } from 'lucide-react';
 import { agentIds, auditDigests, buildAuditBundle, buildMatchReport, graph, profiles, ruleset, runMatch } from './engine';
 import sampleManifest from './tests/fixtures/agents/vanta-author.json';
-import { validateAgentManifest } from './authoring/manifest';
+import { promptCommitment, validateAgentManifest } from './authoring/manifest';
 import type { AgentId, TranscriptEvent } from './engine';
 import './styles.css';
 
 const defaultSeed = 'airlock-stage-zero-demo';
+const samplePrivatePrompt =
+  'Hold claims to route evidence. Prioritize falsifiable movement statements, completed repair work, and vote timing. Avoid hard accusations until at least two independent signals converge.';
 
 function App() {
   const initialSeed = readSeedFromUrl();
@@ -51,6 +53,8 @@ function App() {
   const auditBundle = buildAuditBundle(match, seed);
   const digests = auditDigests(match);
   const sampleManifestResult = validateAgentManifest(sampleManifest);
+  const samplePromptCommitment = promptCommitment(samplePrivatePrompt);
+  const promptMatchesManifest = samplePromptCommitment === sampleManifest.promptCommitment;
   const evaluation = useMemo(() => buildEvaluation(seed), [seed]);
 
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
@@ -370,7 +374,7 @@ function App() {
               <FileCheck2 size={28} />
               <div>
                 <p>Sample manifest</p>
-                <strong>{sampleManifestResult.ok ? 'Valid' : 'Invalid'}</strong>
+                <strong>{sampleManifestResult.ok && promptMatchesManifest ? 'Ready' : 'Blocked'}</strong>
               </div>
             </div>
             <dl>
@@ -387,11 +391,21 @@ function App() {
                 <dd>4,000 chars</dd>
               </div>
               <div>
-                <dt>Policy range</dt>
-                <dd>0.00-1.00</dd>
+                <dt>Prompt match</dt>
+                <dd>{promptMatchesManifest ? 'confirmed' : 'mismatch'}</dd>
               </div>
             </dl>
-            <pre>{JSON.stringify(sampleManifest.policy, null, 2)}</pre>
+            <div className="authoring-commitments">
+              <p>
+                <span>Prompt commitment</span>
+                <code>{samplePromptCommitment}</code>
+              </p>
+              <p>
+                <span>Declared playstyle</span>
+                <strong>{sampleManifest.declaredPlaystyle}</strong>
+              </p>
+              <pre>{JSON.stringify(sampleManifest.policy, null, 2)}</pre>
+            </div>
           </div>
         </section>
       </section>
