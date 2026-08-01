@@ -16,7 +16,7 @@ import {
   Trophy,
   XCircle,
 } from 'lucide-react';
-import { agentIds, auditDigests, buildAuditBundle, graph, profiles, ruleset, runMatch } from './engine';
+import { agentIds, auditDigests, buildAuditBundle, buildMatchReport, graph, profiles, ruleset, runMatch } from './engine';
 import type { AgentId, TranscriptEvent } from './engine';
 import './styles.css';
 
@@ -67,10 +67,19 @@ function App() {
 
   function downloadAuditBundle() {
     const blob = new Blob([JSON.stringify(auditBundle, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, `airlock-audit-${seed}.json`);
+  }
+
+  function downloadMatchReport() {
+    const blob = new Blob([buildMatchReport(match, seed)], { type: 'text/markdown' });
+    downloadBlob(blob, `airlock-report-${seed}.md`);
+  }
+
+  function downloadBlob(blob: Blob, filename: string) {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
-    anchor.download = `airlock-audit-${seed}.json`;
+    anchor.download = filename;
     anchor.click();
     URL.revokeObjectURL(url);
   }
@@ -171,10 +180,16 @@ function App() {
         <aside className="panel audit" aria-label="Audit bundle">
           <div className="panel-header">
             <h2>Audit Bundle</h2>
-            <button className="icon-button" onClick={downloadAuditBundle} type="button">
-              <Download size={18} />
-              Export
-            </button>
+            <div className="button-pair">
+              <button className="icon-button" onClick={downloadMatchReport} type="button">
+                <Download size={18} />
+                Report
+              </button>
+              <button className="icon-button" onClick={downloadAuditBundle} type="button">
+                <Download size={18} />
+                JSON
+              </button>
+            </div>
           </div>
           <dl>
             <div>
