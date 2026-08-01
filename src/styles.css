@@ -283,6 +283,32 @@ h2 {
   line-height: 1.5;
 }
 
+.case-file {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+  padding-top: 14px;
+}
+
+.case-file p {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.case-file span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.case-file strong {
+  color: var(--text);
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
 dl {
   display: grid;
   grid-template-columns: 1fr 1fr;

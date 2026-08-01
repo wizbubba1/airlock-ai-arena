@@ -50,6 +50,8 @@ function App() {
   }, [latestTick, match.market]);
   const topSuspects = [...agentIds].sort((a, b) => market.prices[b] - market.prices[a]);
   const selected = replaySnapshot.agents[selectedAgent];
+  const selectedLastEvent = [...visibleEvents].reverse().find((event) => event.speaker === selectedAgent);
+  const selectedStatus = selected.alive ? 'active' : 'ejected';
   const saboteurs = agentIds.filter((id) => match.agents[id].role === 'saboteur');
   const pickScore = isRevealed ? picks.filter((id) => saboteurs.includes(id)).length : undefined;
   const auditBundle = buildAuditBundle(match, seed);
@@ -187,7 +189,25 @@ function App() {
                 <dt>Repairs</dt>
                 <dd>{selected.completedTasks}</dd>
               </div>
+              <div>
+                <dt>Suspicion</dt>
+                <dd>{market.prices[selectedAgent]}%</dd>
+              </div>
+              <div>
+                <dt>Status</dt>
+                <dd>{isRevealed ? match.agents[selectedAgent].role : selectedStatus}</dd>
+              </div>
             </dl>
+            <div className="case-file">
+              <p>
+                <span>Pick status</span>
+                <strong>{picks.includes(selectedAgent) ? 'locked suspect' : 'unpicked'}</strong>
+              </p>
+              <p>
+                <span>Last public trace</span>
+                <strong>{selectedLastEvent ? `T${selectedLastEvent.tick} ${selectedLastEvent.publicText}` : 'No public trace yet.'}</strong>
+              </p>
+            </div>
           </div>
         </aside>
 
