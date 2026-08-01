@@ -1,22 +1,70 @@
 import React, { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Activity, CircleDot, Crosshair, Eye, Gauge, Radio, ShieldAlert, Trophy } from 'lucide-react';
+import {
+  Activity,
+  CheckCircle2,
+  CircleDot,
+  Crosshair,
+  Download,
+  Eye,
+  Gauge,
+  Radio,
+  RotateCcw,
+  ShieldAlert,
+  Trophy,
+  XCircle,
+} from 'lucide-react';
 import { agentIds, graph, profiles, runMatch } from './engine';
-import type { AgentId, TranscriptEvent } from './engine';
+import type { AgentId, MatchState, TranscriptEvent } from './engine';
 import './styles.css';
 
-const match = runMatch('airlock-stage-zero-demo');
+const defaultSeed = 'airlock-stage-zero-demo';
 
 function App() {
+  const [seedDraft, setSeedDraft] = useState(defaultSeed);
+  const [seed, setSeed] = useState(defaultSeed);
   const [selectedAgent, setSelectedAgent] = useState<AgentId>('vanta');
   const [visibleCount, setVisibleCount] = useState(18);
+  const [picks, setPicks] = useState<AgentId[]>([]);
+  const match = useMemo(() => runMatch(seed), [seed]);
   const visibleTranscript = match.transcript.slice(0, visibleCount);
   const latestTick = visibleTranscript.at(-1)?.tick ?? 0;
+  const isRevealed = visibleCount >= match.transcript.length;
   const market = useMemo(() => {
     return [...match.market].reverse().find((snapshot) => snapshot.tick <= latestTick) ?? match.market[0];
-  }, [latestTick]);
+  }, [latestTick, match.market]);
   const topSuspects = [...agentIds].sort((a, b) => market.prices[b] - market.prices[a]);
   const selected = match.agents[selectedAgent];
+  const saboteurs = agentIds.filter((id) => match.agents[id].role === 'saboteur');
+  const pickScore = isRevealed ? picks.filter((id) => saboteurs.includes(id)).length : undefined;
+  const auditBundle = buildAuditBundle(match, seed);
+
+  function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSeed(seedDraft.trim() || defaultSeed);
+    setVisibleCount(18);
+    setPicks([]);
+    setSelectedAgent('vanta');
+  }
+
+  function togglePick(id: AgentId) {
+    setSelectedAgent(id);
+    setPicks((current) => {
+      if (current.includes(id)) return current.filter((pick) => pick !== id);
+      if (current.length >= 2) return [current[1], id];
+      return [...current, id];
+    });
+  }
+
+  function downloadAuditBundle() {
+    const blob = new Blob([JSON.stringify(auditBundle, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `airlock-audit-${seed}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <main className="app-shell">
@@ -27,11 +75,19 @@ function App() {
           <p className="lede">
             Seeded AI social deduction on Salvage Station Theta. Watch the public transcript, price the Saboteurs, and test whether the show loop works before markets exist.
           </p>
+          <form className="seed-form" onSubmit={regenerateMatch}>
+            <label htmlFor="seed">Match seed</label>
+            <input id="seed" value={seedDraft} onChange={(event) => setSeedDraft(event.target.value)} />
+            <button className="icon-button" type="submit">
+              <RotateCcw size={18} />
+              Replay
+            </button>
+          </form>
         </div>
         <div className="match-stats" aria-label="Match summary">
           <Stat icon={<Radio size={18} />} label="Tick" value={String(latestTick)} />
           <Stat icon={<ShieldAlert size={18} />} label="Meetings" value={String(match.meetingCount)} />
-          <Stat icon={<Trophy size={18} />} label="Winner" value={match.winner === 'technician' ? 'Techs' : 'Saboteurs'} />
+          <Stat icon={<Trophy size={18} />} label="Winner" value={isRevealed ? (match.winner === 'technician' ? 'Techs' : 'Saboteurs') : 'Sealed'} />
         </div>
       </section>
 
@@ -45,20 +101,21 @@ function App() {
             {agentIds.map((id) => {
               const agent = match.agents[id];
               const isSelected = selectedAgent === id;
+              const isPick = picks.includes(id);
               return (
                 <button
-                  className={`agent-row ${isSelected ? 'selected' : ''}`}
+                  className={`agent-row ${isSelected ? 'selected' : ''} ${isPick ? 'picked' : ''}`}
                   key={id}
-                  onClick={() => setSelectedAgent(id)}
+                  onClick={() => togglePick(id)}
                   type="button"
-                  aria-pressed={isSelected}
+                  aria-pressed={isPick}
                 >
                   <span className="agent-color" style={{ background: profiles[id].color }} />
                   <span>
                     <strong>{profiles[id].name}</strong>
-                    <small>{agent.alive ? profiles[id].callsign : 'Ejected or eliminated'}</small>
+                    <small>{isRevealed ? agent.role : profiles[id].callsign}</small>
                   </span>
-                  <span className={`life ${agent.alive ? 'alive' : 'out'}`}>{agent.alive ? 'live' : 'out'}</span>
+                  <span className={`life ${agent.alive ? 'alive' : 'out'}`}>{isPick ? 'pick' : agent.alive ? 'live' : 'out'}</span>
                 </button>
               );
             })}
@@ -69,7 +126,7 @@ function App() {
             <p>{profiles[selectedAgent].persona}</p>
             <dl>
               <div>
-                <dt>Room</dt>
+                <dt>Final room</dt>
                 <dd>{selected.room}</dd>
               </div>
               <div>
@@ -102,13 +159,48 @@ function App() {
           </div>
         </section>
 
+        <aside className="panel audit" aria-label="Audit bundle">
+          <div className="panel-header">
+            <h2>Audit Bundle</h2>
+            <button className="icon-button" onClick={downloadAuditBundle} type="button">
+              <Download size={18} />
+              Export
+            </button>
+          </div>
+          <dl>
+            <div>
+              <dt>Seed</dt>
+              <dd>{seed}</dd>
+            </div>
+            <div>
+              <dt>Events</dt>
+              <dd>{match.transcript.length}</dd>
+            </div>
+            <div>
+              <dt>Market snapshots</dt>
+              <dd>{match.market.length}</dd>
+            </div>
+            <div>
+              <dt>Ruleset</dt>
+              <dd>stage0.v0.1</dd>
+            </div>
+          </dl>
+          <pre>{JSON.stringify(auditBundle.commitments, null, 2)}</pre>
+        </aside>
+
         <section className="panel transcript-panel" aria-label="Public match transcript">
           <div className="panel-header">
             <h2>Public Transcript</h2>
-            <button className="icon-button" onClick={() => setVisibleCount((count) => Math.min(count + 10, match.transcript.length))} type="button">
-              <Activity size={18} />
-              Advance
-            </button>
+            <div className="button-pair">
+              <button className="icon-button" onClick={() => setVisibleCount(match.transcript.length)} type="button">
+                <Gauge size={18} />
+                Reveal
+              </button>
+              <button className="icon-button" onClick={() => setVisibleCount((count) => Math.min(count + 10, match.transcript.length))} type="button">
+                <Activity size={18} />
+                Advance
+              </button>
+            </div>
           </div>
           <ol className="transcript">
             {visibleTranscript.map((event) => (
@@ -120,23 +212,27 @@ function App() {
         <aside className="panel market" aria-label="Free pick'em market">
           <div className="panel-header">
             <h2>Pick'em Board</h2>
-            <span>free points</span>
+            <span>{picks.length}/2 locked</span>
           </div>
           <div className="market-leader">
             <Crosshair size={28} />
             <div>
-              <p>Top suspicion</p>
-              <strong>{profiles[topSuspects[0]].name}</strong>
+              <p>{isRevealed ? 'Pick result' : 'Top suspicion'}</p>
+              <strong>{isRevealed ? `${pickScore}/2 correct` : profiles[topSuspects[0]].name}</strong>
             </div>
           </div>
           <div className="bars">
-            {topSuspects.map((id) => (
-              <button className={`bar ${selectedAgent === id ? 'selected' : ''}`} key={id} onClick={() => setSelectedAgent(id)} type="button">
-                <span>{profiles[id].name}</span>
-                <meter min="0" max="100" value={market.prices[id]} />
-                <strong>{market.prices[id]}%</strong>
-              </button>
-            ))}
+            {topSuspects.map((id) => {
+              const isCorrect = isRevealed && saboteurs.includes(id);
+              return (
+                <button className={`bar ${selectedAgent === id ? 'selected' : ''}`} key={id} onClick={() => togglePick(id)} type="button">
+                  <span>{profiles[id].name}</span>
+                  <meter min="0" max="100" value={market.prices[id]} />
+                  <strong>{market.prices[id]}%</strong>
+                  {isRevealed && <em>{isCorrect ? <CheckCircle2 size={16} /> : <XCircle size={16} />}</em>}
+                </button>
+              );
+            })}
           </div>
         </aside>
       </section>
@@ -165,6 +261,29 @@ function TranscriptLine({ event }: { event: TranscriptEvent }) {
       <p>{event.publicText}</p>
     </li>
   );
+}
+
+function buildAuditBundle(match: MatchState, seed: string) {
+  return {
+    schema: 'airlock.audit.stage0.v1',
+    seed,
+    commitments: {
+      ruleset: 'stage0.v0.1',
+      engine: 'deterministic-typescript-state-machine',
+      randomness: `seed:${seed}`,
+      transcriptEvents: match.transcript.length,
+      marketSnapshots: match.market.length,
+    },
+    result: {
+      winner: match.winner,
+      reason: match.reason,
+      saboteurs: agentIds.filter((id) => match.agents[id].role === 'saboteur'),
+      ticks: match.tick,
+      meetings: match.meetingCount,
+    },
+    publicTranscript: match.transcript.map(({ tick, kind, speaker, publicText }) => ({ tick, kind, speaker, publicText })),
+    market: match.market,
+  };
 }
 
 createRoot(document.getElementById('root')!).render(<App />);

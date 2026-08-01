@@ -36,6 +36,10 @@ button {
   font: inherit;
 }
 
+input {
+  font: inherit;
+}
+
 button:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
@@ -91,6 +95,30 @@ h2 {
   color: var(--muted);
   font-size: 1.08rem;
   line-height: 1.6;
+}
+
+.seed-form {
+  display: grid;
+  grid-template-columns: auto minmax(220px, 360px) auto;
+  gap: 10px;
+  align-items: center;
+  max-width: 650px;
+}
+
+.seed-form label {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.seed-form input {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #0b1010;
+  color: var(--text);
+  padding: 0 12px;
 }
 
 .match-stats {
@@ -188,6 +216,10 @@ h2 {
 
 .agent-row.selected {
   background: #1f2c2a;
+}
+
+.agent-row.picked {
+  box-shadow: inset 4px 0 0 var(--amber);
 }
 
 .agent-color {
@@ -317,6 +349,13 @@ dd {
   padding: 0 12px;
 }
 
+.button-pair {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .transcript {
   list-style: none;
   margin: 0;
@@ -378,6 +417,24 @@ dd {
   font-size: 1.45rem;
 }
 
+.audit dl {
+  padding: 14px;
+  margin: 0;
+}
+
+.audit pre {
+  min-height: 154px;
+  max-height: 180px;
+  overflow: auto;
+  margin: 0;
+  border-top: 1px solid var(--line);
+  background: #090e0e;
+  color: var(--muted);
+  font-size: 0.74rem;
+  line-height: 1.45;
+  padding: 14px;
+}
+
 .bars {
   display: grid;
   padding: 10px;
@@ -386,7 +443,7 @@ dd {
 
 .bar {
   display: grid;
-  grid-template-columns: 74px 1fr 46px;
+  grid-template-columns: 74px 1fr 46px 18px;
   align-items: center;
   gap: 10px;
   min-height: 44px;
@@ -394,6 +451,12 @@ dd {
   border-radius: 4px;
   padding: 8px;
   text-align: left;
+}
+
+.bar em {
+  display: inline-flex;
+  color: var(--amber);
+  font-style: normal;
 }
 
 .bar.selected {
@@ -443,6 +506,10 @@ meter::-webkit-meter-optimum-value {
     grid-template-columns: 1fr;
   }
 
+  .seed-form {
+    grid-template-columns: 1fr;
+  }
+
   .station-map {
     min-height: 620px;
   }
@@ -455,7 +522,7 @@ meter::-webkit-meter-optimum-value {
   }
 
   .bar {
-    grid-template-columns: 1fr 52px;
+    grid-template-columns: 1fr 52px 18px;
   }
 
   .bar meter {
