@@ -13,6 +13,7 @@ Stage 0 includes:
 - deterministic match simulation from a public seed;
 - transcript replay with map, roster, pick'em board, and audit panel;
 - JSON audit bundle export;
+- deterministic audit bundle verification;
 - Markdown match report export;
 - terminal audit, report, balance, and authored-agent validation commands.
 
@@ -68,6 +69,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 - per-tick public commitments;
 - SHA-256 commitments for roles, personas, transcript, market, snapshots, and entropy.
 
+`npm run verify-audit -- <audit-bundle.json>` reruns the match for the bundle seed and compares every public artifact against the deterministic replay. A mismatch fails with the bundle sections that drifted.
+
 `npm run report -- <seed>` writes a human-readable Markdown report over the same match.
 
 ## Stage 1 Bridge
@@ -94,6 +97,7 @@ Local verification commands:
 ```bash
 npm test
 npm run audit -- airlock-stage-zero-demo
+npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
 npm run balance -- 100 stage-zero-ci
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
