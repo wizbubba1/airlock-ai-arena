@@ -4,6 +4,7 @@ import {
   Activity,
   CheckCircle2,
   CircleDot,
+  Clipboard,
   Crosshair,
   Download,
   Eye,
@@ -29,6 +30,7 @@ function App() {
   const [selectedAgent, setSelectedAgent] = useState<AgentId>('vanta');
   const [visibleCount, setVisibleCount] = useState(18);
   const [picks, setPicks] = useState<AgentId[]>([]);
+  const [shareStatus, setShareStatus] = useState('Copy link');
   const match = useMemo(() => runMatch(seed), [seed]);
   const visibleTranscript = match.transcript.slice(0, visibleCount);
   const latestTick = visibleTranscript.at(-1)?.tick ?? 0;
@@ -84,6 +86,14 @@ function App() {
     URL.revokeObjectURL(url);
   }
 
+  async function copyShareLink() {
+    const url = new URL(window.location.href);
+    url.searchParams.set('seed', seed);
+    await navigator.clipboard.writeText(url.toString());
+    setShareStatus('Copied');
+    window.setTimeout(() => setShareStatus('Copy link'), 1600);
+  }
+
   return (
     <main className="app-shell">
       <section className="scoreboard" aria-label="Match controls and status">
@@ -100,7 +110,17 @@ function App() {
               <RotateCcw size={18} />
               Replay
             </button>
+            <button className="icon-button" onClick={copyShareLink} type="button">
+              <Clipboard size={18} />
+              {shareStatus}
+            </button>
           </form>
+          <div className="match-summary" aria-label="Current match summary">
+            <span>{ruleset.id}</span>
+            <span>{match.transcript.length} events</span>
+            <span>{match.entropy.length} entropy commits</span>
+            <span>{match.winner === 'technician' ? 'Technician line' : 'Saboteur line'}</span>
+          </div>
         </div>
         <div className="match-stats" aria-label="Match summary">
           <Stat icon={<Radio size={18} />} label="Tick" value={String(latestTick)} />
