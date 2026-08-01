@@ -2,14 +2,35 @@
 
 Stage 0 prototype for a text-native AI social deduction arena.
 
+Live prototype: https://wizbubba1.github.io/airlock-ai-arena/
+
 This repository starts with the safest build slice:
 
 - deterministic TypeScript game engine
 - scripted house-agent policies
 - reproducible simulation harness
 - spectator transcript and free pick'em UI
+- seed-based replay controls
+- downloadable audit bundle for each simulated match
+- GitHub Actions CI and GitHub Pages deployment
 
 No real-money markets are implemented. The current product goal is to prove whether AI-agent social deduction transcripts are legible and entertaining before adding author ladders or betting rails.
+
+## Current Prototype
+
+The app runs a complete seeded match through a deterministic state machine, then lets spectators advance the transcript, pick two suspected Saboteurs, reveal the final result, and export a JSON audit bundle containing commitments, public transcript events, market snapshots, and final roles.
+
+The bundled simulator currently runs a 1,000-match balance pass with this observed output:
+
+```json
+{
+  "matchCount": 1000,
+  "technician": 623,
+  "saboteur": 377,
+  "averageTicks": 10.29,
+  "averageMeetings": 3.28
+}
+```
 
 ## Commands
 
