@@ -35,10 +35,12 @@ function App() {
   const [selectedAgent, setSelectedAgent] = useState<AgentId>('vanta');
   const [visibleCount, setVisibleCount] = useState(18);
   const [picks, setPicks] = useState<AgentId[]>([]);
+  const [transcriptFilter, setTranscriptFilter] = useState<TranscriptFilter>('all');
   const [shareStatus, setShareStatus] = useState('Copy link');
   const match = useMemo(() => runMatch(seed), [seed]);
-  const visibleTranscript = match.transcript.slice(0, visibleCount);
-  const latestTick = visibleTranscript.at(-1)?.tick ?? 0;
+  const visibleEvents = match.transcript.slice(0, visibleCount);
+  const visibleTranscript = visibleEvents.filter((event) => transcriptFilterMatches(event, transcriptFilter));
+  const latestTick = visibleEvents.at(-1)?.tick ?? 0;
   const isRevealed = visibleCount >= match.transcript.length;
   const replaySnapshot = useMemo(() => {
     return [...match.snapshots].reverse().find((snapshot) => snapshot.tick <= latestTick) ?? match.snapshots[0];
@@ -282,6 +284,20 @@ function App() {
               </button>
             </div>
           </div>
+          <div className="transcript-filters" aria-label="Transcript filters">
+            {transcriptFilters.map((filter) => (
+              <button
+                className={transcriptFilter === filter.id ? 'active' : ''}
+                key={filter.id}
+                onClick={() => setTranscriptFilter(filter.id)}
+                type="button"
+                aria-pressed={transcriptFilter === filter.id}
+              >
+                <span>{filter.label}</span>
+                <strong>{visibleEvents.filter((event) => transcriptFilterMatches(event, filter.id)).length}</strong>
+              </button>
+            ))}
+          </div>
           <ol className="transcript">
             {visibleTranscript.map((event) => (
               <TranscriptLine event={event} key={event.id} />
@@ -434,6 +450,24 @@ function TranscriptLine({ event }: { event: TranscriptEvent }) {
       <p>{event.publicText}</p>
     </li>
   );
+}
+
+type TranscriptFilter = 'all' | 'meetings' | 'reports' | 'votes' | 'danger';
+
+const transcriptFilters: Array<{ id: TranscriptFilter; label: string }> = [
+  { id: 'all', label: 'All' },
+  { id: 'meetings', label: 'Meetings' },
+  { id: 'reports', label: 'Reports' },
+  { id: 'votes', label: 'Votes' },
+  { id: 'danger', label: 'Danger' },
+];
+
+function transcriptFilterMatches(event: TranscriptEvent, filter: TranscriptFilter): boolean {
+  if (filter === 'all') return true;
+  if (filter === 'meetings') return event.kind === 'market' || event.kind === 'speech';
+  if (filter === 'reports') return event.kind === 'report';
+  if (filter === 'votes') return event.kind === 'vote';
+  return event.kind === 'kill' || event.kind === 'report' || event.kind === 'end';
 }
 
 function buildEvaluation(seed: string) {

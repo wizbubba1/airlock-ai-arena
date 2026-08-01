@@ -384,6 +384,47 @@ dd {
   overflow: auto;
 }
 
+.transcript-filters {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  padding: 10px 14px;
+}
+
+.transcript-filters button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 38px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #0b1010;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0 10px;
+}
+
+.transcript-filters button.active {
+  border-color: var(--accent);
+  background: rgba(147, 247, 212, 0.08);
+  color: var(--text);
+}
+
+.transcript-filters span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transcript-filters strong {
+  color: var(--accent);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.78rem;
+}
+
 .line {
   display: grid;
   grid-template-columns: 46px 24px 1fr;
@@ -782,6 +823,10 @@ meter::-webkit-meter-optimum-value {
 
   .bar meter {
     grid-column: 1 / -1;
+  }
+
+  .transcript-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .authoring-body {
