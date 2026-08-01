@@ -35,7 +35,7 @@ jobs:
         run: npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
 
       - name: Balance report smoke test
-        run: npm run balance -- 100 stage-zero-ci
+        run: npm run balance:check
 
       - name: Build
         run: npm run build

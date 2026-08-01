@@ -6,6 +6,7 @@ import type { AgentId } from '../engine';
 const matchCount = Number(process.argv[2] ?? 1000);
 const seedPrefix = process.argv[3] ?? 'stage-zero';
 const outPath = resolve(process.argv[4] ?? `./artifacts/airlock-balance-${matchCount}.json`);
+const enforce = process.argv.includes('--enforce');
 
 const summary = {
   schema: 'airlock.balance.stage0.v1',
@@ -49,8 +50,41 @@ summary.averages.transcriptEvents = round(summary.averages.transcriptEvents / ma
 mkdirSync(dirname(outPath), { recursive: true });
 writeFileSync(outPath, `${JSON.stringify(summary, null, 2)}\n`);
 
-console.log(JSON.stringify({ ok: true, path: outPath, ...summary }, null, 2));
+const guard = evaluateBalance(summary);
+const ok = !enforce || guard.ok;
+
+console.log(JSON.stringify({ ok, path: outPath, guard, ...summary }, null, 2));
+
+if (!ok) {
+  process.exitCode = 1;
+}
 
 function round(value: number): number {
   return Number(value.toFixed(2));
+}
+
+function evaluateBalance(value: typeof summary) {
+  const technicianRate = value.wins.technician / value.matchCount;
+  const saboteurRate = value.wins.saboteur / value.matchCount;
+  const errors: string[] = [];
+
+  if (technicianRate < 0.35 || technicianRate > 0.75) {
+    errors.push(`Technician win rate ${round(technicianRate)} is outside 0.35-0.75.`);
+  }
+  if (saboteurRate < 0.25 || saboteurRate > 0.65) {
+    errors.push(`Saboteur win rate ${round(saboteurRate)} is outside 0.25-0.65.`);
+  }
+  if (value.averages.ticks < 8 || value.averages.ticks > 30) {
+    errors.push(`Average ticks ${value.averages.ticks} is outside 8-30.`);
+  }
+  if (value.averages.meetings < 2 || value.averages.meetings > 8) {
+    errors.push(`Average meetings ${value.averages.meetings} is outside 2-8.`);
+  }
+
+  return {
+    ok: errors.length === 0,
+    technicianRate: round(technicianRate),
+    saboteurRate: round(saboteurRate),
+    errors,
+  };
 }

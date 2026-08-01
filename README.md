@@ -49,6 +49,7 @@ npm run simulate
 npm run audit -- airlock-stage-zero-demo
 npm run report -- airlock-stage-zero-demo
 npm run balance -- 1000 stage-zero
+npm run balance:check
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
 npm run build
 npm run dev
@@ -57,6 +58,7 @@ npm run dev
 `npm run audit -- <seed>` writes a reproducible JSON audit bundle to `artifacts/` unless you pass an explicit output path as the second argument.
 `npm run report -- <seed>` writes a Markdown match report suitable for public archives or Gists.
 `npm run balance -- <count> <seed-prefix>` writes a many-match balance report with win rates, match-length averages, terminal reasons, and Saboteur pair frequencies.
+`npm run balance:check` runs the CI balance guard and fails if the simulator drifts into an obviously broken meta.
 `npm run validate-agent -- <manifest.json>` validates a Stage 1 authored-agent manifest and returns its public manifest hash.
 
 ## Roadmap
