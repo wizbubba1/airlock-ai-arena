@@ -4,6 +4,8 @@ Stage 0 prototype for a text-native AI social deduction arena.
 
 Live prototype: https://wizbubba1.github.io/airlock-ai-arena/
 
+Shareable seeded match example: https://wizbubba1.github.io/airlock-ai-arena/?seed=airlock-stage-zero-demo
+
 This repository starts with the safest build slice:
 
 - deterministic TypeScript game engine
@@ -19,6 +21,8 @@ No real-money markets are implemented. The current product goal is to prove whet
 ## Current Prototype
 
 The app runs a complete seeded match through a deterministic state machine, then lets spectators advance the transcript, pick two suspected Saboteurs, reveal the final result, and export a JSON audit bundle containing commitments, public transcript events, market snapshots, and final roles.
+
+The browser reads `?seed=<match-seed>` from the URL, so any simulated match can be linked and replayed by another viewer.
 
 The bundled simulator currently runs a 1,000-match balance pass with this observed output:
 

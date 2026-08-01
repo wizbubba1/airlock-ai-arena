@@ -21,8 +21,9 @@ import './styles.css';
 const defaultSeed = 'airlock-stage-zero-demo';
 
 function App() {
-  const [seedDraft, setSeedDraft] = useState(defaultSeed);
-  const [seed, setSeed] = useState(defaultSeed);
+  const initialSeed = readSeedFromUrl();
+  const [seedDraft, setSeedDraft] = useState(initialSeed);
+  const [seed, setSeed] = useState(initialSeed);
   const [selectedAgent, setSelectedAgent] = useState<AgentId>('vanta');
   const [visibleCount, setVisibleCount] = useState(18);
   const [picks, setPicks] = useState<AgentId[]>([]);
@@ -45,7 +46,9 @@ function App() {
 
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSeed(seedDraft.trim() || defaultSeed);
+    const nextSeed = seedDraft.trim() || defaultSeed;
+    setSeed(nextSeed);
+    writeSeedToUrl(nextSeed);
     setVisibleCount(18);
     setPicks([]);
     setSelectedAgent('vanta');
@@ -273,6 +276,17 @@ function TranscriptLine({ event }: { event: TranscriptEvent }) {
       <p>{event.publicText}</p>
     </li>
   );
+}
+
+function readSeedFromUrl(): string {
+  const value = new URLSearchParams(window.location.search).get('seed')?.trim();
+  return value || defaultSeed;
+}
+
+function writeSeedToUrl(seed: string): void {
+  const url = new URL(window.location.href);
+  url.searchParams.set('seed', seed);
+  window.history.replaceState({}, '', url);
 }
 
 createRoot(document.getElementById('root')!).render(<App />);
