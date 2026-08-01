@@ -30,11 +30,14 @@ function App() {
   const visibleTranscript = match.transcript.slice(0, visibleCount);
   const latestTick = visibleTranscript.at(-1)?.tick ?? 0;
   const isRevealed = visibleCount >= match.transcript.length;
+  const replaySnapshot = useMemo(() => {
+    return [...match.snapshots].reverse().find((snapshot) => snapshot.tick <= latestTick) ?? match.snapshots[0];
+  }, [latestTick, match.snapshots]);
   const market = useMemo(() => {
     return [...match.market].reverse().find((snapshot) => snapshot.tick <= latestTick) ?? match.market[0];
   }, [latestTick, match.market]);
   const topSuspects = [...agentIds].sort((a, b) => market.prices[b] - market.prices[a]);
-  const selected = match.agents[selectedAgent];
+  const selected = replaySnapshot.agents[selectedAgent];
   const saboteurs = agentIds.filter((id) => match.agents[id].role === 'saboteur');
   const pickScore = isRevealed ? picks.filter((id) => saboteurs.includes(id)).length : undefined;
   const auditBundle = buildAuditBundle(match, seed);
@@ -99,7 +102,7 @@ function App() {
           </div>
           <div className="agent-list">
             {agentIds.map((id) => {
-              const agent = match.agents[id];
+              const agent = replaySnapshot.agents[id];
               const isSelected = selectedAgent === id;
               const isPick = picks.includes(id);
               return (
@@ -113,7 +116,7 @@ function App() {
                   <span className="agent-color" style={{ background: profiles[id].color }} />
                   <span>
                     <strong>{profiles[id].name}</strong>
-                    <small>{isRevealed ? agent.role : profiles[id].callsign}</small>
+                    <small>{isRevealed ? match.agents[id].role : profiles[id].callsign}</small>
                   </span>
                   <span className={`life ${agent.alive ? 'alive' : 'out'}`}>{isPick ? 'pick' : agent.alive ? 'live' : 'out'}</span>
                 </button>
@@ -126,7 +129,7 @@ function App() {
             <p>{profiles[selectedAgent].persona}</p>
             <dl>
               <div>
-                <dt>Final room</dt>
+                <dt>Visible room</dt>
                 <dd>{selected.room}</dd>
               </div>
               <div>
@@ -144,7 +147,7 @@ function App() {
           </div>
           <div className="station-map">
             {Object.keys(graph).map((room, index) => {
-              const occupants = agentIds.filter((id) => match.agents[id].room === room && match.agents[id].alive);
+              const occupants = agentIds.filter((id) => replaySnapshot.agents[id].room === room && replaySnapshot.agents[id].alive);
               return (
                 <div className={`room room-${index}`} key={room}>
                   <span>{room}</span>

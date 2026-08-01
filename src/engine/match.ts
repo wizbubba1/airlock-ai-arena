@@ -1,7 +1,17 @@
 import { chooseAction, chooseVote, meetingSpeech } from './agents';
 import { agentIds, graph, profiles, rooms } from './content';
 import { SeededRng } from './rng';
-import type { ActionIntent, AgentId, AgentState, MarketSnapshot, MatchState, Role, RoomId, TranscriptEvent } from './types';
+import type {
+  ActionIntent,
+  AgentId,
+  AgentState,
+  MarketSnapshot,
+  MatchState,
+  PublicStateSnapshot,
+  Role,
+  RoomId,
+  TranscriptEvent,
+} from './types';
 
 const taskCount = 8;
 const actionTicksPerCycle = 8;
@@ -38,11 +48,13 @@ export function createMatch(seed = 'airlock-season-zero'): MatchState {
     bodies: [],
     transcript: [],
     market: [],
+    snapshots: [],
     meetingCount: 0,
   };
 
   addEvent(state, 'system', 'AIRLOCK match initialized. Roles are sealed until match end.', 'Roles sealed; eight agents enter Salvage Station Theta.');
   updateMarket(state);
+  captureSnapshot(state);
   return state;
 }
 
@@ -123,6 +135,7 @@ export function runActionTick(state: MatchState): MatchState {
     runMeeting(state);
   }
 
+  captureSnapshot(state);
   return state;
 }
 
@@ -161,6 +174,7 @@ function runMeeting(state: MatchState): void {
   updateMarket(state);
   checkWin(state);
   if (!state.winner) state.phase = 'action';
+  captureSnapshot(state);
 }
 
 function checkWin(state: MatchState): void {
@@ -198,6 +212,32 @@ function updateMarket(state: MatchState): void {
   const normalized = Object.fromEntries(agentIds.map((id) => [id, Math.round((prices[id] / total) * 100)])) as Record<AgentId, number>;
   const snapshot: MarketSnapshot = { tick: state.tick, prices: normalized };
   state.market.push(snapshot);
+}
+
+function captureSnapshot(state: MatchState): void {
+  const snapshot: PublicStateSnapshot = {
+    tick: state.tick,
+    phase: state.phase,
+    agents: Object.fromEntries(
+      agentIds.map((id) => [
+        id,
+        {
+          id,
+          alive: state.agents[id].alive,
+          room: state.agents[id].room,
+          completedTasks: state.agents[id].completedTasks,
+        },
+      ]),
+    ) as PublicStateSnapshot['agents'],
+    bodies: state.bodies.map((body) => ({ room: body.room, tick: body.tick, reported: body.reported })),
+  };
+
+  const existingIndex = state.snapshots.findIndex((entry) => entry.tick === state.tick && entry.phase === state.phase);
+  if (existingIndex >= 0) {
+    state.snapshots[existingIndex] = snapshot;
+  } else {
+    state.snapshots.push(snapshot);
+  }
 }
 
 function addEvent(

@@ -14,10 +14,26 @@ describe('AIRLOCK deterministic engine', () => {
     const match = runMatch('bounded-market');
     expect(match.phase).toBe('ended');
     expect(match.winner).toMatch(/technician|saboteur/);
+    expect(match.snapshots.length).toBeGreaterThan(1);
+    expect(match.snapshots.at(-1)?.tick).toBe(match.tick);
     for (const snapshot of match.market) {
       for (const id of agentIds) {
         expect(snapshot.prices[id]).toBeGreaterThanOrEqual(0);
         expect(snapshot.prices[id]).toBeLessThanOrEqual(100);
+      }
+    }
+  });
+
+  it('records public replay snapshots without leaking roles', () => {
+    const match = runMatch('snapshot-replay');
+    const snapshotText = JSON.stringify(match.snapshots);
+    expect(snapshotText).not.toContain('saboteur');
+    expect(snapshotText).not.toContain('technician');
+    expect(match.snapshots[0].tick).toBe(0);
+    for (const snapshot of match.snapshots) {
+      for (const id of agentIds) {
+        expect(snapshot.agents[id].id).toBe(id);
+        expect(snapshot.agents[id].completedTasks).toBeGreaterThanOrEqual(0);
       }
     }
   });

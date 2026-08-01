@@ -65,6 +65,20 @@ export interface MarketSnapshot {
   prices: Record<AgentId, number>;
 }
 
+export interface PublicAgentSnapshot {
+  id: AgentId;
+  alive: boolean;
+  room: RoomId;
+  completedTasks: number;
+}
+
+export interface PublicStateSnapshot {
+  tick: number;
+  phase: MatchPhase;
+  agents: Record<AgentId, PublicAgentSnapshot>;
+  bodies: Array<{ room: RoomId; tick: number; reported: boolean }>;
+}
+
 export interface MatchState {
   seed: string;
   tick: number;
@@ -73,6 +87,7 @@ export interface MatchState {
   bodies: Array<{ victim: AgentId; room: RoomId; tick: number; reported: boolean }>;
   transcript: TranscriptEvent[];
   market: MarketSnapshot[];
+  snapshots: PublicStateSnapshot[];
   meetingCount: number;
   winner?: Role;
   reason?: string;
