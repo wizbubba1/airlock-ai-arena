@@ -45,8 +45,8 @@ describe('AIRLOCK deterministic engine', () => {
 
     expect(second).toEqual(first);
     expect(third.transcriptHash).not.toBe(first.transcriptHash);
-    expect(first.rolesHash).toMatch(/^fnv1a32:[0-9a-f]{8}$/);
-    expect(first.personaHash).toMatch(/^fnv1a32:[0-9a-f]{8}$/);
+    expect(first.rolesHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(first.personaHash).toMatch(/^sha256:[0-9a-f]{64}$/);
   });
 
   it('builds stable per-tick commitments that cover every public snapshot tick', () => {
@@ -61,7 +61,7 @@ describe('AIRLOCK deterministic engine', () => {
     expect(bundle.commitments.tickCommitmentCount).toBe(first.length);
     for (const entry of first) {
       expect(snapshotTicks.has(entry.tick)).toBe(true);
-      expect(entry.commitment).toMatch(/^fnv1a32:[0-9a-f]{8}$/);
+      expect(entry.commitment).toMatch(/^sha256:[0-9a-f]{64}$/);
     }
   });
 

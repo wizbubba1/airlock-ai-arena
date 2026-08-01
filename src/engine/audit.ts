@@ -1,5 +1,6 @@
 import { agentIds, profiles } from './content';
-import { hashString } from './rng';
+import { sha256 } from '@noble/hashes/sha2.js';
+import { bytesToHex } from '@noble/hashes/utils.js';
 import type { MatchState } from './types';
 
 export interface AuditDigests {
@@ -26,7 +27,7 @@ export function auditDigests(match: MatchState): AuditDigests {
 }
 
 export function digest(value: unknown): string {
-  return `fnv1a32:${hashString(stableStringify(value)).toString(16).padStart(8, '0')}`;
+  return `sha256:${bytesToHex(sha256(new TextEncoder().encode(stableStringify(value))))}`;
 }
 
 export function stableStringify(value: unknown): string {
