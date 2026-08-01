@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { agentIds, auditDigests, buildAuditBundle, buildTickCommitments, profiles, runMatch } from '../engine';
+import { agentIds, auditDigests, buildAuditBundle, buildMatchReport, buildTickCommitments, profiles, runMatch } from '../engine';
 
 describe('AIRLOCK deterministic engine', () => {
   it('replays the same seed into the same transcript', () => {
@@ -91,5 +91,13 @@ describe('AIRLOCK deterministic engine', () => {
       .join(' ');
     expect(publicBody).toContain('win:');
     expect(nonTerminal.toLowerCase()).not.toContain('role: saboteur');
+  });
+
+  it('renders a markdown report with audit commitments and transcript', () => {
+    const report = buildMatchReport(runMatch('markdown-report'), 'markdown-report');
+    expect(report).toContain('# AIRLOCK Match Report');
+    expect(report).toContain('## Commitments');
+    expect(report).toContain('## Public Transcript');
+    expect(report).toContain('sha256:');
   });
 });

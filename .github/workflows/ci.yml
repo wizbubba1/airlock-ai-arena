@@ -28,6 +28,9 @@ jobs:
       - name: Audit bundle smoke test
         run: npm run audit -- airlock-stage-zero-demo
 
+      - name: Markdown report smoke test
+        run: npm run report -- airlock-stage-zero-demo
+
       - name: Balance report smoke test
         run: npm run balance -- 100 stage-zero-ci
 

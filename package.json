@@ -9,7 +9,8 @@
     "test": "vitest run",
     "simulate": "tsx src/tests/simulate.ts",
     "audit": "tsx src/tests/audit.ts",
-    "balance": "tsx src/tests/balance.ts"
+    "balance": "tsx src/tests/balance.ts",
+    "report": "tsx src/tests/report.ts"
   },
   "dependencies": {
     "@noble/hashes": "^2.2.0",
