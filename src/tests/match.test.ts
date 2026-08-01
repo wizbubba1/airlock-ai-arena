@@ -47,6 +47,7 @@ describe('AIRLOCK deterministic engine', () => {
     expect(third.transcriptHash).not.toBe(first.transcriptHash);
     expect(first.rolesHash).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(first.personaHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(first.entropyHash).toMatch(/^sha256:[0-9a-f]{64}$/);
   });
 
   it('builds stable per-tick commitments that cover every public snapshot tick', () => {
@@ -87,6 +88,21 @@ describe('AIRLOCK deterministic engine', () => {
     expect(bundle.commitments.ruleset).toBe(ruleset.id);
     expect(bundle.commitments.rulesetManifest.taskCount).toBe(ruleset.taskCount);
     expect(bundle.commitments.rulesetManifest.maxTicks).toBe(ruleset.maxTicks);
+  });
+
+  it('records a deterministic entropy ledger for setup and every action tick', () => {
+    const first = runMatch('entropy-ledger');
+    const second = runMatch('entropy-ledger');
+    const bundle = buildAuditBundle(first, 'entropy-ledger');
+
+    expect(second.entropy).toEqual(first.entropy);
+    expect(first.entropy[0].kind).toBe('setup');
+    expect(first.entropy.filter((event) => event.kind === 'tick')).toHaveLength(first.tick);
+    expect(bundle.entropy).toEqual(first.entropy);
+    for (const event of first.entropy) {
+      expect(event.label).toContain('stage0.v0.1');
+      expect(event.commitment).toMatch(/^sha256:[0-9a-f]{64}$/);
+    }
   });
 
   it('keeps private roles out of public transcript until the terminal event stream', () => {

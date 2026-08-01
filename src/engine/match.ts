@@ -1,4 +1,5 @@
 import { chooseAction, chooseVote, meetingSpeech } from './agents';
+import { digest } from './audit';
 import { agentIds, graph, profiles, rooms } from './content';
 import { SeededRng } from './rng';
 import { ruleset } from './ruleset';
@@ -15,7 +16,8 @@ import type {
 } from './types';
 
 export function createMatch(seed = 'airlock-season-zero'): MatchState {
-  const rng = new SeededRng(seed);
+  const setupEntropy = entropyEvent(seed, 'setup', 0);
+  const rng = new SeededRng(setupEntropy.label);
   const saboteurs = new Set(rng.shuffle(agentIds).slice(0, ruleset.saboteurCount));
   const shuffledRooms = rng.shuffle(rooms);
 
@@ -46,6 +48,7 @@ export function createMatch(seed = 'airlock-season-zero'): MatchState {
     transcript: [],
     market: [],
     snapshots: [],
+    entropy: [setupEntropy],
     meetingCount: 0,
   };
 
@@ -73,7 +76,9 @@ export function runMatch(seed = 'airlock-season-zero'): MatchState {
 export function runActionTick(state: MatchState): MatchState {
   if (state.phase !== 'action') return state;
   state.tick += 1;
-  const rng = new SeededRng(`${state.seed}:tick:${state.tick}`);
+  const tickEntropy = entropyEvent(state.seed, 'tick', state.tick);
+  state.entropy.push(tickEntropy);
+  const rng = new SeededRng(tickEntropy.label);
   const intents = Object.fromEntries(agentIds.map((id) => [id, chooseAction(state, id, rng)])) as Record<AgentId, ActionIntent>;
 
   for (const id of rng.shuffle(agentIds)) {
@@ -291,4 +296,14 @@ function adjustAfterEjection(state: MatchState, ejected: AgentId): void {
 
 function label(room: RoomId): string {
   return room[0].toUpperCase() + room.slice(1);
+}
+
+function entropyEvent(seed: string, kind: 'setup' | 'tick', tick: number) {
+  const label = `airlock:${ruleset.id}:${seed}:${kind}:${tick}`;
+  return {
+    kind,
+    tick,
+    label,
+    commitment: digest({ kind, tick, label }),
+  };
 }

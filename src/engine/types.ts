@@ -86,6 +86,13 @@ export interface PublicStateSnapshot {
   bodies: Array<{ room: RoomId; tick: number; reported: boolean }>;
 }
 
+export interface EntropyEvent {
+  kind: 'setup' | 'tick';
+  tick: number;
+  label: string;
+  commitment: string;
+}
+
 export interface MatchState {
   seed: string;
   tick: number;
@@ -95,6 +102,7 @@ export interface MatchState {
   transcript: TranscriptEvent[];
   market: MarketSnapshot[];
   snapshots: PublicStateSnapshot[];
+  entropy: EntropyEvent[];
   meetingCount: number;
   winner?: Role;
   reason?: string;

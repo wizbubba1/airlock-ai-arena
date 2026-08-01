@@ -9,6 +9,7 @@ export interface AuditDigests {
   marketHash: string;
   personaHash: string;
   snapshotHash: string;
+  entropyHash: string;
 }
 
 export function auditDigests(match: MatchState): AuditDigests {
@@ -23,6 +24,7 @@ export function auditDigests(match: MatchState): AuditDigests {
     marketHash: digest(match.market),
     personaHash: digest(agentIds.map((id) => profiles[id])),
     snapshotHash: digest(match.snapshots),
+    entropyHash: digest(match.entropy),
   };
 }
 

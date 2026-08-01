@@ -30,6 +30,7 @@ export function buildAuditBundle(match: MatchState, seed: string) {
     publicTranscript: match.transcript.map(({ tick, kind, speaker, publicText }) => ({ tick, kind, speaker, publicText })),
     market: match.market,
     publicSnapshots: match.snapshots,
+    entropy: match.entropy,
     tickCommitments,
   };
 }
