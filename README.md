@@ -39,11 +39,13 @@ npm install
 npm test
 npm run simulate
 npm run audit -- airlock-stage-zero-demo
+npm run balance -- 1000 stage-zero
 npm run build
 npm run dev
 ```
 
 `npm run audit -- <seed>` writes a reproducible JSON audit bundle to `artifacts/` unless you pass an explicit output path as the second argument.
+`npm run balance -- <count> <seed-prefix>` writes a many-match balance report with win rates, match-length averages, terminal reasons, and Saboteur pair frequencies.
 
 ## Roadmap
 
