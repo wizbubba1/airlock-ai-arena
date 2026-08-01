@@ -56,7 +56,12 @@ function App() {
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const nextSeed = seedDraft.trim() || defaultSeed;
+    loadSeed(nextSeed);
+  }
+
+  function loadSeed(nextSeed: string) {
     setSeed(nextSeed);
+    setSeedDraft(nextSeed);
     writeSeedToUrl(nextSeed);
     setVisibleCount(18);
     setPicks([]);
@@ -341,9 +346,15 @@ function App() {
             </dl>
             <div className="evaluation-list" aria-label="Recent batch outcomes">
               {evaluation.outcomes.map((outcome) => (
-                <span className={outcome.winner} key={outcome.seed} title={outcome.seed}>
+                <button
+                  className={outcome.winner}
+                  key={outcome.seed}
+                  onClick={() => loadSeed(outcome.seed)}
+                  title={outcome.seed}
+                  type="button"
+                >
                   T{outcome.tick}
-                </span>
+                </button>
               ))}
             </div>
           </div>

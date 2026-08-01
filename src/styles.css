@@ -581,7 +581,7 @@ dd {
   gap: 6px;
 }
 
-.evaluation-list span {
+.evaluation-list button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -592,6 +592,7 @@ dd {
   font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
   font-size: 0.72rem;
   font-weight: 800;
+  cursor: pointer;
 }
 
 .evaluation-list .technician {
