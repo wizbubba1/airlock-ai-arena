@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { agentIds, auditDigests, runMatch } from '../engine';
+import { agentIds, auditDigests, profiles, runMatch } from '../engine';
 
 describe('AIRLOCK deterministic engine', () => {
   it('replays the same seed into the same transcript', () => {
@@ -47,6 +47,23 @@ describe('AIRLOCK deterministic engine', () => {
     expect(third.transcriptHash).not.toBe(first.transcriptHash);
     expect(first.rolesHash).toMatch(/^fnv1a32:[0-9a-f]{8}$/);
     expect(first.personaHash).toMatch(/^fnv1a32:[0-9a-f]{8}$/);
+  });
+
+  it('defines bounded house-agent policy profiles', () => {
+    const voices = new Set<string>();
+    for (const id of agentIds) {
+      const policy = profiles[id].policy;
+      expect(policy.aggression).toBeGreaterThanOrEqual(0);
+      expect(policy.aggression).toBeLessThanOrEqual(1);
+      expect(policy.diligence).toBeGreaterThanOrEqual(0);
+      expect(policy.diligence).toBeLessThanOrEqual(1);
+      expect(policy.suspicionThreshold).toBeGreaterThanOrEqual(0);
+      expect(policy.suspicionThreshold).toBeLessThanOrEqual(1);
+      expect(policy.wander).toBeGreaterThanOrEqual(0);
+      expect(policy.wander).toBeLessThanOrEqual(1);
+      voices.add(policy.voice);
+    }
+    expect(voices.size).toBeGreaterThanOrEqual(6);
   });
 
   it('keeps private roles out of public transcript until the terminal event stream', () => {

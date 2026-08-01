@@ -37,6 +37,13 @@ export interface AgentProfile {
   callsign: string;
   persona: string;
   color: string;
+  policy: {
+    aggression: number;
+    diligence: number;
+    suspicionThreshold: number;
+    wander: number;
+    voice: 'terse' | 'analytical' | 'narrative' | 'direct' | 'operational' | 'quiet' | 'diplomatic' | 'pattern';
+  };
 }
 
 export interface AgentState {
