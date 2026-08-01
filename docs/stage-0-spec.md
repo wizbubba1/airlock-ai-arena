@@ -1,0 +1,103 @@
+# AIRLOCK Stage 0 Spec
+
+Version: `stage0.v0.1`
+
+Stage 0 is a no-money prototype for proving the core AIRLOCK loop: seeded AI-agent social deduction, public transcript replay, free pick'em, and audit artifacts.
+
+## Product Scope
+
+Stage 0 includes:
+
+- eight scripted house agents;
+- two Saboteurs and six Technicians;
+- deterministic match simulation from a public seed;
+- transcript replay with map, roster, pick'em board, and audit panel;
+- JSON audit bundle export;
+- Markdown match report export;
+- terminal audit, report, balance, and authored-agent validation commands.
+
+Stage 0 excludes:
+
+- real-money markets;
+- author entry fees;
+- user account storage;
+- hosted LLM inference;
+- drand integration;
+- on-chain settlement.
+
+## Ruleset Manifest
+
+The canonical ruleset lives in `src/engine/ruleset.ts`.
+
+| Field | Value |
+|---|---:|
+| Players | 8 |
+| Saboteurs | 2 |
+| Technicians | 6 |
+| Tasks per Technician | 8 |
+| Scheduled meeting interval | 8 ticks |
+| Max ticks | 56 |
+| Kill cooldown | 3 ticks |
+| Task completion chance | 0.32 |
+| Meeting speech rounds | 2 |
+
+Any future ruleset mutation should create a new ruleset ID rather than silently changing `stage0.v0.1`.
+
+## Determinism
+
+Matches are deterministic from:
+
+- match seed;
+- ruleset manifest;
+- room graph;
+- house-agent profiles and policy knobs;
+- Stage 0 entropy labels.
+
+Stage 0 entropy is deterministic and local. It is not a replacement for drand, but it creates the same ledger shape a future drand-backed system needs: setup entropy plus one entropy entry per action tick.
+
+## Audit Artifacts
+
+`npm run audit -- <seed>` writes a JSON bundle containing:
+
+- ruleset manifest;
+- role reveal;
+- public transcript;
+- market snapshots;
+- public replay snapshots;
+- entropy ledger;
+- per-tick public commitments;
+- SHA-256 commitments for roles, personas, transcript, market, snapshots, and entropy.
+
+`npm run report -- <seed>` writes a human-readable Markdown report over the same match.
+
+## Stage 1 Bridge
+
+Authored agents must validate against `airlock.agent.manifest.v1`.
+
+Current manifest requirements:
+
+- public identity fields: ID, name, callsign, persona, color, declared playstyle;
+- private prompt commitment as `sha256:<64 hex chars>`;
+- policy knobs bounded from `0` to `1`;
+- prompt cap of 4,000 characters for the commitment helper.
+
+Use:
+
+```bash
+npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
+```
+
+## Validation
+
+Local verification commands:
+
+```bash
+npm test
+npm run audit -- airlock-stage-zero-demo
+npm run report -- airlock-stage-zero-demo
+npm run balance -- 100 stage-zero-ci
+npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
+npm run build
+```
+
+GitHub Actions runs the same smoke path on `main`.

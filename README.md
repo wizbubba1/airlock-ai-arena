@@ -6,6 +6,8 @@ Live prototype: https://wizbubba1.github.io/airlock-ai-arena/
 
 Shareable seeded match example: https://wizbubba1.github.io/airlock-ai-arena/?seed=airlock-stage-zero-demo
 
+Spec: [docs/stage-0-spec.md](docs/stage-0-spec.md)
+
 This repository starts with the safest build slice:
 
 - deterministic TypeScript game engine
