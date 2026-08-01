@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { agentIds, auditDigests, buildAuditBundle, buildMatchReport, buildTickCommitments, profiles, ruleset, runMatch } from '../engine';
+import {
+  agentIds,
+  auditDigests,
+  buildAuditBundle,
+  buildMatchReport,
+  buildTickCommitments,
+  profiles,
+  ruleset,
+  runMatch,
+  verifyAuditBundle,
+} from '../engine';
 import goodManifest from './fixtures/agents/vanta-author.json';
 import badManifest from './fixtures/agents/bad-agent.json';
 import { promptCommitment, validateAgentManifest } from '../authoring/manifest';
@@ -116,6 +126,23 @@ describe('AIRLOCK deterministic engine', () => {
       expect(snapshotTicks.has(entry.tick)).toBe(true);
       expect(entry.commitment).toMatch(/^sha256:[0-9a-f]{64}$/);
     }
+  });
+
+  it('verifies an audit bundle against deterministic replay', () => {
+    const bundle = buildAuditBundle(runMatch('audit-verifier'), 'audit-verifier');
+    const verified = verifyAuditBundle(bundle);
+    const tampered = verifyAuditBundle({
+      ...bundle,
+      commitments: {
+        ...bundle.commitments,
+        transcriptHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+      },
+    });
+
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('commitments does not match deterministic replay.');
   });
 
   it('defines bounded house-agent policy profiles', () => {

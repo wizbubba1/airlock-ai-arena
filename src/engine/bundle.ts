@@ -35,6 +35,8 @@ export function buildAuditBundle(match: MatchState, seed: string) {
   };
 }
 
+export type AuditBundle = ReturnType<typeof buildAuditBundle>;
+
 export function buildTickCommitments(match: MatchState) {
   const ticks = [...new Set(match.snapshots.map((snapshot) => snapshot.tick))].sort((a, b) => a - b);
   return ticks.map((tick) => {
