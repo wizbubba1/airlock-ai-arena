@@ -14,8 +14,8 @@ import {
   Trophy,
   XCircle,
 } from 'lucide-react';
-import { agentIds, auditDigests, graph, profiles, runMatch } from './engine';
-import type { AgentId, MatchState, TranscriptEvent } from './engine';
+import { agentIds, auditDigests, buildAuditBundle, graph, profiles, runMatch } from './engine';
+import type { AgentId, TranscriptEvent } from './engine';
 import './styles.css';
 
 const defaultSeed = 'airlock-stage-zero-demo';
@@ -273,31 +273,6 @@ function TranscriptLine({ event }: { event: TranscriptEvent }) {
       <p>{event.publicText}</p>
     </li>
   );
-}
-
-function buildAuditBundle(match: MatchState, seed: string) {
-  const digests = auditDigests(match);
-  return {
-    schema: 'airlock.audit.stage0.v1',
-    seed,
-    commitments: {
-      ruleset: 'stage0.v0.1',
-      engine: 'deterministic-typescript-state-machine',
-      randomness: `seed:${seed}`,
-      transcriptEvents: match.transcript.length,
-      marketSnapshots: match.market.length,
-      ...digests,
-    },
-    result: {
-      winner: match.winner,
-      reason: match.reason,
-      saboteurs: agentIds.filter((id) => match.agents[id].role === 'saboteur'),
-      ticks: match.tick,
-      meetings: match.meetingCount,
-    },
-    publicTranscript: match.transcript.map(({ tick, kind, speaker, publicText }) => ({ tick, kind, speaker, publicText })),
-    market: match.market,
-  };
 }
 
 createRoot(document.getElementById('root')!).render(<App />);

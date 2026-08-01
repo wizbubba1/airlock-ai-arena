@@ -38,9 +38,12 @@ The bundled simulator currently runs a 1,000-match balance pass with this observ
 npm install
 npm test
 npm run simulate
+npm run audit -- airlock-stage-zero-demo
 npm run build
 npm run dev
 ```
+
+`npm run audit -- <seed>` writes a reproducible JSON audit bundle to `artifacts/` unless you pass an explicit output path as the second argument.
 
 ## Roadmap
 
