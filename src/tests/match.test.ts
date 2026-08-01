@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { agentIds, runMatch } from '../engine';
+import { agentIds, auditDigests, runMatch } from '../engine';
 
 describe('AIRLOCK deterministic engine', () => {
   it('replays the same seed into the same transcript', () => {
@@ -36,6 +36,17 @@ describe('AIRLOCK deterministic engine', () => {
         expect(snapshot.agents[id].completedTasks).toBeGreaterThanOrEqual(0);
       }
     }
+  });
+
+  it('produces stable audit digests for the same seed', () => {
+    const first = auditDigests(runMatch('audit-digest'));
+    const second = auditDigests(runMatch('audit-digest'));
+    const third = auditDigests(runMatch('audit-digest-alt'));
+
+    expect(second).toEqual(first);
+    expect(third.transcriptHash).not.toBe(first.transcriptHash);
+    expect(first.rolesHash).toMatch(/^fnv1a32:[0-9a-f]{8}$/);
+    expect(first.personaHash).toMatch(/^fnv1a32:[0-9a-f]{8}$/);
   });
 
   it('keeps private roles out of public transcript until the terminal event stream', () => {

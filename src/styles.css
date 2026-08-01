@@ -435,6 +435,32 @@ dd {
   padding: 14px;
 }
 
+.digest-list {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+  padding: 12px 14px 14px;
+}
+
+.digest-list p {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+}
+
+.digest-list span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.digest-list code {
+  overflow-wrap: anywhere;
+  color: var(--accent);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.74rem;
+}
+
 .bars {
   display: grid;
   padding: 10px;

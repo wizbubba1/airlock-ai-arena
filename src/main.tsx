@@ -14,7 +14,7 @@ import {
   Trophy,
   XCircle,
 } from 'lucide-react';
-import { agentIds, graph, profiles, runMatch } from './engine';
+import { agentIds, auditDigests, graph, profiles, runMatch } from './engine';
 import type { AgentId, MatchState, TranscriptEvent } from './engine';
 import './styles.css';
 
@@ -41,6 +41,7 @@ function App() {
   const saboteurs = agentIds.filter((id) => match.agents[id].role === 'saboteur');
   const pickScore = isRevealed ? picks.filter((id) => saboteurs.includes(id)).length : undefined;
   const auditBundle = buildAuditBundle(match, seed);
+  const digests = auditDigests(match);
 
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -189,6 +190,14 @@ function App() {
             </div>
           </dl>
           <pre>{JSON.stringify(auditBundle.commitments, null, 2)}</pre>
+          <div className="digest-list">
+            {Object.entries(digests).map(([label, value]) => (
+              <p key={label}>
+                <span>{label}</span>
+                <code>{value}</code>
+              </p>
+            ))}
+          </div>
         </aside>
 
         <section className="panel transcript-panel" aria-label="Public match transcript">
@@ -267,6 +276,7 @@ function TranscriptLine({ event }: { event: TranscriptEvent }) {
 }
 
 function buildAuditBundle(match: MatchState, seed: string) {
+  const digests = auditDigests(match);
   return {
     schema: 'airlock.audit.stage0.v1',
     seed,
@@ -276,6 +286,7 @@ function buildAuditBundle(match: MatchState, seed: string) {
       randomness: `seed:${seed}`,
       transcriptEvents: match.transcript.length,
       marketSnapshots: match.market.length,
+      ...digests,
     },
     result: {
       winner: match.winner,
