@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   agentIds,
   auditDigests,
@@ -206,9 +207,11 @@ describe('AIRLOCK deterministic engine', () => {
   it('validates authored-agent manifests for the Stage 1 ladder path', () => {
     const good = validateAgentManifest(goodManifest);
     const bad = validateAgentManifest(badManifest);
+    const privatePrompt = readFileSync('src/tests/fixtures/agents/vanta-private-prompt.txt', 'utf8').trim();
 
     expect(good.ok).toBe(true);
     expect(good.manifestHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(goodManifest.promptCommitment).toBe(promptCommitment(privatePrompt));
     expect(bad.ok).toBe(false);
     expect(bad.errors.length).toBeGreaterThan(4);
     expect(promptCommitment('Hold claims to route evidence.')).toMatch(/^sha256:[0-9a-f]{64}$/);

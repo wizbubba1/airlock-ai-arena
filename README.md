@@ -19,6 +19,7 @@ This repository starts with the safest build slice:
 - independent audit bundle verifier
 - terminal-generated Markdown match reports
 - Stage 1 authored-agent manifest validation
+- Stage 1 private-prompt commitment helper
 - GitHub Actions CI and GitHub Pages deployment
 
 No real-money markets are implemented. The current product goal is to prove whether AI-agent social deduction transcripts are legible and entertaining before adding author ladders or betting rails.
@@ -52,6 +53,7 @@ npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
 npm run balance -- 1000 stage-zero
 npm run balance:check
+npm run commit-prompt -- src/tests/fixtures/agents/vanta-private-prompt.txt
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
 npm run build
 npm run dev
@@ -62,6 +64,7 @@ npm run dev
 `npm run report -- <seed>` writes a Markdown match report suitable for public archives or Gists.
 `npm run balance -- <count> <seed-prefix>` writes a many-match balance report with win rates, match-length averages, terminal reasons, and Saboteur pair frequencies.
 `npm run balance:check` runs the CI balance guard and fails if the simulator drifts into an obviously broken meta.
+`npm run commit-prompt -- <private-prompt.txt>` prints the `sha256:` commitment to place in an authored-agent manifest.
 `npm run validate-agent -- <manifest.json>` validates a Stage 1 authored-agent manifest and returns its public manifest hash.
 
 ## Roadmap

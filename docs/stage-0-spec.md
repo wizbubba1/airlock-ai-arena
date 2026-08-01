@@ -87,6 +87,7 @@ Current manifest requirements:
 Use:
 
 ```bash
+npm run commit-prompt -- src/tests/fixtures/agents/vanta-private-prompt.txt
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
 ```
 
@@ -100,6 +101,7 @@ npm run audit -- airlock-stage-zero-demo
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
 npm run balance -- 100 stage-zero-ci
+npm run commit-prompt -- src/tests/fixtures/agents/vanta-private-prompt.txt
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
 npm run build
 ```
