@@ -8,9 +8,11 @@ import {
   Download,
   Eye,
   Gauge,
+  Rewind,
   Radio,
   RotateCcw,
   ShieldAlert,
+  SkipBack,
   Trophy,
   XCircle,
 } from 'lucide-react';
@@ -207,6 +209,14 @@ function App() {
           <div className="panel-header">
             <h2>Public Transcript</h2>
             <div className="button-pair">
+              <button className="icon-button" onClick={() => setVisibleCount(18)} type="button">
+                <SkipBack size={18} />
+                Reset
+              </button>
+              <button className="icon-button" onClick={() => setVisibleCount((count) => Math.max(18, count - 10))} type="button">
+                <Rewind size={18} />
+                Back
+              </button>
               <button className="icon-button" onClick={() => setVisibleCount(match.transcript.length)} type="button">
                 <Gauge size={18} />
                 Reveal
