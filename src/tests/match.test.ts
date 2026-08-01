@@ -5,6 +5,55 @@ import badManifest from './fixtures/agents/bad-agent.json';
 import { promptCommitment, validateAgentManifest } from '../authoring/manifest';
 
 describe('AIRLOCK deterministic engine', () => {
+  it('preserves canonical seeded regression outputs', () => {
+    const cases = [
+      {
+        seed: 'airlock-stage-zero-demo',
+        winner: 'saboteur',
+        tick: 17,
+        meetings: 5,
+        transcriptHash: 'sha256:f9c6b80b0724833cd855b85b01aa6a38bad063384bfda3b7e9d71a4868149667',
+      },
+      {
+        seed: 'repeatable-match',
+        winner: 'technician',
+        tick: 8,
+        meetings: 3,
+        transcriptHash: 'sha256:a44855efb64186ba23c3737360b53d349a45e4b54642082736dfd1a5f6aa379d',
+      },
+      {
+        seed: 'entropy-ledger',
+        winner: 'saboteur',
+        tick: 9,
+        meetings: 4,
+        transcriptHash: 'sha256:e0643343fb9283ce9525b56338b2f645cc276dae0899a0fcd0cbea214b8f32e8',
+      },
+      {
+        seed: 'ruleset-artifact',
+        winner: 'technician',
+        tick: 8,
+        meetings: 2,
+        transcriptHash: 'sha256:c2fdd7f499b1971bddb32112b2f5346f89da72791d3f14f77afe1385b1334e04',
+      },
+      {
+        seed: 'snapshot-replay',
+        winner: 'technician',
+        tick: 24,
+        meetings: 6,
+        transcriptHash: 'sha256:bc6e61e9b640065d3e20c6b7000b9b2cf343c91d1d8e25cdbe74c3de01264d4a',
+      },
+    ] as const;
+
+    for (const expected of cases) {
+      const match = runMatch(expected.seed);
+      const digests = auditDigests(match);
+      expect(match.winner).toBe(expected.winner);
+      expect(match.tick).toBe(expected.tick);
+      expect(match.meetingCount).toBe(expected.meetings);
+      expect(digests.transcriptHash).toBe(expected.transcriptHash);
+    }
+  });
+
   it('replays the same seed into the same transcript', () => {
     const first = runMatch('repeatable-match');
     const second = runMatch('repeatable-match');
