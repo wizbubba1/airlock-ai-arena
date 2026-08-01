@@ -384,6 +384,32 @@ dd {
   overflow: auto;
 }
 
+.replay-scrubber {
+  display: grid;
+  grid-template-columns: auto minmax(160px, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 14px;
+}
+
+.replay-scrubber label,
+.replay-scrubber output {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.replay-scrubber output {
+  color: var(--accent);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+
+.replay-scrubber input {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
 .transcript-filters {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -804,6 +830,14 @@ meter::-webkit-meter-optimum-value {
 
   .seed-form {
     grid-template-columns: 1fr;
+  }
+
+  .replay-scrubber {
+    grid-template-columns: 1fr auto;
+  }
+
+  .replay-scrubber input {
+    grid-column: 1 / -1;
   }
 
   .station-map {

@@ -284,6 +284,20 @@ function App() {
               </button>
             </div>
           </div>
+          <div className="replay-scrubber">
+            <label htmlFor="replay-position">Replay position</label>
+            <input
+              id="replay-position"
+              max={match.transcript.length}
+              min={1}
+              onChange={(event) => setVisibleCount(Number(event.target.value))}
+              type="range"
+              value={visibleCount}
+            />
+            <output htmlFor="replay-position">
+              {visibleCount}/{match.transcript.length}
+            </output>
+          </div>
           <div className="transcript-filters" aria-label="Transcript filters">
             {transcriptFilters.map((filter) => (
               <button
