@@ -12,6 +12,7 @@
     "verify-audit": "tsx src/tests/verify-audit.ts",
     "balance": "tsx src/tests/balance.ts",
     "balance:check": "tsx src/tests/balance.ts 100 stage-zero-ci ./artifacts/airlock-balance-ci.json --enforce",
+    "ladder": "tsx src/tests/ladder.ts",
     "report": "tsx src/tests/report.ts",
     "commit-prompt": "tsx src/tests/commit-prompt.ts",
     "validate-agent": "tsx src/tests/validate-agent.ts"

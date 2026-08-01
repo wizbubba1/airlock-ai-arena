@@ -43,5 +43,8 @@ jobs:
       - name: Balance report smoke test
         run: npm run balance:check
 
+      - name: Ladder preview smoke test
+        run: npm run ladder -- 32 stage-one-ci
+
       - name: Build
         run: npm run build

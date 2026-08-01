@@ -16,6 +16,7 @@ Stage 0 includes:
 - deterministic audit bundle verification;
 - Markdown match report export;
 - terminal audit, report, balance, and authored-agent validation commands.
+- deterministic Stage 1 preview ladder reports.
 
 Stage 0 excludes:
 
@@ -89,7 +90,10 @@ Use:
 ```bash
 npm run commit-prompt -- src/tests/fixtures/agents/vanta-private-prompt.txt
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
+npm run ladder -- 64 stage-one-preview
 ```
+
+`npm run ladder -- <count> <seed-prefix>` runs repeated seeded matches and produces an Elo-style preview table for the house agents. It is a bridge toward authored-agent seasons, not a production league service.
 
 ## Validation
 
@@ -101,6 +105,7 @@ npm run audit -- airlock-stage-zero-demo
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
 npm run balance -- 100 stage-zero-ci
+npm run ladder -- 32 stage-one-ci
 npm run commit-prompt -- src/tests/fixtures/agents/vanta-private-prompt.txt
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
 npm run build

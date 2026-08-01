@@ -8,6 +8,7 @@ import {
   buildTickCommitments,
   profiles,
   ruleset,
+  runLadderPreview,
   runMatch,
   verifyAuditBundle,
 } from '../engine';
@@ -144,6 +145,21 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('commitments does not match deterministic replay.');
+  });
+
+  it('runs a deterministic Stage 1 ladder preview', () => {
+    const first = runLadderPreview(16, 'ladder-preview');
+    const second = runLadderPreview(16, 'ladder-preview');
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.ladder.stage1.preview.v1');
+    expect(first.matches).toHaveLength(16);
+    expect(first.standings).toHaveLength(agentIds.length);
+    expect(first.standings[0].rating).toBeGreaterThanOrEqual(first.standings.at(-1)?.rating ?? 0);
+    for (const standing of first.standings) {
+      expect(standing.wins + standing.losses).toBe(16);
+      expect(standing.saboteurGames + standing.technicianGames).toBe(16);
+    }
   });
 
   it('defines bounded house-agent policy profiles', () => {
