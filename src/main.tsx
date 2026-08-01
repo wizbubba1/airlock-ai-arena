@@ -51,6 +51,7 @@ function App() {
   const auditBundle = buildAuditBundle(match, seed);
   const digests = auditDigests(match);
   const sampleManifestResult = validateAgentManifest(sampleManifest);
+  const evaluation = useMemo(() => buildEvaluation(seed), [seed]);
 
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -306,6 +307,48 @@ function App() {
           </div>
         </aside>
 
+        <section className="panel evaluation-panel" aria-label="Stage 0 evaluation batch">
+          <div className="panel-header">
+            <h2>Evaluation Batch</h2>
+            <span>{evaluation.matchCount} seeded matches</span>
+          </div>
+          <div className="evaluation-body">
+            <div className="evaluation-meter">
+              <p>Win balance</p>
+              <div aria-label="Technician and Saboteur win balance">
+                <span style={{ width: `${evaluation.technicianRate}%` }} />
+                <strong>{evaluation.technicianRate}% Tech</strong>
+                <em>{evaluation.saboteurRate}% Sab</em>
+              </div>
+            </div>
+            <dl>
+              <div>
+                <dt>Avg ticks</dt>
+                <dd>{evaluation.averageTicks}</dd>
+              </div>
+              <div>
+                <dt>Avg meetings</dt>
+                <dd>{evaluation.averageMeetings}</dd>
+              </div>
+              <div>
+                <dt>Avg transcript</dt>
+                <dd>{evaluation.averageEvents}</dd>
+              </div>
+              <div>
+                <dt>Top pair</dt>
+                <dd>{evaluation.topSaboteurPair}</dd>
+              </div>
+            </dl>
+            <div className="evaluation-list" aria-label="Recent batch outcomes">
+              {evaluation.outcomes.map((outcome) => (
+                <span className={outcome.winner} key={outcome.seed} title={outcome.seed}>
+                  T{outcome.tick}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="panel authoring-panel" aria-label="Agent authoring readiness">
           <div className="panel-header">
             <h2>Authoring Gate</h2>
@@ -366,6 +409,56 @@ function TranscriptLine({ event }: { event: TranscriptEvent }) {
       <p>{event.publicText}</p>
     </li>
   );
+}
+
+function buildEvaluation(seed: string) {
+  const matchCount = 32;
+  const pairCounts = new Map<string, number>();
+  let technicianWins = 0;
+  let saboteurWins = 0;
+  let totalTicks = 0;
+  let totalMeetings = 0;
+  let totalEvents = 0;
+
+  const outcomes = Array.from({ length: matchCount }, (_, index) => {
+    const matchSeed = `${seed}-eval-${index}`;
+    const result = runMatch(matchSeed);
+    const pair = agentIds
+      .filter((id) => result.agents[id].role === 'saboteur')
+      .map((id) => profiles[id].name)
+      .sort()
+      .join(' + ');
+    pairCounts.set(pair, (pairCounts.get(pair) ?? 0) + 1);
+
+    if (result.winner === 'technician') technicianWins += 1;
+    if (result.winner === 'saboteur') saboteurWins += 1;
+    totalTicks += result.tick;
+    totalMeetings += result.meetingCount;
+    totalEvents += result.transcript.length;
+
+    return {
+      seed: matchSeed,
+      winner: result.winner ?? 'technician',
+      tick: result.tick,
+    };
+  });
+
+  const topSaboteurPair = [...pairCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'none';
+
+  return {
+    matchCount,
+    technicianRate: Math.round((technicianWins / matchCount) * 100),
+    saboteurRate: Math.round((saboteurWins / matchCount) * 100),
+    averageTicks: roundMetric(totalTicks / matchCount),
+    averageMeetings: roundMetric(totalMeetings / matchCount),
+    averageEvents: roundMetric(totalEvents / matchCount),
+    topSaboteurPair,
+    outcomes,
+  };
+}
+
+function roundMetric(value: number): number {
+  return Number(value.toFixed(1));
 }
 
 function readSeedFromUrl(): string {

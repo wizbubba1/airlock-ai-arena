@@ -513,6 +513,97 @@ dd {
   grid-column: 1 / -1;
 }
 
+.evaluation-panel {
+  grid-column: span 2;
+}
+
+.evaluation-body {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.1fr) minmax(260px, 0.9fr);
+  gap: 14px;
+  padding: 14px;
+}
+
+.evaluation-meter {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.evaluation-meter p {
+  color: var(--muted);
+  font-weight: 800;
+  margin: 0;
+}
+
+.evaluation-meter div {
+  position: relative;
+  min-height: 72px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(251, 113, 133, 0.32), rgba(251, 113, 133, 0.12));
+}
+
+.evaluation-meter span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, rgba(147, 247, 212, 0.72), rgba(147, 247, 212, 0.28));
+}
+
+.evaluation-meter strong,
+.evaluation-meter em {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  transform: translateY(-50%);
+  font-style: normal;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+}
+
+.evaluation-meter strong {
+  left: 14px;
+}
+
+.evaluation-meter em {
+  right: 14px;
+  font-weight: 800;
+}
+
+.evaluation-body dl {
+  margin: 0;
+}
+
+.evaluation-list {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.evaluation-list span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 30px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.evaluation-list .technician {
+  color: var(--accent);
+  background: rgba(147, 247, 212, 0.08);
+}
+
+.evaluation-list .saboteur {
+  color: var(--danger);
+  background: rgba(251, 113, 133, 0.08);
+}
+
 .authoring-body {
   display: grid;
   grid-template-columns: minmax(220px, 280px) minmax(280px, 1fr) minmax(260px, 420px);
@@ -609,13 +700,23 @@ meter::-webkit-meter-optimum-value {
 
   .arena-grid,
   .roster,
-  .transcript-panel {
+  .transcript-panel,
+  .evaluation-panel {
     grid-column: auto;
     grid-row: auto;
   }
 
   .match-stats {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .evaluation-body,
+  .authoring-body {
+    grid-template-columns: 1fr;
+  }
+
+  .evaluation-list {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
   }
 }
 
