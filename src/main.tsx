@@ -195,6 +195,12 @@ function App() {
             </div>
           </dl>
           <pre>{JSON.stringify(auditBundle.commitments, null, 2)}</pre>
+          <div className="tick-commitments">
+            <p>
+              Tick commitments <strong>{auditBundle.tickCommitments.length}</strong>
+            </p>
+            <code>{auditBundle.tickCommitments.at(-1)?.commitment}</code>
+          </div>
           <div className="digest-list">
             {Object.entries(digests).map(([label, value]) => (
               <p key={label}>

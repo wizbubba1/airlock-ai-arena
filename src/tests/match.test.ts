@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { agentIds, auditDigests, profiles, runMatch } from '../engine';
+import { agentIds, auditDigests, buildAuditBundle, buildTickCommitments, profiles, runMatch } from '../engine';
 
 describe('AIRLOCK deterministic engine', () => {
   it('replays the same seed into the same transcript', () => {
@@ -47,6 +47,22 @@ describe('AIRLOCK deterministic engine', () => {
     expect(third.transcriptHash).not.toBe(first.transcriptHash);
     expect(first.rolesHash).toMatch(/^fnv1a32:[0-9a-f]{8}$/);
     expect(first.personaHash).toMatch(/^fnv1a32:[0-9a-f]{8}$/);
+  });
+
+  it('builds stable per-tick commitments that cover every public snapshot tick', () => {
+    const match = runMatch('tick-commitments');
+    const first = buildTickCommitments(match);
+    const second = buildTickCommitments(runMatch('tick-commitments'));
+    const snapshotTicks = new Set(match.snapshots.map((snapshot) => snapshot.tick));
+    const bundle = buildAuditBundle(match, 'tick-commitments');
+
+    expect(first).toEqual(second);
+    expect(first).toHaveLength(snapshotTicks.size);
+    expect(bundle.commitments.tickCommitmentCount).toBe(first.length);
+    for (const entry of first) {
+      expect(snapshotTicks.has(entry.tick)).toBe(true);
+      expect(entry.commitment).toMatch(/^fnv1a32:[0-9a-f]{8}$/);
+    }
   });
 
   it('defines bounded house-agent policy profiles', () => {

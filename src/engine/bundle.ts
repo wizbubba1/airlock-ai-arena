@@ -1,9 +1,10 @@
 import { agentIds } from './content';
-import { auditDigests } from './audit';
+import { auditDigests, digest } from './audit';
 import type { MatchState } from './types';
 
 export function buildAuditBundle(match: MatchState, seed: string) {
   const digests = auditDigests(match);
+  const tickCommitments = buildTickCommitments(match);
   return {
     schema: 'airlock.audit.stage0.v1',
     seed,
@@ -14,6 +15,7 @@ export function buildAuditBundle(match: MatchState, seed: string) {
       transcriptEvents: match.transcript.length,
       marketSnapshots: match.market.length,
       snapshotCount: match.snapshots.length,
+      tickCommitmentCount: tickCommitments.length,
       ...digests,
     },
     result: {
@@ -26,5 +28,24 @@ export function buildAuditBundle(match: MatchState, seed: string) {
     publicTranscript: match.transcript.map(({ tick, kind, speaker, publicText }) => ({ tick, kind, speaker, publicText })),
     market: match.market,
     publicSnapshots: match.snapshots,
+    tickCommitments,
   };
+}
+
+export function buildTickCommitments(match: MatchState) {
+  const ticks = [...new Set(match.snapshots.map((snapshot) => snapshot.tick))].sort((a, b) => a - b);
+  return ticks.map((tick) => {
+    const transcript = match.transcript
+      .filter((event) => event.tick === tick)
+      .map(({ kind, speaker, publicText }) => ({ kind, speaker, publicText }));
+    const snapshots = match.snapshots.filter((snapshot) => snapshot.tick === tick);
+    const market = match.market.filter((snapshot) => snapshot.tick === tick);
+    return {
+      tick,
+      eventCount: transcript.length,
+      snapshotCount: snapshots.length,
+      marketCount: market.length,
+      commitment: digest({ tick, transcript, snapshots, market }),
+    };
+  });
 }

@@ -442,6 +442,28 @@ dd {
   padding: 12px 14px 14px;
 }
 
+.tick-commitments {
+  display: grid;
+  gap: 6px;
+  border-top: 1px solid var(--line);
+  padding: 12px 14px;
+}
+
+.tick-commitments p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.tick-commitments strong {
+  color: var(--text);
+}
+
+.tick-commitments code {
+  color: var(--amber);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.78rem;
+}
+
 .digest-list p {
   display: grid;
   gap: 3px;
