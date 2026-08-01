@@ -509,6 +509,61 @@ dd {
   gap: 6px;
 }
 
+.authoring-panel {
+  grid-column: 1 / -1;
+}
+
+.authoring-body {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(280px, 1fr) minmax(260px, 420px);
+  gap: 14px;
+  align-items: stretch;
+  padding: 14px;
+}
+
+.authoring-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  background: #0b1010;
+  border-radius: 4px;
+  padding: 14px;
+}
+
+.authoring-status svg {
+  color: var(--accent);
+}
+
+.authoring-status p {
+  color: var(--muted);
+  margin: 0 0 2px;
+}
+
+.authoring-status strong {
+  font-size: 1.35rem;
+}
+
+.authoring-body dl {
+  margin: 0;
+}
+
+.authoring-body dd {
+  overflow-wrap: anywhere;
+}
+
+.authoring-body pre {
+  margin: 0;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #090e0e;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+  padding: 12px;
+}
+
 .bar {
   display: grid;
   grid-template-columns: 74px 1fr 46px 18px;
@@ -595,6 +650,10 @@ meter::-webkit-meter-optimum-value {
 
   .bar meter {
     grid-column: 1 / -1;
+  }
+
+  .authoring-body {
+    grid-template-columns: 1fr;
   }
 }
 

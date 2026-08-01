@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   CircleDot,
   Clipboard,
+  FileCheck2,
   Crosshair,
   Download,
   Eye,
@@ -18,6 +19,8 @@ import {
   XCircle,
 } from 'lucide-react';
 import { agentIds, auditDigests, buildAuditBundle, buildMatchReport, graph, profiles, ruleset, runMatch } from './engine';
+import sampleManifest from './tests/fixtures/agents/vanta-author.json';
+import { validateAgentManifest } from './authoring/manifest';
 import type { AgentId, TranscriptEvent } from './engine';
 import './styles.css';
 
@@ -47,6 +50,7 @@ function App() {
   const pickScore = isRevealed ? picks.filter((id) => saboteurs.includes(id)).length : undefined;
   const auditBundle = buildAuditBundle(match, seed);
   const digests = auditDigests(match);
+  const sampleManifestResult = validateAgentManifest(sampleManifest);
 
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -301,6 +305,41 @@ function App() {
             })}
           </div>
         </aside>
+
+        <section className="panel authoring-panel" aria-label="Agent authoring readiness">
+          <div className="panel-header">
+            <h2>Authoring Gate</h2>
+            <span>Stage 1 preview</span>
+          </div>
+          <div className="authoring-body">
+            <div className="authoring-status">
+              <FileCheck2 size={28} />
+              <div>
+                <p>Sample manifest</p>
+                <strong>{sampleManifestResult.ok ? 'Valid' : 'Invalid'}</strong>
+              </div>
+            </div>
+            <dl>
+              <div>
+                <dt>Schema</dt>
+                <dd>{sampleManifest.schema}</dd>
+              </div>
+              <div>
+                <dt>Manifest hash</dt>
+                <dd>{sampleManifestResult.manifestHash ?? 'unavailable'}</dd>
+              </div>
+              <div>
+                <dt>Prompt cap</dt>
+                <dd>4,000 chars</dd>
+              </div>
+              <div>
+                <dt>Policy range</dt>
+                <dd>0.00-1.00</dd>
+              </div>
+            </dl>
+            <pre>{JSON.stringify(sampleManifest.policy, null, 2)}</pre>
+          </div>
+        </section>
       </section>
     </main>
   );
