@@ -7,9 +7,11 @@ export { buildBalanceSummary, evaluateBalance, roundBalance } from './balance';
 export { buildAuditBundle, buildTickCommitments } from './bundle';
 export { buildChallengePacket } from './challenge';
 export { buildFallbackDrill } from './fallback-drill';
+export { buildInferenceReceipts } from './inference-receipts';
 export {
   buildArtifactCatalogReport,
   buildFallbackDrillMarkdown,
+  buildInferenceReceiptsMarkdown,
   buildLadderReport,
   buildMatchReport,
   buildRevealScheduleMarkdown,
@@ -32,6 +34,7 @@ export {
   verifyAuditBundle,
   verifyBalanceSummary,
   verifyFallbackDrill,
+  verifyInferenceReceipts,
   verifyLadderSummary,
   verifyRevealSchedule,
   verifySanitizerAudit,

@@ -97,6 +97,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Deterministic timeout drill showing action, speech, vote, and micro-pool void fallbacks for inference failures.',
     },
     {
+      name: 'Inference receipts',
+      schema: 'airlock.inference_receipts.stage0.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-inference-receipts-airlock-stage-zero-demo.json',
+      generateCommand: 'npm run inference-receipts -- airlock-stage-zero-demo',
+      verifyCommand: 'npm run verify-inference-receipts -- ./artifacts/airlock-inference-receipts-airlock-stage-zero-demo.json',
+      purpose: 'Speech-generation receipt log for P1-style optimistic fairness review: prompt hashes, output hashes, token counts, logprob commitments, and receipt hashes.',
+    },
+    {
       name: "Pick'em receipt",
       schema: 'airlock.pickem.stage0.v1',
       format: 'json',

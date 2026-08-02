@@ -3,6 +3,7 @@ import { buildAuditBundle } from './bundle';
 import { ruleset } from './ruleset';
 import type { ArtifactCatalog } from './artifact-catalog';
 import type { FallbackDrill } from './fallback-drill';
+import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
 import type { RevealSchedule } from './reveal-schedule';
 import type { SanitizerAudit } from './sanitizer-audit';
@@ -382,6 +383,40 @@ export function buildFallbackDrillMarkdown(drill: FallbackDrill): string {
     ...drill.entries.map(
       (entry) =>
         `| ${entry.tick} | ${entry.phase} | ${profiles[entry.agent].name} | ${fallbackLabel(entry.fallback)} | ${entry.affectedPools.join(', ') || 'none'} | \`${entry.entryHash}\` |`,
+    ),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildInferenceReceiptsMarkdown(receipts: InferenceReceipts): string {
+  const lines: string[] = [
+    `# AIRLOCK Inference Receipts`,
+    ``,
+    `Seed: \`${receipts.seed}\``,
+    `Schema: \`${receipts.schema}\``,
+    `Ruleset: \`${receipts.ruleset}\``,
+    `Receipts hash: \`${receipts.receiptsHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Provider | ${receipts.policy.provider} |`,
+    `| Model | ${receipts.policy.model} |`,
+    `| Hardware | ${receipts.policy.hardware} |`,
+    `| Decoding | ${receipts.policy.decoding} |`,
+    `| Attestation | ${receipts.policy.attestation} |`,
+    `| Evidence | ${receipts.policy.publishedEvidence.join(', ')} |`,
+    ``,
+    `## Speech Receipts`,
+    ``,
+    `| Tick | Speaker | Tokens | Prompt Hash | Output Hash | Logprob Commitment | Receipt |`,
+    `|---:|---|---:|---|---|---|---|`,
+    ...receipts.entries.map(
+      (entry) =>
+        `| ${entry.tick} | ${profiles[entry.speaker].name} | ${entry.tokenCount} | \`${entry.promptHash}\` | \`${entry.outputHash}\` | \`${entry.logprobCommitment}\` | \`${entry.receiptHash}\` |`,
     ),
     ``,
   ];

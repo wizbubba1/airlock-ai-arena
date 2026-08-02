@@ -10,6 +10,8 @@ import {
   buildChallengePacket,
   buildFallbackDrill,
   buildFallbackDrillMarkdown,
+  buildInferenceReceipts,
+  buildInferenceReceiptsMarkdown,
   buildLadderReport,
   buildMatchReport,
   buildPickemReceipt,
@@ -35,6 +37,7 @@ import {
   verifyAuditBundle,
   verifyBalanceSummary,
   verifyFallbackDrill,
+  verifyInferenceReceipts,
   verifyLadderSummary,
   verifyPickemReceipt,
   verifyRevealSchedule,
@@ -593,6 +596,34 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('drillHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies deterministic inference receipts', () => {
+    const first = buildInferenceReceipts('airlock-stage-zero-demo');
+    const second = buildInferenceReceipts('airlock-stage-zero-demo');
+    const markdown = buildInferenceReceiptsMarkdown(first);
+    const verified = verifyInferenceReceipts(first);
+    const tampered = verifyInferenceReceipts({
+      ...first,
+      receiptsHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.inference_receipts.stage0.v1');
+    expect(first.policy.attestation).toBe('signed-receipt-placeholder');
+    expect(first.entries.length).toBeGreaterThan(0);
+    expect(first.entries[0].promptHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(first.entries[0].outputHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(first.entries[0].logprobCommitment).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(first.entries[0].receiptHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(first.entries[0].tokenCount).toBeGreaterThan(0);
+    expect(first.receiptsHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Inference Receipts');
+    expect(markdown).toContain('## Speech Receipts');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('receiptsHash does not match deterministic replay.');
   });
 
   it('validates authored-agent manifests for the Stage 1 ladder path', () => {

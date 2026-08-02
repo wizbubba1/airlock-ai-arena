@@ -85,6 +85,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run fallback-drill -- <seed>` writes JSON and Markdown timeout drill artifacts for action, speech, vote, and affected micro-pool fallback behavior.
 
+`npm run inference-receipts -- <seed>` writes JSON and Markdown speech-generation receipt artifacts for prompt hashes, output hashes, token counts, logprob commitments, and receipt hashes. This is the Stage 0 stand-in for P1 attested inference receipts.
+
 `npm run report -- <seed>` writes a human-readable Markdown report over the same match.
 
 `npm run transcript-quality -- <seed>` writes JSON and Markdown reports for content-health metrics: speech, votes, reports, danger beats, repairs, market events, and meeting density.

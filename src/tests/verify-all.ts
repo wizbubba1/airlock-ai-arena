@@ -8,6 +8,8 @@ import {
   buildChallengePacket,
   buildFallbackDrill,
   buildFallbackDrillMarkdown,
+  buildInferenceReceipts,
+  buildInferenceReceiptsMarkdown,
   buildLadderReport,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
@@ -28,6 +30,7 @@ import {
   verifyAuditBundle,
   verifyBalanceSummary,
   verifyFallbackDrill,
+  verifyInferenceReceipts,
   verifyLadderSummary,
   verifyRevealSchedule,
   verifySanitizerAudit,
@@ -53,6 +56,7 @@ const audit = buildAuditBundle(match, seed);
 const challenge = buildChallengePacket(seed);
 const balance = buildBalanceSummary(100, 'stage-zero-ci');
 const fallbackDrill = buildFallbackDrill(seed);
+const inferenceReceipts = buildInferenceReceipts(seed);
 const ladder = runLadderPreview(32, 'stage-one-ci');
 const revealSchedule = buildRevealSchedule(seed);
 const sanitizerAudit = buildSanitizerAudit(seed);
@@ -70,6 +74,8 @@ const outputs = [
   writeJson('airlock-balance-ci.json', balance),
   writeJson('airlock-fallback-drill-airlock-stage-zero-demo.json', fallbackDrill),
   writeMarkdown('airlock-fallback-drill-airlock-stage-zero-demo.md', buildFallbackDrillMarkdown(fallbackDrill)),
+  writeJson('airlock-inference-receipts-airlock-stage-zero-demo.json', inferenceReceipts),
+  writeMarkdown('airlock-inference-receipts-airlock-stage-zero-demo.md', buildInferenceReceiptsMarkdown(inferenceReceipts)),
   writeJson('airlock-ladder-32.json', ladder),
   writeMarkdown('airlock-ladder-32.md', buildLadderReport(ladder)),
   writeJson('airlock-reveal-schedule-airlock-stage-zero-demo.json', revealSchedule),
@@ -96,6 +102,7 @@ const checks = [
   { name: 'balance-guard', ...evaluateBalance(balance) },
   { name: 'balance', ...verifyBalanceSummary(balance) },
   { name: 'fallback-drill', ...verifyFallbackDrill(fallbackDrill) },
+  { name: 'inference-receipts', ...verifyInferenceReceipts(inferenceReceipts) },
   { name: 'ladder', ...verifyLadderSummary(ladder) },
   { name: 'reveal-schedule', ...verifyRevealSchedule(revealSchedule) },
   { name: 'sanitizer-audit', ...verifySanitizerAudit(sanitizerAudit) },

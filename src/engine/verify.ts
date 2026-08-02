@@ -1,6 +1,7 @@
 import { buildBalanceSummary } from './balance';
 import { buildAuditBundle } from './bundle';
 import { buildFallbackDrill } from './fallback-drill';
+import { buildInferenceReceipts } from './inference-receipts';
 import { runLadderPreview } from './ladder';
 import { runMatch } from './match';
 import { buildRevealSchedule } from './reveal-schedule';
@@ -13,6 +14,7 @@ import { buildTranscriptQualityReport } from './transcript-quality';
 import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
 import type { FallbackDrill } from './fallback-drill';
+import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
 import type { RevealSchedule } from './reveal-schedule';
 import type { SanitizerAudit } from './sanitizer-audit';
@@ -50,6 +52,13 @@ export interface LadderVerificationResult {
   seedPrefix: string;
   errors: string[];
   expected: LadderSummary;
+}
+
+export interface InferenceReceiptsVerificationResult {
+  ok: boolean;
+  seed: string;
+  errors: string[];
+  expected: InferenceReceipts;
 }
 
 export interface SeedIndexVerificationResult {
@@ -158,6 +167,35 @@ export function verifyFallbackDrill(drill: FallbackDrill): FallbackDrillVerifica
   return {
     ok: errors.length === 0,
     seed: drill.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyInferenceReceipts(receipts: InferenceReceipts): InferenceReceiptsVerificationResult {
+  const expected = buildInferenceReceipts(receipts.seed);
+  const errors: string[] = [];
+
+  compare('schema', receipts.schema, expected.schema, errors);
+  compare('ruleset', receipts.ruleset, expected.ruleset, errors);
+  compare('policy', receipts.policy, expected.policy, errors);
+  compare('entries', receipts.entries, expected.entries, errors);
+  compare('receiptsHash', receipts.receiptsHash, expected.receiptsHash, errors);
+
+  if (receipts.entries.length === 0) errors.push('inference receipts have no speech entries.');
+  for (const entry of receipts.entries) {
+    if (entry.tokenCount <= 0) errors.push(`receipt ${entry.eventId} has no tokens.`);
+    if (!entry.promptHash.startsWith('sha256:')) errors.push(`receipt ${entry.eventId} has an invalid prompt hash.`);
+    if (!entry.outputHash.startsWith('sha256:')) errors.push(`receipt ${entry.eventId} has an invalid output hash.`);
+    if (!entry.logprobCommitment.startsWith('sha256:')) {
+      errors.push(`receipt ${entry.eventId} has an invalid logprob commitment.`);
+    }
+    if (!entry.receiptHash.startsWith('sha256:')) errors.push(`receipt ${entry.eventId} has an invalid receipt hash.`);
+  }
+
+  return {
+    ok: errors.length === 0,
+    seed: receipts.seed,
     errors,
     expected,
   };

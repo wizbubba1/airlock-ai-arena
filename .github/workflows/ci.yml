@@ -40,6 +40,12 @@ jobs:
       - name: Fallback drill verifier smoke test
         run: npm run verify-fallback-drill -- ./artifacts/airlock-fallback-drill-airlock-stage-zero-demo.json
 
+      - name: Inference receipts smoke test
+        run: npm run inference-receipts -- airlock-stage-zero-demo
+
+      - name: Inference receipts verifier smoke test
+        run: npm run verify-inference-receipts -- ./artifacts/airlock-inference-receipts-airlock-stage-zero-demo.json
+
       - name: Audit verifier smoke test
         run: npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 
