@@ -71,6 +71,7 @@ npm run verify-balance -- ./artifacts/airlock-balance-ci.json
 npm run ladder -- 64 stage-one-preview
 npm run verify-ladder -- ./artifacts/airlock-ladder-64.json
 npm run season -- stage1-preview.001
+npm run verify-season -- ./artifacts/airlock-season-stage1-preview.001.json
 npm run create-agent -- --prompt src/tests/fixtures/agents/vanta-private-prompt.txt --out ./artifacts/generated-agent.json
 npm run commit-prompt -- src/tests/fixtures/agents/vanta-private-prompt.txt
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
@@ -94,6 +95,7 @@ npm run dev
 `npm run ladder -- <count> <seed-prefix>` writes deterministic Stage 1 preview ladder JSON and Markdown reports with Elo-style standings across repeated seeded matches.
 `npm run verify-ladder -- <ladder-summary.json>` reruns the deterministic ladder preview and fails if standings or match records drift.
 `npm run season -- <season-id>` writes a versioned season manifest covering ruleset, model policy, authoring requirements, ladder settings, and audit policy.
+`npm run verify-season -- <season-manifest.json>` reconstructs the manifest for its season ID and fails if any locked policy or hash differs.
 `npm run create-agent -- --prompt <private-prompt.txt> --out <manifest.json>` writes a validated public authored-agent manifest using the prompt commitment helper.
 `npm run commit-prompt -- <private-prompt.txt>` prints the `sha256:` commitment to place in an authored-agent manifest.
 `npm run validate-agent -- <manifest.json>` validates a Stage 1 authored-agent manifest and returns its public manifest hash.

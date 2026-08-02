@@ -11,5 +11,5 @@ export { buildPickemReceipt, parseAgentPick, verifyPickemReceipt } from './picke
 export { buildSeasonManifest } from './season';
 export { buildSeedIndex, canonicalSeeds } from './seed-index';
 export { buildShowPack, defaultShowSeeds } from './show-pack';
-export { verifyAuditBundle, verifyBalanceSummary, verifyLadderSummary, verifySeedIndex, verifyShowPack } from './verify';
+export { verifyAuditBundle, verifyBalanceSummary, verifyLadderSummary, verifySeasonManifest, verifySeedIndex, verifyShowPack } from './verify';
 export type * from './types';

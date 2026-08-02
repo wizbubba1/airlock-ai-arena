@@ -13,6 +13,7 @@
     "verify-audit": "tsx src/tests/verify-audit.ts",
     "verify-balance": "tsx src/tests/verify-balance.ts",
     "verify-ladder": "tsx src/tests/verify-ladder.ts",
+    "verify-season": "tsx src/tests/verify-season.ts",
     "verify-seed-index": "tsx src/tests/verify-seed-index.ts",
     "verify-show-pack": "tsx src/tests/verify-show-pack.ts",
     "balance": "tsx src/tests/balance.ts",

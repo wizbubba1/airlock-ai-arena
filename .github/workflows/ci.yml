@@ -67,6 +67,9 @@ jobs:
       - name: Season manifest smoke test
         run: npm run season -- stage1-preview.001
 
+      - name: Season manifest verifier smoke test
+        run: npm run verify-season -- ./artifacts/airlock-season-stage1-preview.001.json
+
       - name: Seed index smoke test
         run: npm run seed-index
 

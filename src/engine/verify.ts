@@ -3,11 +3,13 @@ import { buildAuditBundle } from './bundle';
 import { runLadderPreview } from './ladder';
 import { runMatch } from './match';
 import { buildSeedIndex } from './seed-index';
+import { buildSeasonManifest } from './season';
 import { buildShowPack } from './show-pack';
 import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
 import type { LadderSummary } from './ladder';
 import type { SeedIndex } from './seed-index';
+import type { SeasonManifest } from './season';
 import type { ShowPack } from './show-pack';
 
 export interface AuditVerificationResult {
@@ -38,6 +40,13 @@ export interface SeedIndexVerificationResult {
   seeds: string[];
   errors: string[];
   expected: SeedIndex;
+}
+
+export interface SeasonManifestVerificationResult {
+  ok: boolean;
+  seasonId: string;
+  errors: string[];
+  expected: SeasonManifest;
 }
 
 export interface ShowPackVerificationResult {
@@ -116,6 +125,27 @@ export function verifySeedIndex(index: SeedIndex): SeedIndexVerificationResult {
   return {
     ok: errors.length === 0,
     seeds,
+    errors,
+    expected,
+  };
+}
+
+export function verifySeasonManifest(manifest: SeasonManifest): SeasonManifestVerificationResult {
+  const expected = buildSeasonManifest(manifest.seasonId);
+  const errors: string[] = [];
+
+  compare('schema', manifest.schema, expected.schema, errors);
+  compare('status', manifest.status, expected.status, errors);
+  compare('ruleset', manifest.ruleset, expected.ruleset, errors);
+  compare('modelPolicy', manifest.modelPolicy, expected.modelPolicy, errors);
+  compare('authoring', manifest.authoring, expected.authoring, errors);
+  compare('ladder', manifest.ladder, expected.ladder, errors);
+  compare('auditPolicy', manifest.auditPolicy, expected.auditPolicy, errors);
+  compare('manifestHash', manifest.manifestHash, expected.manifestHash, errors);
+
+  return {
+    ok: errors.length === 0,
+    seasonId: manifest.seasonId,
     errors,
     expected,
   };

@@ -24,6 +24,7 @@ import {
   verifyBalanceSummary,
   verifyLadderSummary,
   verifyPickemReceipt,
+  verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,
 } from '../engine';
@@ -182,6 +183,20 @@ describe('AIRLOCK deterministic engine', () => {
     expect(manifest.ladder.entrants).toHaveLength(agentIds.length);
     expect(manifest.manifestHash).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(manifest.auditPolicy.deterministicReplayRequired).toBe(true);
+  });
+
+  it('verifies season manifests against deterministic reconstruction', () => {
+    const manifest = buildSeasonManifest('stage1-preview.test');
+    const verified = verifySeasonManifest(manifest);
+    const tampered = verifySeasonManifest({
+      ...manifest,
+      manifestHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('manifestHash does not match deterministic replay.');
   });
 
   it('runs a deterministic Stage 1 ladder preview', () => {
