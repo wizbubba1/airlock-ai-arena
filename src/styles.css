@@ -606,6 +606,10 @@ dd {
   grid-column: 1 / -1;
 }
 
+.ladder-panel {
+  grid-column: 1 / -1;
+}
+
 .evaluation-panel {
   grid-column: span 2;
 }
@@ -696,6 +700,56 @@ dd {
 .evaluation-list .saboteur {
   color: var(--danger);
   background: rgba(251, 113, 133, 0.08);
+}
+
+.ladder-table {
+  display: grid;
+  padding: 10px;
+  gap: 6px;
+}
+
+.ladder-head,
+.ladder-row {
+  display: grid;
+  grid-template-columns: 54px minmax(120px, 1fr) 90px 90px 120px;
+  gap: 10px;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 10px;
+}
+
+.ladder-head {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.ladder-row {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #0b1010;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.ladder-row:hover {
+  border-color: var(--accent);
+  background: rgba(147, 247, 212, 0.06);
+}
+
+.ladder-row span {
+  color: var(--muted);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.78rem;
+}
+
+.ladder-row strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .authoring-body {
@@ -825,7 +879,8 @@ meter::-webkit-meter-optimum-value {
   .arena-grid,
   .roster,
   .transcript-panel,
-  .evaluation-panel {
+  .evaluation-panel,
+  .ladder-panel {
     grid-column: auto;
     grid-row: auto;
   }
@@ -841,6 +896,16 @@ meter::-webkit-meter-optimum-value {
 
   .evaluation-list {
     grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+
+  .ladder-head,
+  .ladder-row {
+    grid-template-columns: 42px minmax(100px, 1fr) 76px 74px;
+  }
+
+  .ladder-head span:last-child,
+  .ladder-row span:last-child {
+    display: none;
   }
 }
 

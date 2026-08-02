@@ -18,7 +18,7 @@ import {
   Trophy,
   XCircle,
 } from 'lucide-react';
-import { agentIds, auditDigests, buildAuditBundle, buildMatchReport, graph, profiles, ruleset, runMatch } from './engine';
+import { agentIds, auditDigests, buildAuditBundle, buildMatchReport, graph, profiles, ruleset, runLadderPreview, runMatch } from './engine';
 import sampleManifest from './tests/fixtures/agents/vanta-author.json';
 import { promptCommitment, validateAgentManifest } from './authoring/manifest';
 import type { AgentId, TranscriptEvent } from './engine';
@@ -60,6 +60,7 @@ function App() {
   const samplePromptCommitment = promptCommitment(samplePrivatePrompt);
   const promptMatchesManifest = samplePromptCommitment === sampleManifest.promptCommitment;
   const evaluation = useMemo(() => buildEvaluation(seed), [seed]);
+  const ladder = useMemo(() => runLadderPreview(32, `${seed}-ladder`), [seed]);
 
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -411,6 +412,35 @@ function App() {
                 </button>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="panel ladder-panel" aria-label="Stage 1 ladder preview">
+          <div className="panel-header">
+            <h2>Ladder Preview</h2>
+            <span>{ladder.matchCount} matches</span>
+          </div>
+          <div className="ladder-table">
+            <div className="ladder-head">
+              <span>Rank</span>
+              <span>Agent</span>
+              <span>Rating</span>
+              <span>Record</span>
+              <span>Roles</span>
+            </div>
+            {ladder.standings.map((standing, index) => (
+              <button className="ladder-row" key={standing.id} onClick={() => setSelectedAgent(standing.id)} type="button">
+                <span>{index + 1}</span>
+                <strong>{standing.name}</strong>
+                <span>{standing.rating}</span>
+                <span>
+                  {standing.wins}-{standing.losses}
+                </span>
+                <span>
+                  S{standing.saboteurGames} / T{standing.technicianGames}
+                </span>
+              </button>
+            ))}
           </div>
         </section>
 
