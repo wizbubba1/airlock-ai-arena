@@ -15,6 +15,8 @@
     "verify-seed-index": "tsx src/tests/verify-seed-index.ts",
     "balance": "tsx src/tests/balance.ts",
     "balance:check": "tsx src/tests/balance.ts 100 stage-zero-ci ./artifacts/airlock-balance-ci.json --enforce",
+    "pickem": "tsx src/tests/pickem.ts",
+    "verify-pickem": "tsx src/tests/verify-pickem.ts",
     "ladder": "tsx src/tests/ladder.ts",
     "season": "tsx src/tests/season.ts",
     "seed-index": "tsx src/tests/seed-index.ts",

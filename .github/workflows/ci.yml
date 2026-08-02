@@ -37,6 +37,12 @@ jobs:
       - name: Markdown report smoke test
         run: npm run report -- airlock-stage-zero-demo
 
+      - name: Pickem receipt smoke test
+        run: npm run pickem -- airlock-stage-zero-demo vanta kepler
+
+      - name: Pickem verifier smoke test
+        run: npm run verify-pickem -- ./artifacts/airlock-pickem-airlock-stage-zero-demo.json
+
       - name: Agent manifest validation smoke test
         run: npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
 

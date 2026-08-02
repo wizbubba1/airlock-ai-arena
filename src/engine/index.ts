@@ -6,6 +6,7 @@ export { buildAuditBundle, buildTickCommitments } from './bundle';
 export { buildChallengePacket } from './challenge';
 export { buildLadderReport, buildMatchReport, buildSeedIndexReport } from './report';
 export { runLadderPreview } from './ladder';
+export { buildPickemReceipt, parseAgentPick, verifyPickemReceipt } from './pickem';
 export { buildSeasonManifest } from './season';
 export { buildSeedIndex, canonicalSeeds } from './seed-index';
 export { verifyAuditBundle, verifyLadderSummary, verifySeedIndex } from './verify';

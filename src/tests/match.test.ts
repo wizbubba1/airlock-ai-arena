@@ -7,6 +7,7 @@ import {
   buildChallengePacket,
   buildLadderReport,
   buildMatchReport,
+  buildPickemReceipt,
   buildSeasonManifest,
   buildSeedIndex,
   buildSeedIndexReport,
@@ -18,6 +19,7 @@ import {
   runMatch,
   verifyAuditBundle,
   verifyLadderSummary,
+  verifyPickemReceipt,
   verifySeedIndex,
 } from '../engine';
 import goodManifest from './fixtures/agents/vanta-author.json';
@@ -245,6 +247,28 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('seeds does not match deterministic replay.');
+  });
+
+  it('builds and verifies deterministic pickem receipts', () => {
+    const receipt = buildPickemReceipt('airlock-stage-zero-demo', ['vanta', 'kepler']);
+    const repeated = buildPickemReceipt('airlock-stage-zero-demo', ['vanta', 'kepler']);
+    const verified = verifyPickemReceipt(receipt);
+    const tampered = verifyPickemReceipt({
+      ...receipt,
+      score: receipt.score + 1,
+    });
+
+    expect(repeated).toEqual(receipt);
+    expect(receipt.schema).toBe('airlock.pickem.stage0.v1');
+    expect(receipt.picks).toEqual(['vanta', 'kepler']);
+    expect(receipt.saboteurs).toHaveLength(2);
+    expect(receipt.score).toBeGreaterThanOrEqual(0);
+    expect(receipt.score).toBeLessThanOrEqual(2);
+    expect(receipt.transcriptHash).toBe('sha256:f9c6b80b0724833cd855b85b01aa6a38bad063384bfda3b7e9d71a4868149667');
+    expect(receipt.receiptHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(verified.ok).toBe(true);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('pickem receipt does not match deterministic replay.');
   });
 
   it('verifies a ladder summary against deterministic replay', () => {
