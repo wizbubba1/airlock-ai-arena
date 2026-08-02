@@ -20,6 +20,7 @@ This repository starts with the safest build slice:
 - challenge packet export for optimistic fairness review
 - terminal-generated Markdown match reports
 - canonical seed index reports
+- Stage 0 show pack export
 - pick'em receipt export and verification
 - Stage 1 authored-agent manifest validation
 - Stage 1 private-prompt commitment helper
@@ -62,6 +63,7 @@ npm run pickem -- airlock-stage-zero-demo vanta kepler
 npm run verify-pickem -- ./artifacts/airlock-pickem-airlock-stage-zero-demo.json
 npm run seed-index
 npm run verify-seed-index -- ./artifacts/airlock-seed-index.json
+npm run show-pack
 npm run balance -- 1000 stage-zero
 npm run balance:check
 npm run ladder -- 64 stage-one-preview
@@ -82,6 +84,7 @@ npm run dev
 `npm run verify-pickem -- <receipt.json>` reruns the seeded match and fails if the receipt differs.
 `npm run seed-index` writes JSON and Markdown summaries for the canonical regression seeds, including result metrics and audit hashes.
 `npm run verify-seed-index -- <seed-index.json>` reruns every listed seed and fails if any result or hash drifts.
+`npm run show-pack` writes a deterministic JSON and Markdown demo pack with multiple seeded matches, pick'em prompts, transcript excerpts, reveal data, and audit hashes.
 `npm run balance -- <count> <seed-prefix>` writes a many-match balance report with win rates, match-length averages, terminal reasons, and Saboteur pair frequencies.
 `npm run balance:check` runs the CI balance guard and fails if the simulator drifts into an obviously broken meta.
 `npm run ladder -- <count> <seed-prefix>` writes deterministic Stage 1 preview ladder JSON and Markdown reports with Elo-style standings across repeated seeded matches.

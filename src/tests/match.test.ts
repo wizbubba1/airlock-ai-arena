@@ -11,6 +11,8 @@ import {
   buildSeasonManifest,
   buildSeedIndex,
   buildSeedIndexReport,
+  buildShowPack,
+  buildShowPackReport,
   buildTickCommitments,
   canonicalSeeds,
   profiles,
@@ -269,6 +271,32 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.ok).toBe(true);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('pickem receipt does not match deterministic replay.');
+  });
+
+  it('builds a deterministic Stage 0 show pack', () => {
+    const first = buildShowPack(['airlock-stage-zero-demo', 'repeatable-match']);
+    const second = buildShowPack(['airlock-stage-zero-demo', 'repeatable-match']);
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.show_pack.stage0.v1');
+    expect(first.ruleset).toBe(ruleset.id);
+    expect(first.matches).toHaveLength(2);
+    expect(first.matches[0].seed).toBe('airlock-stage-zero-demo');
+    expect(first.matches[0].openingTranscript.length).toBeGreaterThan(0);
+    expect(first.matches[0].meetingTranscript.length).toBeGreaterThan(0);
+    expect(first.matches[0].saboteurs).toHaveLength(2);
+    expect(first.matches[0].leadSuspects).toHaveLength(2);
+    expect(first.packHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+  });
+
+  it('renders a markdown show pack report', () => {
+    const report = buildShowPackReport(buildShowPack(['airlock-stage-zero-demo']));
+
+    expect(report).toContain('# AIRLOCK Stage 0 Show Pack');
+    expect(report).toContain('## Show 1:');
+    expect(report).toContain('### Public Setup');
+    expect(report).toContain('### First Meeting Signals');
+    expect(report).toContain('### Reveal');
   });
 
   it('verifies a ladder summary against deterministic replay', () => {

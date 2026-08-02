@@ -70,5 +70,8 @@ jobs:
       - name: Seed index verifier smoke test
         run: npm run verify-seed-index -- ./artifacts/airlock-seed-index.json
 
+      - name: Show pack smoke test
+        run: npm run show-pack
+
       - name: Build
         run: npm run build

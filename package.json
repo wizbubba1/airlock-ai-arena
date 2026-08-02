@@ -20,6 +20,7 @@
     "ladder": "tsx src/tests/ladder.ts",
     "season": "tsx src/tests/season.ts",
     "seed-index": "tsx src/tests/seed-index.ts",
+    "show-pack": "tsx src/tests/show-pack.ts",
     "report": "tsx src/tests/report.ts",
     "create-agent": "tsx src/tests/create-agent.ts",
     "commit-prompt": "tsx src/tests/commit-prompt.ts",

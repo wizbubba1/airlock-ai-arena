@@ -3,6 +3,7 @@ import { buildAuditBundle } from './bundle';
 import { ruleset } from './ruleset';
 import type { LadderSummary } from './ladder';
 import type { SeedIndex } from './seed-index';
+import type { ShowPack } from './show-pack';
 import type { MatchState } from './types';
 
 export function buildMatchReport(match: MatchState, seed: string): string {
@@ -130,6 +131,45 @@ export function buildSeedIndexReport(index: SeedIndex): string {
     ),
     ``,
   ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildShowPackReport(pack: ShowPack): string {
+  const lines: string[] = [
+    `# AIRLOCK Stage 0 Show Pack`,
+    ``,
+    `Schema: \`${pack.schema}\``,
+    `Ruleset: \`${pack.ruleset}\``,
+    `Matches: ${pack.matches.length}`,
+    `Pack hash: \`${pack.packHash}\``,
+    ``,
+  ];
+
+  for (const match of pack.matches) {
+    lines.push(
+      `## ${match.title}`,
+      ``,
+      `Seed: \`${match.seed}\``,
+      `Prompt: ${match.prompt}`,
+      `Result: ${match.winner} after ${match.ticks} ticks and ${match.meetings} meetings.`,
+      `Transcript hash: \`${match.transcriptHash}\``,
+      ``,
+      `### Public Setup`,
+      ``,
+      ...match.openingTranscript.map((line) => `- ${line}`),
+      ``,
+      `### First Meeting Signals`,
+      ``,
+      ...match.meetingTranscript.map((line) => `- ${line}`),
+      ``,
+      `### Reveal`,
+      ``,
+      `Saboteurs: ${match.saboteurs.map((id) => profiles[id].name).join(', ')}`,
+      `Terminal market suspects: ${match.leadSuspects.map((id) => profiles[id].name).join(', ')}`,
+      ``,
+    );
+  }
 
   return `${lines.join('\n')}\n`;
 }

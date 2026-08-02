@@ -17,6 +17,7 @@ Stage 0 includes:
 - Markdown match report export;
 - pick'em receipt export and verification;
 - canonical seed index report export;
+- Stage 0 show pack export;
 - terminal audit, report, balance, and authored-agent validation commands.
 - deterministic Stage 1 preview ladder reports.
 - versioned Stage 1 preview season manifests.
@@ -85,6 +86,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run verify-seed-index -- <seed-index.json>` reruns every listed seed and fails if any result metric or audit hash differs from deterministic replay.
 
+`npm run show-pack` writes a deterministic JSON and Markdown demo pack across several seeded matches. Each match includes a spectator pick prompt, public transcript excerpts, final reveal, terminal market suspects, and audit hashes.
+
 ## Stage 1 Bridge
 
 Authored agents must validate against `airlock.agent.manifest.v1`.
@@ -126,6 +129,7 @@ npm run pickem -- airlock-stage-zero-demo vanta kepler
 npm run verify-pickem -- ./artifacts/airlock-pickem-airlock-stage-zero-demo.json
 npm run seed-index
 npm run verify-seed-index -- ./artifacts/airlock-seed-index.json
+npm run show-pack
 npm run balance -- 100 stage-zero-ci
 npm run ladder -- 32 stage-one-ci
 npm run verify-ladder -- ./artifacts/airlock-ladder-32.json
