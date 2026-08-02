@@ -55,6 +55,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Licensed-operator or media partner packet that bundles the certified event feed, market readiness gates, stage-gate policy, and no direct consumer betting posture.',
     },
     {
+      name: 'Partner handoff',
+      schema: 'airlock.partner_handoff.stage2.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-partner-handoff-airlock-stage-zero-demo.json',
+      generateCommand: 'npm run partner-handoff -- airlock-stage-zero-demo airlock-roadmap.001',
+      verifyCommand: 'npm run verify-partner-handoff -- ./artifacts/airlock-partner-handoff-airlock-stage-zero-demo.json',
+      purpose: 'Stage 2 partner handoff artifact defining AIRLOCK as certified feed provider, keeping direct betting and settlement external, and listing blocked legal/responsible-play partner gates.',
+    },
+    {
       name: 'Full verification bundle',
       schema: 'airlock.verify_all.local',
       format: 'json',

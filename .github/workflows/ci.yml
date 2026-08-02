@@ -49,6 +49,12 @@ jobs:
       - name: B2B feed packet verifier smoke test
         run: npm run verify-b2b-feed-packet -- ./artifacts/airlock-b2b-feed-packet-airlock-stage-zero-demo.json
 
+      - name: Partner handoff smoke test
+        run: npm run partner-handoff -- airlock-stage-zero-demo airlock-roadmap.001
+
+      - name: Partner handoff verifier smoke test
+        run: npm run verify-partner-handoff -- ./artifacts/airlock-partner-handoff-airlock-stage-zero-demo.json
+
       - name: Balance patch schedule smoke test
         run: npm run balance-patch-schedule -- stage1-preview.001
 

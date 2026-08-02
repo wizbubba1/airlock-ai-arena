@@ -13,6 +13,7 @@ import { runLadderPreview } from './ladder';
 import { buildMarketReadiness } from './market-readiness';
 import { buildOperatorReadiness } from './readiness';
 import { buildOperationsRunbook } from './operations-runbook';
+import { buildPartnerHandoff } from './partner-handoff';
 import { buildPromptRevealPolicy } from './prompt-reveal-policy';
 import { buildRandomnessBeaconPlan } from './randomness-beacon-plan';
 import { runMatch } from './match';
@@ -41,6 +42,7 @@ import type { LadderSummary } from './ladder';
 import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
 import type { OperationsRunbook } from './operations-runbook';
+import type { PartnerHandoff } from './partner-handoff';
 import type { PromptRevealPolicy } from './prompt-reveal-policy';
 import type { RandomnessBeaconPlan } from './randomness-beacon-plan';
 import type { RevealSchedule } from './reveal-schedule';
@@ -153,6 +155,14 @@ export interface OperationsRunbookVerificationResult {
   programId: string;
   errors: string[];
   expected: OperationsRunbook;
+}
+
+export interface PartnerHandoffVerificationResult {
+  ok: boolean;
+  seed: string;
+  programId: string;
+  errors: string[];
+  expected: PartnerHandoff;
 }
 
 export interface MarketReadinessVerificationResult {
@@ -602,6 +612,45 @@ export function verifyOperationsRunbook(runbook: OperationsRunbook): OperationsR
   return {
     ok: errors.length === 0,
     programId: runbook.programId,
+    errors,
+    expected,
+  };
+}
+
+export function verifyPartnerHandoff(handoff: PartnerHandoff): PartnerHandoffVerificationResult {
+  const expected = buildPartnerHandoff(handoff.seed, handoff.programId);
+  const errors: string[] = [];
+
+  compare('schema', handoff.schema, expected.schema, errors);
+  compare('audience', handoff.audience, expected.audience, errors);
+  compare('posture', handoff.posture, expected.posture, errors);
+  compare('evidence', handoff.evidence, expected.evidence, errors);
+  compare('checklist', handoff.checklist, expected.checklist, errors);
+  compare('handoffHash', handoff.handoffHash, expected.handoffHash, errors);
+
+  if (handoff.posture.directConsumerBetting !== 'not-implemented') {
+    errors.push('partner handoff must not implement direct consumer betting.');
+  }
+  if (handoff.posture.settlement !== 'external-partner-only') {
+    errors.push('partner handoff settlement must remain external partner only.');
+  }
+  if (!handoff.checklist.some((item) => item.id === 'certified-feed' && item.status === 'ready')) {
+    errors.push('partner handoff must include a ready certified-feed item.');
+  }
+  if (!handoff.checklist.some((item) => item.id === 'market-operation' && item.status === 'external')) {
+    errors.push('partner handoff must keep market operation external.');
+  }
+  if (!handoff.checklist.some((item) => item.id === 'jurisdiction-signoff' && item.status === 'blocked')) {
+    errors.push('partner handoff must block jurisdiction signoff until evidence is attached.');
+  }
+  if (!handoff.checklist.some((item) => item.id === 'responsible-play-controls' && item.status === 'blocked')) {
+    errors.push('partner handoff must block responsible-play controls until evidence is attached.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    seed: handoff.seed,
+    programId: handoff.programId,
     errors,
     expected,
   };

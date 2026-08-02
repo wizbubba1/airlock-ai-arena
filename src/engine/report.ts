@@ -15,6 +15,7 @@ import type { LadderSummary } from './ladder';
 import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
 import type { OperationsRunbook } from './operations-runbook';
+import type { PartnerHandoff } from './partner-handoff';
 import type { PromptRevealPolicy } from './prompt-reveal-policy';
 import type { RandomnessBeaconPlan } from './randomness-beacon-plan';
 import type { RevealSchedule } from './reveal-schedule';
@@ -920,6 +921,44 @@ export function buildResponsiblePlayPolicyMarkdown(policy: ResponsiblePlayPolicy
     `## Evidence Required`,
     ``,
     ...policy.evidenceRequired.map((evidence) => `- \`${evidence}\``),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildPartnerHandoffMarkdown(handoff: PartnerHandoff): string {
+  const lines: string[] = [
+    `# AIRLOCK Partner Handoff`,
+    ``,
+    `Seed: \`${handoff.seed}\``,
+    `Program: \`${handoff.programId}\``,
+    `Schema: \`${handoff.schema}\``,
+    `Audience: ${handoff.audience}`,
+    `Handoff hash: \`${handoff.handoffHash}\``,
+    ``,
+    `## Posture`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| AIRLOCK role | ${handoff.posture.airlockRole} |`,
+    `| Partner role | ${handoff.posture.partnerRole} |`,
+    `| Settlement | ${handoff.posture.settlement} |`,
+    `| Direct consumer betting | ${handoff.posture.directConsumerBetting} |`,
+    ``,
+    `## Evidence`,
+    ``,
+    `| Artifact | Hash |`,
+    `|---|---|`,
+    `| B2B feed packet | \`${handoff.evidence.b2bFeedPacket.packetHash}\` |`,
+    `| Jurisdiction policy | \`${handoff.evidence.jurisdictionPolicy.policyHash}\` |`,
+    `| Responsible play policy | \`${handoff.evidence.responsiblePlayPolicy.policyHash}\` |`,
+    ``,
+    `## Checklist`,
+    ``,
+    `| Item | Status | Owner | Summary |`,
+    `|---|---|---|---|`,
+    ...handoff.checklist.map((item) => `| ${item.id} | ${item.status} | ${item.owner} | ${item.summary} |`),
     ``,
   ];
 

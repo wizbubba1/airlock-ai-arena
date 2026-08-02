@@ -34,6 +34,8 @@ import {
   buildOperatorReadinessMarkdown,
   buildOperationsRunbook,
   buildOperationsRunbookMarkdown,
+  buildPartnerHandoff,
+  buildPartnerHandoffMarkdown,
   buildPromptRevealPolicy,
   buildPromptRevealPolicyMarkdown,
   buildRandomnessBeaconPlan,
@@ -79,6 +81,7 @@ import {
   verifyMarketReadiness,
   verifyOperatorReadiness,
   verifyOperationsRunbook,
+  verifyPartnerHandoff,
   verifyPickemReceipt,
   verifyPromptRevealPolicy,
   verifyRandomnessBeaconPlan,
@@ -307,6 +310,34 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('packetHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies a partner handoff packet', () => {
+    const first = buildPartnerHandoff('airlock-stage-zero-demo', 'airlock-roadmap.test');
+    const second = buildPartnerHandoff('airlock-stage-zero-demo', 'airlock-roadmap.test');
+    const markdown = buildPartnerHandoffMarkdown(first);
+    const verified = verifyPartnerHandoff(first);
+    const tampered = verifyPartnerHandoff({
+      ...first,
+      handoffHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.partner_handoff.stage2.v1');
+    expect(first.audience).toBe('licensed-operator-or-media-partner');
+    expect(first.posture.airlockRole).toBe('certified-content-feed-provider');
+    expect(first.posture.settlement).toBe('external-partner-only');
+    expect(first.posture.directConsumerBetting).toBe('not-implemented');
+    expect(first.checklist.some((item) => item.id === 'certified-feed' && item.status === 'ready')).toBe(true);
+    expect(first.checklist.some((item) => item.id === 'market-operation' && item.status === 'external')).toBe(true);
+    expect(first.checklist.some((item) => item.id === 'jurisdiction-signoff' && item.status === 'blocked')).toBe(true);
+    expect(first.handoffHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Partner Handoff');
+    expect(markdown).toContain('## Checklist');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('handoffHash does not match deterministic replay.');
   });
 
   it('builds a challenge packet with audit verification evidence', () => {
