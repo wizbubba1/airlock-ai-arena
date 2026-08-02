@@ -89,6 +89,10 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run inference-receipts -- <seed>` writes JSON and Markdown speech-generation receipt artifacts for prompt hashes, output hashes, token counts, logprob commitments, and receipt hashes. This is the Stage 0 stand-in for P1 attested inference receipts.
 
+`npm run balance-patch-schedule -- <season-id>` writes JSON and Markdown precommitted balance-patch schedules for Stage 1 preview seasons. The artifact keeps mid-season mutations reviewable without giving the operator discretionary patch power.
+
+`npm run market-readiness -- <seed>` writes JSON and Markdown Stage 2 market gate artifacts. Real-money markets remain blocked unless counsel, jurisdiction policy, licensed-operator, responsible-play, and certified-feed evidence are present.
+
 `npm run report -- <seed>` writes a human-readable Markdown report over the same match.
 
 `npm run transcript-quality -- <seed>` writes JSON and Markdown reports for content-health metrics: speech, votes, reports, danger beats, repairs, market events, and meeting density.
@@ -156,6 +160,10 @@ npm run audit -- airlock-stage-zero-demo
 npm run challenge -- airlock-stage-zero-demo
 npm run fallback-drill -- airlock-stage-zero-demo
 npm run verify-fallback-drill -- ./artifacts/airlock-fallback-drill-airlock-stage-zero-demo.json
+npm run balance-patch-schedule -- stage1-preview.001
+npm run verify-balance-patch-schedule -- ./artifacts/airlock-balance-patch-schedule-stage1-preview.001.json
+npm run market-readiness -- airlock-stage-zero-demo
+npm run verify-market-readiness -- ./artifacts/airlock-market-readiness-airlock-stage-zero-demo.json
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
 npm run transcript-quality -- airlock-stage-zero-demo
