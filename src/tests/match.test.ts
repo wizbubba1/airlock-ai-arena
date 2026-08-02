@@ -41,6 +41,8 @@ import {
   buildPickemReceipt,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
+  buildResponsiblePlayPolicy,
+  buildResponsiblePlayPolicyMarkdown,
   buildRoleRoadmap,
   buildRoleRoadmapMarkdown,
   buildSanitizerAudit,
@@ -81,6 +83,7 @@ import {
   verifyPromptRevealPolicy,
   verifyRandomnessBeaconPlan,
   verifyRevealSchedule,
+  verifyResponsiblePlayPolicy,
   verifyRoleRoadmap,
   verifySanitizerAudit,
   verifySeasonManifest,
@@ -1008,6 +1011,35 @@ describe('AIRLOCK deterministic engine', () => {
     expect(first.policyHash).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(markdown).toContain('# AIRLOCK Jurisdiction Policy');
     expect(markdown).toContain('## Required Evidence');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('policyHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies a Stage 2 responsible-play policy', () => {
+    const first = buildResponsiblePlayPolicy('airlock-roadmap.001');
+    const second = buildResponsiblePlayPolicy('airlock-roadmap.001');
+    const markdown = buildResponsiblePlayPolicyMarkdown(first);
+    const verified = verifyResponsiblePlayPolicy(first);
+    const tampered = verifyResponsiblePlayPolicy({
+      ...first,
+      policyHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.responsible_play_policy.stage2.v1');
+    expect(first.posture.directConsumerBetting).toBe('not-implemented');
+    expect(first.posture.realMoneyPools).toBe('blocked');
+    expect(first.posture.defaultMode).toBe('free-pickem-only');
+    expect(first.posture.prizeRedemption).toBe('blocked-until-counsel-approved');
+    expect(first.controls.some((control) => control.id === 'age-gate' && control.status === 'required')).toBe(true);
+    expect(first.controls.some((control) => control.id === 'self-exclusion' && control.status === 'required')).toBe(true);
+    expect(first.controls.some((control) => control.id === 'risk-review' && control.status === 'blocked')).toBe(true);
+    expect(first.evidenceRequired).toContain('risk-review-approval-hash');
+    expect(first.policyHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Responsible Play Policy');
+    expect(markdown).toContain('## Evidence Required');
     expect(verified.ok).toBe(true);
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);

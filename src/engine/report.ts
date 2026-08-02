@@ -18,6 +18,7 @@ import type { OperationsRunbook } from './operations-runbook';
 import type { PromptRevealPolicy } from './prompt-reveal-policy';
 import type { RandomnessBeaconPlan } from './randomness-beacon-plan';
 import type { RevealSchedule } from './reveal-schedule';
+import type { ResponsiblePlayPolicy } from './responsible-play-policy';
 import type { RoleRoadmap } from './role-roadmap';
 import type { SanitizerAudit } from './sanitizer-audit';
 import type { SeedIndex } from './seed-index';
@@ -887,6 +888,38 @@ export function buildJurisdictionPolicyMarkdown(policy: JurisdictionPolicy): str
     `## Required Evidence`,
     ``,
     ...policy.requiredEvidence.map((evidence) => `- \`${evidence}\``),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildResponsiblePlayPolicyMarkdown(policy: ResponsiblePlayPolicy): string {
+  const lines: string[] = [
+    `# AIRLOCK Responsible Play Policy`,
+    ``,
+    `Program: \`${policy.programId}\``,
+    `Schema: \`${policy.schema}\``,
+    `Policy hash: \`${policy.policyHash}\``,
+    ``,
+    `## Posture`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Direct consumer betting | ${policy.posture.directConsumerBetting} |`,
+    `| Real-money pools | ${policy.posture.realMoneyPools} |`,
+    `| Default mode | ${policy.posture.defaultMode} |`,
+    `| Prize redemption | ${policy.posture.prizeRedemption} |`,
+    ``,
+    `## Controls`,
+    ``,
+    `| Control | Status | Summary |`,
+    `|---|---|---|`,
+    ...policy.controls.map((control) => `| ${control.id} | ${control.status} | ${control.summary} |`),
+    ``,
+    `## Evidence Required`,
+    ``,
+    ...policy.evidenceRequired.map((evidence) => `- \`${evidence}\``),
     ``,
   ];
 

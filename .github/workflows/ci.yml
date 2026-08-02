@@ -124,6 +124,12 @@ jobs:
       - name: Reveal schedule verifier smoke test
         run: npm run verify-reveal-schedule -- ./artifacts/airlock-reveal-schedule-airlock-stage-zero-demo.json
 
+      - name: Responsible play policy smoke test
+        run: npm run responsible-play-policy -- airlock-roadmap.001
+
+      - name: Responsible play policy verifier smoke test
+        run: npm run verify-responsible-play-policy -- ./artifacts/airlock-responsible-play-policy-airlock-roadmap.001.json
+
       - name: Role roadmap smoke test
         run: npm run role-roadmap -- airlock-role-roadmap.001
 

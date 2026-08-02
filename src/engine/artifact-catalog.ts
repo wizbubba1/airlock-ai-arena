@@ -117,6 +117,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Stage 2 jurisdiction posture artifact that keeps direct real-money markets blocked while documenting evidence required for geo-fencing, sweeps rails, responsible play, and licensed partner review.',
     },
     {
+      name: 'Responsible play policy',
+      schema: 'airlock.responsible_play_policy.stage2.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-responsible-play-policy-airlock-roadmap.001.json',
+      generateCommand: 'npm run responsible-play-policy -- airlock-roadmap.001',
+      verifyCommand: 'npm run verify-responsible-play-policy -- ./artifacts/airlock-responsible-play-policy-airlock-roadmap.001.json',
+      purpose: 'Stage 2 responsible-play control artifact that keeps paid pools and prize redemption blocked while listing age gate, self-exclusion, limits, cooling-off, support, and risk-review evidence.',
+    },
+    {
       name: 'Collusion controls',
       schema: 'airlock.collusion_controls.stage1.preview.v1',
       format: 'json',

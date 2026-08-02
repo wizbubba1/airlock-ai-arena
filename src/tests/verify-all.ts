@@ -37,6 +37,8 @@ import {
   buildRandomnessBeaconPlanMarkdown,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
+  buildResponsiblePlayPolicy,
+  buildResponsiblePlayPolicyMarkdown,
   buildRoleRoadmap,
   buildRoleRoadmapMarkdown,
   buildSanitizerAudit,
@@ -73,6 +75,7 @@ import {
   verifyPromptRevealPolicy,
   verifyRandomnessBeaconPlan,
   verifyRevealSchedule,
+  verifyResponsiblePlayPolicy,
   verifyRoleRoadmap,
   verifySanitizerAudit,
   verifySeasonManifest,
@@ -114,6 +117,7 @@ const operationsRunbook = buildOperationsRunbook(programId);
 const promptRevealPolicy = buildPromptRevealPolicy(seasonId);
 const randomnessBeaconPlan = buildRandomnessBeaconPlan(seed);
 const revealSchedule = buildRevealSchedule(seed);
+const responsiblePlayPolicy = buildResponsiblePlayPolicy(programId);
 const roleRoadmap = buildRoleRoadmap();
 const sanitizerAudit = buildSanitizerAudit(seed);
 const season = buildSeasonManifest(seasonId);
@@ -161,6 +165,8 @@ const outputs = [
   writeMarkdown('airlock-randomness-beacon-plan-airlock-stage-zero-demo.md', buildRandomnessBeaconPlanMarkdown(randomnessBeaconPlan)),
   writeJson('airlock-reveal-schedule-airlock-stage-zero-demo.json', revealSchedule),
   writeMarkdown('airlock-reveal-schedule-airlock-stage-zero-demo.md', buildRevealScheduleMarkdown(revealSchedule)),
+  writeJson('airlock-responsible-play-policy-airlock-roadmap.001.json', responsiblePlayPolicy),
+  writeMarkdown('airlock-responsible-play-policy-airlock-roadmap.001.md', buildResponsiblePlayPolicyMarkdown(responsiblePlayPolicy)),
   writeJson('airlock-role-roadmap-airlock-role-roadmap.001.json', roleRoadmap),
   writeMarkdown('airlock-role-roadmap-airlock-role-roadmap.001.md', buildRoleRoadmapMarkdown(roleRoadmap)),
   writeJson('airlock-sanitizer-audit-airlock-stage-zero-demo.json', sanitizerAudit),
@@ -202,6 +208,7 @@ const checks = [
   { name: 'prompt-reveal-policy', ...verifyPromptRevealPolicy(promptRevealPolicy) },
   { name: 'randomness-beacon-plan', ...verifyRandomnessBeaconPlan(randomnessBeaconPlan) },
   { name: 'reveal-schedule', ...verifyRevealSchedule(revealSchedule) },
+  { name: 'responsible-play-policy', ...verifyResponsiblePlayPolicy(responsiblePlayPolicy) },
   { name: 'role-roadmap', ...verifyRoleRoadmap(roleRoadmap) },
   { name: 'sanitizer-audit', ...verifySanitizerAudit(sanitizerAudit) },
   { name: 'season', ...verifySeasonManifest(season) },

@@ -17,6 +17,7 @@ import { buildPromptRevealPolicy } from './prompt-reveal-policy';
 import { buildRandomnessBeaconPlan } from './randomness-beacon-plan';
 import { runMatch } from './match';
 import { buildRevealSchedule } from './reveal-schedule';
+import { buildResponsiblePlayPolicy } from './responsible-play-policy';
 import { buildRoleRoadmap } from './role-roadmap';
 import { buildSanitizerAudit } from './sanitizer-audit';
 import { buildSeedIndex } from './seed-index';
@@ -43,6 +44,7 @@ import type { OperationsRunbook } from './operations-runbook';
 import type { PromptRevealPolicy } from './prompt-reveal-policy';
 import type { RandomnessBeaconPlan } from './randomness-beacon-plan';
 import type { RevealSchedule } from './reveal-schedule';
+import type { ResponsiblePlayPolicy } from './responsible-play-policy';
 import type { RoleRoadmap } from './role-roadmap';
 import type { SanitizerAudit } from './sanitizer-audit';
 import type { SeedIndex } from './seed-index';
@@ -221,6 +223,13 @@ export interface RevealScheduleVerificationResult {
   seed: string;
   errors: string[];
   expected: RevealSchedule;
+}
+
+export interface ResponsiblePlayPolicyVerificationResult {
+  ok: boolean;
+  programId: string;
+  errors: string[];
+  expected: ResponsiblePlayPolicy;
 }
 
 export interface RoleRoadmapVerificationResult {
@@ -861,6 +870,41 @@ export function verifyRevealSchedule(schedule: RevealSchedule): RevealScheduleVe
   return {
     ok: errors.length === 0,
     seed: schedule.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyResponsiblePlayPolicy(policy: ResponsiblePlayPolicy): ResponsiblePlayPolicyVerificationResult {
+  const expected = buildResponsiblePlayPolicy(policy.programId);
+  const errors: string[] = [];
+
+  compare('schema', policy.schema, expected.schema, errors);
+  compare('posture', policy.posture, expected.posture, errors);
+  compare('controls', policy.controls, expected.controls, errors);
+  compare('evidenceRequired', policy.evidenceRequired, expected.evidenceRequired, errors);
+  compare('policyHash', policy.policyHash, expected.policyHash, errors);
+
+  if (policy.posture.directConsumerBetting !== 'not-implemented') {
+    errors.push('direct consumer betting must remain unimplemented.');
+  }
+  if (policy.posture.realMoneyPools !== 'blocked') errors.push('real-money pools must remain blocked.');
+  if (policy.posture.prizeRedemption !== 'blocked-until-counsel-approved') {
+    errors.push('prize redemption must remain blocked until counsel approval.');
+  }
+  for (const id of ['age-gate', 'self-exclusion', 'spend-limits', 'cooling-off', 'support-links']) {
+    if (!policy.controls.some((control) => control.id === id && control.status === 'required')) {
+      errors.push(`responsible-play policy must require ${id}.`);
+    }
+  }
+  if (!policy.controls.some((control) => control.id === 'risk-review' && control.status === 'blocked')) {
+    errors.push('risk review must remain blocked until evidence is attached.');
+  }
+  if (policy.evidenceRequired.length < 6) errors.push('responsible-play policy must list required evidence.');
+
+  return {
+    ok: errors.length === 0,
+    programId: policy.programId,
     errors,
     expected,
   };

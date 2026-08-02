@@ -33,6 +33,7 @@ export {
   buildPromptRevealPolicyMarkdown,
   buildRandomnessBeaconPlanMarkdown,
   buildRevealScheduleMarkdown,
+  buildResponsiblePlayPolicyMarkdown,
   buildRoleRoadmapMarkdown,
   buildSanitizerAuditMarkdown,
   buildSeedIndexReport,
@@ -50,6 +51,7 @@ export { buildPromptRevealPolicy } from './prompt-reveal-policy';
 export { buildRandomnessBeaconPlan } from './randomness-beacon-plan';
 export { buildOperatorReadiness } from './readiness';
 export { buildRevealSchedule, buildRevealScheduleFromMatch } from './reveal-schedule';
+export { buildResponsiblePlayPolicy } from './responsible-play-policy';
 export { buildRoleRoadmap } from './role-roadmap';
 export { buildSanitizerAudit, sanitizeSpeech } from './sanitizer-audit';
 export { buildSeasonManifest } from './season';
@@ -77,6 +79,7 @@ export {
   verifyPromptRevealPolicy,
   verifyRandomnessBeaconPlan,
   verifyRevealSchedule,
+  verifyResponsiblePlayPolicy,
   verifyRoleRoadmap,
   verifySanitizerAudit,
   verifySeasonManifest,
