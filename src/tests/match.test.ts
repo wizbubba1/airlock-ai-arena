@@ -26,6 +26,8 @@ import {
   buildFallbackDrillMarkdown,
   buildInferenceReceipts,
   buildInferenceReceiptsMarkdown,
+  buildInferenceSlo,
+  buildInferenceSloMarkdown,
   buildJurisdictionPolicy,
   buildJurisdictionPolicyMarkdown,
   buildLadderReport,
@@ -79,6 +81,7 @@ import {
   verifyEngagementBaseline,
   verifyFallbackDrill,
   verifyInferenceReceipts,
+  verifyInferenceSlo,
   verifyJurisdictionPolicy,
   verifyLadderSummary,
   verifyMarketReadiness,
@@ -1049,6 +1052,32 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('receiptsHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies a deterministic inference SLO', () => {
+    const first = buildInferenceSlo('airlock-stage-zero-demo');
+    const second = buildInferenceSlo('airlock-stage-zero-demo');
+    const markdown = buildInferenceSloMarkdown(first);
+    const verified = verifyInferenceSlo(first);
+    const tampered = verifyInferenceSlo({
+      ...first,
+      sloHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.inference_slo.stage0.v1');
+    expect(first.policy.hungCallBehavior).toBe('deterministic-fallback');
+    expect(first.policy.liveMarketPolicy).toBe('void-affected-micro-pools');
+    expect(first.targets.some((target) => target.id === 'speech-receipt-coverage')).toBe(true);
+    expect(first.targets.some((target) => target.id === 'timeout-fallback-coverage')).toBe(true);
+    expect(first.targets.every((target) => target.status === 'pass')).toBe(true);
+    expect(first.sloHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Inference SLO');
+    expect(markdown).toContain('## Targets');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('sloHash does not match deterministic replay.');
   });
 
   it('builds and verifies a Stage 2 jurisdiction policy', () => {

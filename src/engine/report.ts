@@ -11,6 +11,7 @@ import type { CollusionControls } from './collusion-controls';
 import type { EngagementBaseline } from './engagement-baseline';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
+import type { InferenceSlo } from './inference-slo';
 import type { JurisdictionPolicy } from './jurisdiction-policy';
 import type { LadderSummary } from './ladder';
 import type { MarketReadiness } from './market-readiness';
@@ -825,6 +826,46 @@ export function buildInferenceReceiptsMarkdown(receipts: InferenceReceipts): str
     ...receipts.entries.map(
       (entry) =>
         `| ${entry.tick} | ${profiles[entry.speaker].name} | ${entry.tokenCount} | \`${entry.promptHash}\` | \`${entry.outputHash}\` | \`${entry.logprobCommitment}\` | \`${entry.receiptHash}\` |`,
+    ),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildInferenceSloMarkdown(slo: InferenceSlo): string {
+  const lines: string[] = [
+    `# AIRLOCK Inference SLO`,
+    ``,
+    `Seed: \`${slo.seed}\``,
+    `Schema: \`${slo.schema}\``,
+    `SLO hash: \`${slo.sloHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Provider | ${slo.policy.provider} |`,
+    `| Timeout | ${slo.policy.timeoutMs}ms |`,
+    `| Hung call behavior | ${slo.policy.hungCallBehavior} |`,
+    `| Live market policy | ${slo.policy.liveMarketPolicy} |`,
+    `| Production migration | ${slo.policy.productionMigration} |`,
+    ``,
+    `## Evidence`,
+    ``,
+    `| Artifact | Hash |`,
+    `|---|---|`,
+    `| Inference receipts | \`${slo.evidence.inferenceReceipts.receiptsHash}\` |`,
+    `| Fallback drill | \`${slo.evidence.fallbackDrill.drillHash}\` |`,
+    `| Transcript quality | \`${slo.evidence.transcriptQuality.qualityHash}\` |`,
+    ``,
+    `## Targets`,
+    ``,
+    `| Target | Status | Threshold | Evidence | Summary |`,
+    `|---|---|---|---|---|`,
+    ...slo.targets.map(
+      (target) =>
+        `| ${target.id} | ${target.status} | ${target.threshold} | \`${target.evidenceHash}\` | ${target.summary} |`,
     ),
     ``,
   ];

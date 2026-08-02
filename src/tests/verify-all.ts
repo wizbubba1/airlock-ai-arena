@@ -24,6 +24,8 @@ import {
   buildFallbackDrillMarkdown,
   buildInferenceReceipts,
   buildInferenceReceiptsMarkdown,
+  buildInferenceSlo,
+  buildInferenceSloMarkdown,
   buildJurisdictionPolicy,
   buildJurisdictionPolicyMarkdown,
   buildLadderReport,
@@ -72,6 +74,7 @@ import {
   verifyEngagementBaseline,
   verifyFallbackDrill,
   verifyInferenceReceipts,
+  verifyInferenceSlo,
   verifyJurisdictionPolicy,
   verifyLadderSummary,
   verifyMarketReadiness,
@@ -116,6 +119,7 @@ const eventFeed = buildCertifiedEventFeed(seed);
 const balance = buildBalanceSummary(100, 'stage-zero-ci');
 const fallbackDrill = buildFallbackDrill(seed);
 const inferenceReceipts = buildInferenceReceipts(seed);
+const inferenceSlo = buildInferenceSlo(seed);
 const jurisdictionPolicy = buildJurisdictionPolicy(programId);
 const ladder = runLadderPreview(32, 'stage-one-ci');
 const marketReadiness = buildMarketReadiness(seed);
@@ -159,6 +163,8 @@ const outputs = [
   writeMarkdown('airlock-fallback-drill-airlock-stage-zero-demo.md', buildFallbackDrillMarkdown(fallbackDrill)),
   writeJson('airlock-inference-receipts-airlock-stage-zero-demo.json', inferenceReceipts),
   writeMarkdown('airlock-inference-receipts-airlock-stage-zero-demo.md', buildInferenceReceiptsMarkdown(inferenceReceipts)),
+  writeJson('airlock-inference-slo-airlock-stage-zero-demo.json', inferenceSlo),
+  writeMarkdown('airlock-inference-slo-airlock-stage-zero-demo.md', buildInferenceSloMarkdown(inferenceSlo)),
   writeJson('airlock-jurisdiction-policy-airlock-roadmap.001.json', jurisdictionPolicy),
   writeMarkdown('airlock-jurisdiction-policy-airlock-roadmap.001.md', buildJurisdictionPolicyMarkdown(jurisdictionPolicy)),
   writeJson('airlock-ladder-32.json', ladder),
@@ -213,6 +219,7 @@ const checks = [
   { name: 'balance', ...verifyBalanceSummary(balance) },
   { name: 'fallback-drill', ...verifyFallbackDrill(fallbackDrill) },
   { name: 'inference-receipts', ...verifyInferenceReceipts(inferenceReceipts) },
+  { name: 'inference-slo', ...verifyInferenceSlo(inferenceSlo) },
   { name: 'jurisdiction-policy', ...verifyJurisdictionPolicy(jurisdictionPolicy) },
   { name: 'ladder', ...verifyLadderSummary(ladder) },
   { name: 'market-readiness', ...verifyMarketReadiness(marketReadiness) },

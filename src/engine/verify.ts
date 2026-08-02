@@ -9,6 +9,7 @@ import { buildCollusionControls } from './collusion-controls';
 import { buildEngagementBaseline } from './engagement-baseline';
 import { buildFallbackDrill } from './fallback-drill';
 import { buildInferenceReceipts } from './inference-receipts';
+import { buildInferenceSlo } from './inference-slo';
 import { buildJurisdictionPolicy } from './jurisdiction-policy';
 import { runLadderPreview } from './ladder';
 import { buildMarketReadiness } from './market-readiness';
@@ -39,6 +40,7 @@ import type { CollusionControls } from './collusion-controls';
 import type { EngagementBaseline } from './engagement-baseline';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
+import type { InferenceSlo } from './inference-slo';
 import type { JurisdictionPolicy } from './jurisdiction-policy';
 import type { LadderSummary } from './ladder';
 import type { MarketReadiness } from './market-readiness';
@@ -143,6 +145,13 @@ export interface InferenceReceiptsVerificationResult {
   seed: string;
   errors: string[];
   expected: InferenceReceipts;
+}
+
+export interface InferenceSloVerificationResult {
+  ok: boolean;
+  seed: string;
+  errors: string[];
+  expected: InferenceSlo;
 }
 
 export interface JurisdictionPolicyVerificationResult {
@@ -553,6 +562,40 @@ export function verifyInferenceReceipts(receipts: InferenceReceipts): InferenceR
   return {
     ok: errors.length === 0,
     seed: receipts.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyInferenceSlo(slo: InferenceSlo): InferenceSloVerificationResult {
+  const expected = buildInferenceSlo(slo.seed);
+  const errors: string[] = [];
+
+  compare('schema', slo.schema, expected.schema, errors);
+  compare('policy', slo.policy, expected.policy, errors);
+  compare('evidence', slo.evidence, expected.evidence, errors);
+  compare('targets', slo.targets, expected.targets, errors);
+  compare('sloHash', slo.sloHash, expected.sloHash, errors);
+
+  if (slo.policy.hungCallBehavior !== 'deterministic-fallback') {
+    errors.push('hung inference calls must use deterministic fallback behavior.');
+  }
+  if (slo.policy.liveMarketPolicy !== 'void-affected-micro-pools') {
+    errors.push('live market policy must void affected micro-pools.');
+  }
+  if (!slo.targets.some((target) => target.id === 'speech-receipt-coverage')) {
+    errors.push('inference SLO must include speech receipt coverage.');
+  }
+  if (!slo.targets.some((target) => target.id === 'timeout-fallback-coverage')) {
+    errors.push('inference SLO must include timeout fallback coverage.');
+  }
+  if (!slo.targets.every((target) => target.status === 'pass')) {
+    errors.push('Stage 0 inference SLO targets must pass against deterministic evidence.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    seed: slo.seed,
     errors,
     expected,
   };

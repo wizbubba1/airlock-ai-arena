@@ -15,6 +15,7 @@ export { buildCollusionControls } from './collusion-controls';
 export { buildEngagementBaseline } from './engagement-baseline';
 export { buildFallbackDrill } from './fallback-drill';
 export { buildInferenceReceipts } from './inference-receipts';
+export { buildInferenceSlo } from './inference-slo';
 export {
   buildArtifactCatalogReport,
   buildAnalyticsSchemaMarkdown,
@@ -26,6 +27,7 @@ export {
   buildEngagementBaselineMarkdown,
   buildFallbackDrillMarkdown,
   buildInferenceReceiptsMarkdown,
+  buildInferenceSloMarkdown,
   buildJurisdictionPolicyMarkdown,
   buildLadderReport,
   buildMarketReadinessMarkdown,
@@ -76,6 +78,7 @@ export {
   verifyEngagementBaseline,
   verifyFallbackDrill,
   verifyInferenceReceipts,
+  verifyInferenceSlo,
   verifyJurisdictionPolicy,
   verifyLadderSummary,
   verifyMarketReadiness,

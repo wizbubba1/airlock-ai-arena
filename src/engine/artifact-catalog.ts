@@ -259,6 +259,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Speech-generation receipt log for P1-style optimistic fairness review: prompt hashes, output hashes, token counts, logprob commitments, and receipt hashes.',
     },
     {
+      name: 'Inference SLO',
+      schema: 'airlock.inference_slo.stage0.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-inference-slo-airlock-stage-zero-demo.json',
+      generateCommand: 'npm run inference-slo -- airlock-stage-zero-demo',
+      verifyCommand: 'npm run verify-inference-slo -- ./artifacts/airlock-inference-slo-airlock-stage-zero-demo.json',
+      purpose: 'Stage 0 inference service-level artifact tying receipt coverage, timeout fallbacks, transcript quality, and live-stall policy into one reviewable SLO packet.',
+    },
+    {
       name: "Pick'em receipt",
       schema: 'airlock.pickem.stage0.v1',
       format: 'json',
