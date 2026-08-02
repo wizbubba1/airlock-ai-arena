@@ -29,6 +29,8 @@ import {
   ruleset,
   runLadderPreview,
   runMatch,
+  verifyAuditBundle,
+  verifyLadderSummary,
 } from './engine';
 import sampleManifest from './tests/fixtures/agents/vanta-author.json';
 import { promptCommitment, validateAgentManifest } from './authoring/manifest';
@@ -66,6 +68,7 @@ function App() {
   const saboteurs = agentIds.filter((id) => match.agents[id].role === 'saboteur');
   const pickScore = isRevealed ? picks.filter((id) => saboteurs.includes(id)).length : undefined;
   const auditBundle = buildAuditBundle(match, seed);
+  const auditVerification = useMemo(() => verifyAuditBundle(auditBundle), [auditBundle]);
   const digests = auditDigests(match);
   const sampleManifestResult = validateAgentManifest(sampleManifest);
   const samplePromptCommitment = promptCommitment(samplePrivatePrompt);
@@ -73,6 +76,7 @@ function App() {
   const evaluation = useMemo(() => buildEvaluation(seed), [seed]);
   const eventDensity = useMemo(() => buildEventDensity(match.transcript), [match.transcript]);
   const ladder = useMemo(() => runLadderPreview(32, `${seed}-ladder`), [seed]);
+  const ladderVerification = useMemo(() => verifyLadderSummary(ladder), [ladder]);
 
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -295,6 +299,13 @@ function App() {
             </p>
             <code>{auditBundle.tickCommitments.at(-1)?.commitment}</code>
           </div>
+          <div className={`verification-status ${auditVerification.ok ? 'ok' : 'fail'}`}>
+            <CheckCircle2 size={17} />
+            <p>
+              <span>Replay verification</span>
+              <strong>{auditVerification.ok ? 'passed deterministic replay' : auditVerification.errors.join(', ')}</strong>
+            </p>
+          </div>
           <div className="digest-list">
             {Object.entries(digests).map(([label, value]) => (
               <p key={label}>
@@ -461,6 +472,13 @@ function App() {
             </div>
           </div>
           <div className="ladder-table">
+            <div className={`verification-status ${ladderVerification.ok ? 'ok' : 'fail'}`}>
+              <CheckCircle2 size={17} />
+              <p>
+                <span>Ladder verification</span>
+                <strong>{ladderVerification.ok ? 'standings match deterministic replay' : ladderVerification.errors.join(', ')}</strong>
+              </p>
+            </div>
             <div className="ladder-head">
               <span>Rank</span>
               <span>Agent</span>

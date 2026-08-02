@@ -577,6 +577,40 @@ dd {
   font-size: 0.78rem;
 }
 
+.verification-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding: 12px 14px;
+}
+
+.verification-status.ok svg {
+  color: var(--accent);
+}
+
+.verification-status.fail svg {
+  color: var(--danger);
+}
+
+.verification-status p {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+}
+
+.verification-status span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.verification-status strong {
+  color: var(--text);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
 .digest-list p {
   display: grid;
   gap: 3px;
@@ -734,6 +768,13 @@ dd {
   display: grid;
   padding: 10px;
   gap: 6px;
+}
+
+.ladder-table .verification-status {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #0b1010;
+  padding: 10px;
 }
 
 .ladder-head,
