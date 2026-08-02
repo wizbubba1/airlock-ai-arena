@@ -96,6 +96,11 @@ function App() {
     downloadBlob(blob, `airlock-report-${seed}.md`);
   }
 
+  function downloadLadderPreview() {
+    const blob = new Blob([JSON.stringify(ladder, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, `airlock-ladder-${seed}.json`);
+  }
+
   function downloadBlob(blob: Blob, filename: string) {
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
@@ -418,7 +423,13 @@ function App() {
         <section className="panel ladder-panel" aria-label="Stage 1 ladder preview">
           <div className="panel-header">
             <h2>Ladder Preview</h2>
-            <span>{ladder.matchCount} matches</span>
+            <div className="button-pair">
+              <span>{ladder.matchCount} matches</span>
+              <button className="icon-button" onClick={downloadLadderPreview} type="button">
+                <Download size={18} />
+                JSON
+              </button>
+            </div>
           </div>
           <div className="ladder-table">
             <div className="ladder-head">
