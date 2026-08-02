@@ -97,6 +97,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run stage0-evaluation` writes JSON and Markdown reports that combine balance, canonical seed coverage, show pack readiness, and transcript legibility into a reviewer-facing go/no-go summary.
 
+`npm run operator-readiness` writes JSON and Markdown reports that aggregate the Stage 0 evaluation with inference receipts, reveal timing, sanitizer, and fallback evidence into one reviewer checklist.
+
 `npm run pickem -- <seed> <agent-id> <agent-id>` writes a spectator receipt for two Saboteur picks. `npm run verify-pickem -- <receipt.json>` reruns the seed and verifies the score, actual Saboteurs, transcript hash, and receipt hash.
 
 `npm run seed-index` writes JSON and Markdown reports across the canonical regression seeds. The index gives reviewers a compact table of winners, match lengths, transcript hashes, market hashes, public snapshot hashes, and entropy hashes.

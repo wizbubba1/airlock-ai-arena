@@ -76,6 +76,8 @@ npm run sanitizer-audit -- airlock-stage-zero-demo
 npm run verify-sanitizer-audit -- ./artifacts/airlock-sanitizer-audit-airlock-stage-zero-demo.json
 npm run stage0-evaluation
 npm run verify-stage0-evaluation -- ./artifacts/airlock-stage0-evaluation.json
+npm run operator-readiness
+npm run verify-operator-readiness -- ./artifacts/airlock-operator-readiness.json
 npm run pickem -- airlock-stage-zero-demo vanta kepler
 npm run verify-pickem -- ./artifacts/airlock-pickem-airlock-stage-zero-demo.json
 npm run seed-index
@@ -116,6 +118,8 @@ npm run dev
 `npm run verify-sanitizer-audit -- <sanitizer-audit.json>` reruns the seeded sanitizer audit and fails if policy, speech entries, sanitized hashes, or audit hash drift.
 `npm run stage0-evaluation` writes a reviewer-facing go/no-go summary combining balance, seed coverage, show pack readiness, and transcript legibility gates.
 `npm run verify-stage0-evaluation -- <stage0-evaluation.json>` reruns the evaluation inputs and fails if any gate, aggregate, artifact, or evaluation hash drifts.
+`npm run operator-readiness` writes a single JSON and Markdown readiness checklist over the Stage 0 product gates plus P1/P2/P4/P9 evidence artifacts.
+`npm run verify-operator-readiness -- <operator-readiness.json>` reruns the readiness bundle and fails if any gate, nested artifact, recommendation, or readiness hash drifts.
 `npm run pickem -- <seed> <agent-id> <agent-id>` writes a spectator pick'em receipt with the actual Saboteurs, score, transcript hash, and receipt hash.
 `npm run verify-pickem -- <receipt.json>` reruns the seeded match and fails if the receipt differs.
 `npm run seed-index` writes JSON and Markdown summaries for the canonical regression seeds, including result metrics and audit hashes.

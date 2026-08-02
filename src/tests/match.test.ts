@@ -14,6 +14,8 @@ import {
   buildInferenceReceiptsMarkdown,
   buildLadderReport,
   buildMatchReport,
+  buildOperatorReadiness,
+  buildOperatorReadinessMarkdown,
   buildPickemReceipt,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
@@ -39,6 +41,7 @@ import {
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyLadderSummary,
+  verifyOperatorReadiness,
   verifyPickemReceipt,
   verifyRevealSchedule,
   verifySanitizerAudit,
@@ -624,6 +627,37 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('receiptsHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies operator readiness across Stage 0 evidence', () => {
+    const first = buildOperatorReadiness('airlock-stage-zero-demo', 12, 'stage0-readiness');
+    const second = buildOperatorReadiness('airlock-stage-zero-demo', 12, 'stage0-readiness');
+    const markdown = buildOperatorReadinessMarkdown(first);
+    const verified = verifyOperatorReadiness(first);
+    const tampered = verifyOperatorReadiness({
+      ...first,
+      readinessHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.operator_readiness.stage0.v1');
+    expect(first.recommendation).toBe('ready-for-stage-0-review');
+    expect(first.gates).toHaveLength(5);
+    expect(first.gates.every((gate) => gate.status === 'pass')).toBe(true);
+    expect(first.gates.map((gate) => gate.id)).toEqual([
+      'attested-receipts',
+      'commit-before-render',
+      'speech-sanitizer',
+      'timeout-fallbacks',
+      'stage0-product',
+    ]);
+    expect(first.readinessHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Operator Readiness');
+    expect(markdown).toContain('## Evidence Bundle');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('readinessHash does not match deterministic replay.');
   });
 
   it('validates authored-agent manifests for the Stage 1 ladder path', () => {

@@ -14,6 +14,7 @@ export {
   buildInferenceReceiptsMarkdown,
   buildLadderReport,
   buildMatchReport,
+  buildOperatorReadinessMarkdown,
   buildRevealScheduleMarkdown,
   buildSanitizerAuditMarkdown,
   buildSeedIndexReport,
@@ -23,6 +24,7 @@ export {
 } from './report';
 export { runLadderPreview } from './ladder';
 export { buildPickemReceipt, parseAgentPick, verifyPickemReceipt } from './pickem';
+export { buildOperatorReadiness } from './readiness';
 export { buildRevealSchedule, buildRevealScheduleFromMatch } from './reveal-schedule';
 export { buildSanitizerAudit, sanitizeSpeech } from './sanitizer-audit';
 export { buildSeasonManifest } from './season';
@@ -36,6 +38,7 @@ export {
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyLadderSummary,
+  verifyOperatorReadiness,
   verifyRevealSchedule,
   verifySanitizerAudit,
   verifySeasonManifest,

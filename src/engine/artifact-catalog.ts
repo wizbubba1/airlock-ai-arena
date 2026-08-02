@@ -45,6 +45,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Reviewer-facing go/no-go summary combining balance, seed coverage, show pack readiness, and transcript legibility gates.',
     },
     {
+      name: 'Operator readiness',
+      schema: 'airlock.operator_readiness.stage0.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-operator-readiness.json',
+      generateCommand: 'npm run operator-readiness',
+      verifyCommand: 'npm run verify-operator-readiness -- ./artifacts/airlock-operator-readiness.json',
+      purpose: 'Single readiness checklist over Stage 0 product gates plus P1/P2/P4/P9 evidence artifacts.',
+    },
+    {
       name: 'Challenge packet',
       schema: 'airlock.challenge.stage0.v1',
       format: 'json',

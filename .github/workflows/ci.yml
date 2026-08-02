@@ -76,6 +76,12 @@ jobs:
       - name: Stage 0 evaluation verifier smoke test
         run: npm run verify-stage0-evaluation -- ./artifacts/airlock-stage0-evaluation.json
 
+      - name: Operator readiness smoke test
+        run: npm run operator-readiness
+
+      - name: Operator readiness verifier smoke test
+        run: npm run verify-operator-readiness -- ./artifacts/airlock-operator-readiness.json
+
       - name: Pickem receipt smoke test
         run: npm run pickem -- airlock-stage-zero-demo vanta kepler
 

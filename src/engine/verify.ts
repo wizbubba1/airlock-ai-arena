@@ -3,6 +3,7 @@ import { buildAuditBundle } from './bundle';
 import { buildFallbackDrill } from './fallback-drill';
 import { buildInferenceReceipts } from './inference-receipts';
 import { runLadderPreview } from './ladder';
+import { buildOperatorReadiness } from './readiness';
 import { runMatch } from './match';
 import { buildRevealSchedule } from './reveal-schedule';
 import { buildSanitizerAudit } from './sanitizer-audit';
@@ -16,6 +17,7 @@ import type { AuditBundle } from './bundle';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
+import type { OperatorReadiness } from './readiness';
 import type { RevealSchedule } from './reveal-schedule';
 import type { SanitizerAudit } from './sanitizer-audit';
 import type { SeedIndex } from './seed-index';
@@ -59,6 +61,13 @@ export interface InferenceReceiptsVerificationResult {
   seed: string;
   errors: string[];
   expected: InferenceReceipts;
+}
+
+export interface OperatorReadinessVerificationResult {
+  ok: boolean;
+  seed: string;
+  errors: string[];
+  expected: OperatorReadiness;
 }
 
 export interface SeedIndexVerificationResult {
@@ -196,6 +205,35 @@ export function verifyInferenceReceipts(receipts: InferenceReceipts): InferenceR
   return {
     ok: errors.length === 0,
     seed: receipts.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyOperatorReadiness(readiness: OperatorReadiness): OperatorReadinessVerificationResult {
+  const expected = buildOperatorReadiness(
+    readiness.seed,
+    readiness.evaluation.balance.matchCount,
+    readiness.evaluation.balance.seedPrefix,
+  );
+  const errors: string[] = [];
+
+  compare('schema', readiness.schema, expected.schema, errors);
+  compare('evaluation', readiness.evaluation, expected.evaluation, errors);
+  compare('inferenceReceipts', readiness.inferenceReceipts, expected.inferenceReceipts, errors);
+  compare('revealSchedule', readiness.revealSchedule, expected.revealSchedule, errors);
+  compare('sanitizerAudit', readiness.sanitizerAudit, expected.sanitizerAudit, errors);
+  compare('fallbackDrill', readiness.fallbackDrill, expected.fallbackDrill, errors);
+  compare('gates', readiness.gates, expected.gates, errors);
+  compare('recommendation', readiness.recommendation, expected.recommendation, errors);
+  compare('readinessHash', readiness.readinessHash, expected.readinessHash, errors);
+
+  if (readiness.gates.length !== 5) errors.push('operator readiness must contain five gates.');
+  if (readiness.gates.some((gate) => gate.status !== 'pass')) errors.push('one or more operator readiness gates failed.');
+
+  return {
+    ok: errors.length === 0,
+    seed: readiness.seed,
     errors,
     expected,
   };

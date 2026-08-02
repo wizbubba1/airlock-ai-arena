@@ -11,6 +11,8 @@ import {
   buildInferenceReceipts,
   buildInferenceReceiptsMarkdown,
   buildLadderReport,
+  buildOperatorReadiness,
+  buildOperatorReadinessMarkdown,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
   buildSanitizerAudit,
@@ -32,6 +34,7 @@ import {
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyLadderSummary,
+  verifyOperatorReadiness,
   verifyRevealSchedule,
   verifySanitizerAudit,
   verifySeasonManifest,
@@ -58,6 +61,7 @@ const balance = buildBalanceSummary(100, 'stage-zero-ci');
 const fallbackDrill = buildFallbackDrill(seed);
 const inferenceReceipts = buildInferenceReceipts(seed);
 const ladder = runLadderPreview(32, 'stage-one-ci');
+const operatorReadiness = buildOperatorReadiness(seed, 100, 'stage-zero-ci');
 const revealSchedule = buildRevealSchedule(seed);
 const sanitizerAudit = buildSanitizerAudit(seed);
 const season = buildSeasonManifest(seasonId);
@@ -78,6 +82,8 @@ const outputs = [
   writeMarkdown('airlock-inference-receipts-airlock-stage-zero-demo.md', buildInferenceReceiptsMarkdown(inferenceReceipts)),
   writeJson('airlock-ladder-32.json', ladder),
   writeMarkdown('airlock-ladder-32.md', buildLadderReport(ladder)),
+  writeJson('airlock-operator-readiness.json', operatorReadiness),
+  writeMarkdown('airlock-operator-readiness.md', buildOperatorReadinessMarkdown(operatorReadiness)),
   writeJson('airlock-reveal-schedule-airlock-stage-zero-demo.json', revealSchedule),
   writeMarkdown('airlock-reveal-schedule-airlock-stage-zero-demo.md', buildRevealScheduleMarkdown(revealSchedule)),
   writeJson('airlock-sanitizer-audit-airlock-stage-zero-demo.json', sanitizerAudit),
@@ -104,6 +110,7 @@ const checks = [
   { name: 'fallback-drill', ...verifyFallbackDrill(fallbackDrill) },
   { name: 'inference-receipts', ...verifyInferenceReceipts(inferenceReceipts) },
   { name: 'ladder', ...verifyLadderSummary(ladder) },
+  { name: 'operator-readiness', ...verifyOperatorReadiness(operatorReadiness) },
   { name: 'reveal-schedule', ...verifyRevealSchedule(revealSchedule) },
   { name: 'sanitizer-audit', ...verifySanitizerAudit(sanitizerAudit) },
   { name: 'season', ...verifySeasonManifest(season) },
