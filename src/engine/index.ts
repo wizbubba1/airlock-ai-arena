@@ -12,6 +12,7 @@ export {
   buildMatchReport,
   buildSeedIndexReport,
   buildShowPackReport,
+  buildStage0EvaluationMarkdown,
   buildTranscriptQualityMarkdown,
 } from './report';
 export { runLadderPreview } from './ladder';
@@ -19,6 +20,7 @@ export { buildPickemReceipt, parseAgentPick, verifyPickemReceipt } from './picke
 export { buildSeasonManifest } from './season';
 export { buildSeedIndex, canonicalSeeds } from './seed-index';
 export { buildShowPack, defaultShowSeeds } from './show-pack';
+export { buildStage0Evaluation } from './stage0-evaluation';
 export { buildTranscriptQualityReport } from './transcript-quality';
 export {
   verifyAuditBundle,
@@ -27,6 +29,7 @@ export {
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,
+  verifyStage0Evaluation,
   verifyTranscriptQualityReport,
 } from './verify';
 export type * from './types';

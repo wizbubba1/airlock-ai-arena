@@ -16,6 +16,8 @@ import {
   buildSeedIndexReport,
   buildShowPack,
   buildShowPackReport,
+  buildStage0Evaluation,
+  buildStage0EvaluationMarkdown,
   buildTickCommitments,
   buildTranscriptQualityMarkdown,
   buildTranscriptQualityReport,
@@ -31,6 +33,8 @@ import {
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,
+  verifyStage0Evaluation,
+  verifyTranscriptQualityReport,
 } from '../engine';
 import goodManifest from './fixtures/agents/vanta-author.json';
 import badManifest from './fixtures/agents/bad-agent.json';
@@ -457,6 +461,11 @@ describe('AIRLOCK deterministic engine', () => {
     const first = buildTranscriptQualityReport('airlock-stage-zero-demo');
     const second = buildTranscriptQualityReport('airlock-stage-zero-demo');
     const markdown = buildTranscriptQualityMarkdown(first);
+    const verified = verifyTranscriptQualityReport(first);
+    const tampered = verifyTranscriptQualityReport({
+      ...first,
+      qualityHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
 
     expect(second).toEqual(first);
     expect(first.schema).toBe('airlock.transcript_quality.stage0.v1');
@@ -468,6 +477,36 @@ describe('AIRLOCK deterministic engine', () => {
     expect(markdown).toContain('# AIRLOCK Transcript Quality');
     expect(markdown).toContain('## Event Mix');
     expect(markdown).toContain('## Density');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('qualityHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies a Stage 0 evaluation summary', () => {
+    const first = buildStage0Evaluation('airlock-stage-zero-demo', 12, 'stage0-eval');
+    const second = buildStage0Evaluation('airlock-stage-zero-demo', 12, 'stage0-eval');
+    const markdown = buildStage0EvaluationMarkdown(first);
+    const verified = verifyStage0Evaluation(first);
+    const tampered = verifyStage0Evaluation({
+      ...first,
+      evaluationHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.stage0_evaluation.v1');
+    expect(first.gates.deterministicArtifacts).toBe(true);
+    expect(first.gates.transcriptLegible).toBe(true);
+    expect(first.showPack.matches.length).toBeGreaterThan(0);
+    expect(first.seedIndex.seeds.length).toBeGreaterThan(0);
+    expect(first.evaluationHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Stage 0 Evaluation');
+    expect(markdown).toContain('## Gates');
+    expect(markdown).toContain('## Artifact Coverage');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('evaluationHash does not match deterministic replay.');
   });
 
   it('validates authored-agent manifests for the Stage 1 ladder path', () => {

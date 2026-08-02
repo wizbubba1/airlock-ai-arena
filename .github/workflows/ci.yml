@@ -46,6 +46,12 @@ jobs:
       - name: Transcript quality verifier smoke test
         run: npm run verify-transcript-quality -- ./artifacts/airlock-transcript-quality-airlock-stage-zero-demo.json
 
+      - name: Stage 0 evaluation smoke test
+        run: npm run stage0-evaluation
+
+      - name: Stage 0 evaluation verifier smoke test
+        run: npm run verify-stage0-evaluation -- ./artifacts/airlock-stage0-evaluation.json
+
       - name: Pickem receipt smoke test
         run: npm run pickem -- airlock-stage-zero-demo vanta kepler
 

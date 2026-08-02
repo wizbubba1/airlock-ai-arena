@@ -36,6 +36,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Single reviewer command that regenerates the core artifact set and runs deterministic verification checks in one pass.',
     },
     {
+      name: 'Stage 0 evaluation',
+      schema: 'airlock.stage0_evaluation.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-stage0-evaluation.json',
+      generateCommand: 'npm run stage0-evaluation',
+      verifyCommand: 'npm run verify-stage0-evaluation -- ./artifacts/airlock-stage0-evaluation.json',
+      purpose: 'Reviewer-facing go/no-go summary combining balance, seed coverage, show pack readiness, and transcript legibility gates.',
+    },
+    {
       name: 'Challenge packet',
       schema: 'airlock.challenge.stage0.v1',
       format: 'json',

@@ -5,6 +5,7 @@ import { runMatch } from './match';
 import { buildSeedIndex } from './seed-index';
 import { buildSeasonManifest } from './season';
 import { buildShowPack } from './show-pack';
+import { buildStage0Evaluation } from './stage0-evaluation';
 import { buildTranscriptQualityReport } from './transcript-quality';
 import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
@@ -12,6 +13,7 @@ import type { LadderSummary } from './ladder';
 import type { SeedIndex } from './seed-index';
 import type { SeasonManifest } from './season';
 import type { ShowPack } from './show-pack';
+import type { Stage0Evaluation } from './stage0-evaluation';
 import type { TranscriptQualityReport } from './transcript-quality';
 
 export interface AuditVerificationResult {
@@ -63,6 +65,13 @@ export interface TranscriptQualityVerificationResult {
   seed: string;
   errors: string[];
   expected: TranscriptQualityReport;
+}
+
+export interface Stage0EvaluationVerificationResult {
+  ok: boolean;
+  seed: string;
+  errors: string[];
+  expected: Stage0Evaluation;
 }
 
 export function verifyAuditBundle(bundle: AuditBundle): AuditVerificationResult {
@@ -197,6 +206,28 @@ export function verifyTranscriptQualityReport(report: TranscriptQualityReport): 
   return {
     ok: errors.length === 0,
     seed: report.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyStage0Evaluation(evaluation: Stage0Evaluation): Stage0EvaluationVerificationResult {
+  const expected = buildStage0Evaluation(evaluation.seed, evaluation.balance.matchCount, evaluation.balance.seedPrefix);
+  const errors: string[] = [];
+
+  compare('schema', evaluation.schema, expected.schema, errors);
+  compare('balance', evaluation.balance, expected.balance, errors);
+  compare('balanceGuard', evaluation.balanceGuard, expected.balanceGuard, errors);
+  compare('seedIndex', evaluation.seedIndex, expected.seedIndex, errors);
+  compare('showPack', evaluation.showPack, expected.showPack, errors);
+  compare('transcriptQuality', evaluation.transcriptQuality, expected.transcriptQuality, errors);
+  compare('gates', evaluation.gates, expected.gates, errors);
+  compare('recommendation', evaluation.recommendation, expected.recommendation, errors);
+  compare('evaluationHash', evaluation.evaluationHash, expected.evaluationHash, errors);
+
+  return {
+    ok: errors.length === 0,
+    seed: evaluation.seed,
     errors,
     expected,
   };

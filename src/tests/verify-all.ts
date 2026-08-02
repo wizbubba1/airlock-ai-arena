@@ -12,6 +12,8 @@ import {
   buildSeasonManifest,
   buildShowPack,
   buildShowPackReport,
+  buildStage0Evaluation,
+  buildStage0EvaluationMarkdown,
   buildTranscriptQualityMarkdown,
   buildTranscriptQualityReport,
   evaluateBalance,
@@ -23,6 +25,7 @@ import {
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,
+  verifyStage0Evaluation,
   verifyTranscriptQualityReport,
 } from '../engine';
 import { buildAgentSubmissionPacket, verifyAgentSubmissionPacket } from '../authoring/submission';
@@ -45,6 +48,7 @@ const season = buildSeasonManifest(seasonId);
 const seedIndex = buildSeedIndex();
 const showPack = buildShowPack();
 const transcriptQuality = buildTranscriptQualityReport(seed);
+const stage0Evaluation = buildStage0Evaluation(seed, 100, 'stage-zero-ci');
 const agentSubmission = buildAgentSubmissionPacket(manifest, seasonId);
 const catalog = buildArtifactCatalog();
 
@@ -61,6 +65,8 @@ const outputs = [
   writeMarkdown('airlock-show-pack.md', buildShowPackReport(showPack)),
   writeJson('airlock-transcript-quality-airlock-stage-zero-demo.json', transcriptQuality),
   writeMarkdown('airlock-transcript-quality-airlock-stage-zero-demo.md', buildTranscriptQualityMarkdown(transcriptQuality)),
+  writeJson('airlock-stage0-evaluation.json', stage0Evaluation),
+  writeMarkdown('airlock-stage0-evaluation.md', buildStage0EvaluationMarkdown(stage0Evaluation)),
   writeJson('airlock-agent-submission.json', agentSubmission),
   writeJson('airlock-artifact-catalog.json', catalog),
   writeMarkdown('airlock-artifact-catalog.md', buildArtifactCatalogReport(catalog)),
@@ -76,6 +82,7 @@ const checks = [
   { name: 'seed-index', ...verifySeedIndex(seedIndex) },
   { name: 'show-pack', ...verifyShowPack(showPack) },
   { name: 'transcript-quality', ...verifyTranscriptQualityReport(transcriptQuality) },
+  { name: 'stage0-evaluation', ...verifyStage0Evaluation(stage0Evaluation) },
   { name: 'agent-submission', ...verifyAgentSubmissionPacket(agentSubmission) },
 ];
 

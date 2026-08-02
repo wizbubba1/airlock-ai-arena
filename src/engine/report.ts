@@ -5,6 +5,7 @@ import type { ArtifactCatalog } from './artifact-catalog';
 import type { LadderSummary } from './ladder';
 import type { SeedIndex } from './seed-index';
 import type { ShowPack } from './show-pack';
+import type { Stage0Evaluation } from './stage0-evaluation';
 import type { TranscriptQualityReport } from './transcript-quality';
 import type { MatchState } from './types';
 
@@ -236,4 +237,63 @@ export function buildTranscriptQualityMarkdown(report: TranscriptQualityReport):
   ];
 
   return `${lines.join('\n')}\n`;
+}
+
+export function buildStage0EvaluationMarkdown(evaluation: Stage0Evaluation): string {
+  const lines: string[] = [
+    `# AIRLOCK Stage 0 Evaluation`,
+    ``,
+    `Schema: \`${evaluation.schema}\``,
+    `Seed: \`${evaluation.seed}\``,
+    `Recommendation: **${evaluation.recommendation}**`,
+    `Evaluation hash: \`${evaluation.evaluationHash}\``,
+    ``,
+    `## Gates`,
+    ``,
+    `| Gate | Status |`,
+    `|---|---|`,
+    `| Deterministic artifacts | ${status(evaluation.gates.deterministicArtifacts)} |`,
+    `| Balance healthy | ${status(evaluation.gates.balanceHealthy)} |`,
+    `| Transcript legible | ${status(evaluation.gates.transcriptLegible)} |`,
+    `| Show pack ready | ${status(evaluation.gates.showPackReady)} |`,
+    ``,
+    `## Balance`,
+    ``,
+    `| Metric | Value |`,
+    `|---|---:|`,
+    `| Matches | ${evaluation.balance.matchCount} |`,
+    `| Technician wins | ${evaluation.balance.wins.technician} |`,
+    `| Saboteur wins | ${evaluation.balance.wins.saboteur} |`,
+    `| Technician rate | ${evaluation.balanceGuard.technicianRate} |`,
+    `| Saboteur rate | ${evaluation.balanceGuard.saboteurRate} |`,
+    `| Average ticks | ${evaluation.balance.averages.ticks} |`,
+    `| Average meetings | ${evaluation.balance.averages.meetings} |`,
+    ``,
+    `## Transcript Quality`,
+    ``,
+    `| Metric | Value |`,
+    `|---|---:|`,
+    `| Events | ${evaluation.transcriptQuality.events.total} |`,
+    `| Speech events | ${evaluation.transcriptQuality.events.speech} |`,
+    `| Speech rate | ${evaluation.transcriptQuality.density.speechRate} |`,
+    `| Meetings | ${evaluation.transcriptQuality.meetings} |`,
+    ``,
+    `## Artifact Coverage`,
+    ``,
+    `| Artifact | Count |`,
+    `|---|---:|`,
+    `| Canonical seeds | ${evaluation.seedIndex.seeds.length} |`,
+    `| Show pack matches | ${evaluation.showPack.matches.length} |`,
+    ``,
+  ];
+
+  if (evaluation.balanceGuard.errors.length > 0) {
+    lines.push(`## Balance Guard Errors`, ``, ...evaluation.balanceGuard.errors.map((error) => `- ${error}`), ``);
+  }
+
+  return `${lines.join('\n')}\n`;
+}
+
+function status(ok: boolean): string {
+  return ok ? 'pass' : 'fail';
 }
