@@ -23,6 +23,7 @@ import {
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,
+  verifyTranscriptQualityReport,
 } from '../engine';
 import { buildAgentSubmissionPacket, verifyAgentSubmissionPacket } from '../authoring/submission';
 import sampleManifest from './fixtures/agents/vanta-author.json';
@@ -44,10 +45,6 @@ const season = buildSeasonManifest(seasonId);
 const seedIndex = buildSeedIndex();
 const showPack = buildShowPack();
 const transcriptQuality = buildTranscriptQualityReport(seed);
-const transcriptQualityErrors = [
-  transcriptQuality.events.total > 0 ? null : 'transcript has no events.',
-  transcriptQuality.events.speech > 0 ? null : 'transcript has no speech events.',
-].filter((error): error is string => error !== null);
 const agentSubmission = buildAgentSubmissionPacket(manifest, seasonId);
 const catalog = buildArtifactCatalog();
 
@@ -78,7 +75,7 @@ const checks = [
   { name: 'season', ...verifySeasonManifest(season) },
   { name: 'seed-index', ...verifySeedIndex(seedIndex) },
   { name: 'show-pack', ...verifyShowPack(showPack) },
-  { name: 'transcript-quality', ok: transcriptQualityErrors.length === 0, errors: transcriptQualityErrors },
+  { name: 'transcript-quality', ...verifyTranscriptQualityReport(transcriptQuality) },
   { name: 'agent-submission', ...verifyAgentSubmissionPacket(agentSubmission) },
 ];
 

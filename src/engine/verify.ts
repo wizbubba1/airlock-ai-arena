@@ -5,12 +5,14 @@ import { runMatch } from './match';
 import { buildSeedIndex } from './seed-index';
 import { buildSeasonManifest } from './season';
 import { buildShowPack } from './show-pack';
+import { buildTranscriptQualityReport } from './transcript-quality';
 import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
 import type { LadderSummary } from './ladder';
 import type { SeedIndex } from './seed-index';
 import type { SeasonManifest } from './season';
 import type { ShowPack } from './show-pack';
+import type { TranscriptQualityReport } from './transcript-quality';
 
 export interface AuditVerificationResult {
   ok: boolean;
@@ -54,6 +56,13 @@ export interface ShowPackVerificationResult {
   seeds: string[];
   errors: string[];
   expected: ShowPack;
+}
+
+export interface TranscriptQualityVerificationResult {
+  ok: boolean;
+  seed: string;
+  errors: string[];
+  expected: TranscriptQualityReport;
 }
 
 export function verifyAuditBundle(bundle: AuditBundle): AuditVerificationResult {
@@ -164,6 +173,30 @@ export function verifyShowPack(pack: ShowPack): ShowPackVerificationResult {
   return {
     ok: errors.length === 0,
     seeds,
+    errors,
+    expected,
+  };
+}
+
+export function verifyTranscriptQualityReport(report: TranscriptQualityReport): TranscriptQualityVerificationResult {
+  const expected = buildTranscriptQualityReport(report.seed);
+  const errors: string[] = [];
+
+  compare('schema', report.schema, expected.schema, errors);
+  compare('events', report.events, expected.events, errors);
+  compare('density', report.density, expected.density, errors);
+  compare('meetings', report.meetings, expected.meetings, errors);
+  compare('ticks', report.ticks, expected.ticks, errors);
+  compare('winner', report.winner, expected.winner, errors);
+  compare('transcriptHash', report.transcriptHash, expected.transcriptHash, errors);
+  compare('qualityHash', report.qualityHash, expected.qualityHash, errors);
+
+  if (report.events.total <= 0) errors.push('transcript has no events.');
+  if (report.events.speech <= 0) errors.push('transcript has no speech events.');
+
+  return {
+    ok: errors.length === 0,
+    seed: report.seed,
     errors,
     expected,
   };

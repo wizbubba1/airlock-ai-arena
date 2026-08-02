@@ -17,6 +17,7 @@
     "verify-season": "tsx src/tests/verify-season.ts",
     "verify-seed-index": "tsx src/tests/verify-seed-index.ts",
     "verify-show-pack": "tsx src/tests/verify-show-pack.ts",
+    "verify-transcript-quality": "tsx src/tests/verify-transcript-quality.ts",
     "verify-all": "tsx src/tests/verify-all.ts",
     "balance": "tsx src/tests/balance.ts",
     "balance:check": "tsx src/tests/balance.ts 100 stage-zero-ci ./artifacts/airlock-balance-ci.json --enforce",

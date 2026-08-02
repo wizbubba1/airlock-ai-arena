@@ -57,6 +57,7 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       format: 'json',
       defaultPath: './artifacts/airlock-transcript-quality-airlock-stage-zero-demo.json',
       generateCommand: 'npm run transcript-quality -- airlock-stage-zero-demo',
+      verifyCommand: 'npm run verify-transcript-quality -- ./artifacts/airlock-transcript-quality-airlock-stage-zero-demo.json',
       purpose: 'Deterministic content-health report for speech, votes, reports, danger beats, repairs, and meeting density.',
     },
     {
