@@ -369,6 +369,10 @@ function App() {
               <strong>{auditVerification.ok ? 'passed deterministic replay' : auditVerification.errors.join(', ')}</strong>
             </p>
           </div>
+          <div className="verify-all-callout">
+            <span>Reviewer command</span>
+            <code>npm run verify-all</code>
+          </div>
           <div className="digest-list">
             {Object.entries(digests).map(([label, value]) => (
               <p key={label}>

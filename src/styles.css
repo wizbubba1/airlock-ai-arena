@@ -645,6 +645,34 @@ dd {
   line-height: 1.35;
 }
 
+.verify-all-callout {
+  display: grid;
+  gap: 5px;
+  border-top: 1px solid var(--line);
+  background: #0b1010;
+  padding: 12px 14px;
+}
+
+.verify-all-callout span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.verify-all-callout code {
+  width: fit-content;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: rgba(147, 247, 212, 0.08);
+  color: var(--accent);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.8rem;
+  padding: 6px 8px;
+}
+
 .digest-list p {
   display: grid;
   gap: 3px;
