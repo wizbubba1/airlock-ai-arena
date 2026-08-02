@@ -73,6 +73,8 @@ npm run collusion-controls -- stage1-preview.001
 npm run verify-collusion-controls -- ./artifacts/airlock-collusion-controls-stage1-preview.001.json
 npm run prompt-reveal-policy -- stage1-preview.001
 npm run verify-prompt-reveal-policy -- ./artifacts/airlock-prompt-reveal-policy-stage1-preview.001.json
+npm run randomness-beacon-plan -- airlock-stage-zero-demo
+npm run verify-randomness-beacon-plan -- ./artifacts/airlock-randomness-beacon-plan-airlock-stage-zero-demo.json
 npm run stage-gate-policy -- airlock-roadmap.001
 npm run verify-stage-gate-policy -- ./artifacts/airlock-stage-gate-policy-airlock-roadmap.001.json
 npm run challenge -- airlock-stage-zero-demo
@@ -135,6 +137,8 @@ npm run dev
 `npm run verify-collusion-controls -- <collusion-controls.json>` reconstructs the controls and fails if bond tiers, policies, detection metrics, monitored agents, or controls hash drift.
 `npm run prompt-reveal-policy -- <season-id>` writes JSON and Markdown policy artifacts for pre-season prompt commitments, auditor-only access, challenge mediation, and two-season lagged public reveal.
 `npm run verify-prompt-reveal-policy -- <prompt-reveal-policy.json>` reconstructs the policy and fails if reveal timing, audit access, author-moat, stage, or hash fields drift.
+`npm run randomness-beacon-plan -- <seed>` writes JSON and Markdown randomness-beacon plan artifacts for future drand role assignment, per-tick entropy, and audit publication timing.
+`npm run verify-randomness-beacon-plan -- <randomness-beacon-plan.json>` reconstructs the plan and fails if entropy timing policy, entries, ruleset, or plan hash drift.
 `npm run stage-gate-policy -- <program-id>` writes JSON and Markdown roadmap gate artifacts for Show -> Ladder -> Market sequencing, kill criteria, hold-stage decisions, and B2B-feed pivots.
 `npm run verify-stage-gate-policy -- <stage-gate-policy.json>` reconstructs the policy and fails if sequencing, principles, metrics, actions, or policy hash drift.
 `npm run challenge -- <seed>` writes a challenge packet containing the audit bundle plus deterministic replay verification evidence.

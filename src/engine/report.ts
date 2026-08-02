@@ -14,6 +14,7 @@ import type { LadderSummary } from './ladder';
 import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
 import type { PromptRevealPolicy } from './prompt-reveal-policy';
+import type { RandomnessBeaconPlan } from './randomness-beacon-plan';
 import type { RevealSchedule } from './reveal-schedule';
 import type { RoleRoadmap } from './role-roadmap';
 import type { SanitizerAudit } from './sanitizer-audit';
@@ -554,6 +555,35 @@ export function buildStage0EvaluationMarkdown(evaluation: Stage0Evaluation): str
   if (evaluation.balanceGuard.errors.length > 0) {
     lines.push(`## Balance Guard Errors`, ``, ...evaluation.balanceGuard.errors.map((error) => `- ${error}`), ``);
   }
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildRandomnessBeaconPlanMarkdown(plan: RandomnessBeaconPlan): string {
+  const lines: string[] = [
+    `# AIRLOCK Randomness Beacon Plan`,
+    ``,
+    `Seed: \`${plan.seed}\``,
+    `Schema: \`${plan.schema}\``,
+    `Ruleset: \`${plan.ruleset}\``,
+    `Plan hash: \`${plan.planHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Pre-match betting closes before role entropy | ${plan.policy.preMatchBettingClosesBeforeRoleEntropy} |`,
+    `| Tick entropy unavailable before tick | ${plan.policy.tickEntropyUnavailableBeforeTick} |`,
+    `| Deterministic Stage 0 placeholder | ${plan.policy.deterministicStage0Placeholder} |`,
+    `| Future source | ${plan.policy.futureSource} |`,
+    ``,
+    `## Entries`,
+    ``,
+    `| Entry | Phase | Source | Timing | Purpose |`,
+    `|---|---|---|---|---|`,
+    ...plan.entries.map((entry) => `| ${entry.id} | ${entry.phase} | ${entry.source} | ${entry.timing} | ${entry.purpose} |`),
+    ``,
+  ];
 
   return `${lines.join('\n')}\n`;
 }

@@ -117,6 +117,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Stage 1 prompt reveal artifact for P3: pre-season commitments, auditor-only prompt access, challenge mediation, and two-season lagged public reveal.',
     },
     {
+      name: 'Randomness beacon plan',
+      schema: 'airlock.randomness_beacon_plan.stage0.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-randomness-beacon-plan-airlock-stage-zero-demo.json',
+      generateCommand: 'npm run randomness-beacon-plan -- airlock-stage-zero-demo',
+      verifyCommand: 'npm run verify-randomness-beacon-plan -- ./artifacts/airlock-randomness-beacon-plan-airlock-stage-zero-demo.json',
+      purpose: 'Stage 0 placeholder and future drand migration plan for pre-match close timing, role assignment entropy, per-tick entropy, and audit publication.',
+    },
+    {
       name: 'Stage gate policy',
       schema: 'airlock.stage_gate_policy.v1',
       format: 'json',

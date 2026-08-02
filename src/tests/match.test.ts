@@ -32,6 +32,8 @@ import {
   buildOperatorReadinessMarkdown,
   buildPromptRevealPolicy,
   buildPromptRevealPolicyMarkdown,
+  buildRandomnessBeaconPlan,
+  buildRandomnessBeaconPlanMarkdown,
   buildPickemReceipt,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
@@ -71,6 +73,7 @@ import {
   verifyOperatorReadiness,
   verifyPickemReceipt,
   verifyPromptRevealPolicy,
+  verifyRandomnessBeaconPlan,
   verifyRevealSchedule,
   verifyRoleRoadmap,
   verifySanitizerAudit,
@@ -437,6 +440,33 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('promptRevealHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies the randomness beacon plan', () => {
+    const first = buildRandomnessBeaconPlan('airlock-stage-zero-demo');
+    const second = buildRandomnessBeaconPlan('airlock-stage-zero-demo');
+    const markdown = buildRandomnessBeaconPlanMarkdown(first);
+    const verified = verifyRandomnessBeaconPlan(first);
+    const tampered = verifyRandomnessBeaconPlan({
+      ...first,
+      planHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.randomness_beacon_plan.stage0.v1');
+    expect(first.ruleset).toBe(ruleset.id);
+    expect(first.policy.preMatchBettingClosesBeforeRoleEntropy).toBe(true);
+    expect(first.policy.tickEntropyUnavailableBeforeTick).toBe(true);
+    expect(first.policy.futureSource).toBe('drand-http-rounds');
+    expect(first.entries.some((entry) => entry.phase === 'role-assignment')).toBe(true);
+    expect(first.entries.some((entry) => entry.phase === 'tick-entropy')).toBe(true);
+    expect(first.planHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Randomness Beacon Plan');
+    expect(markdown).toContain('## Entries');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('planHash does not match deterministic replay.');
   });
 
   it('builds and verifies the staged roadmap gate policy', () => {

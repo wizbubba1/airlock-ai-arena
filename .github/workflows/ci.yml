@@ -67,6 +67,12 @@ jobs:
       - name: Prompt reveal policy verifier smoke test
         run: npm run verify-prompt-reveal-policy -- ./artifacts/airlock-prompt-reveal-policy-stage1-preview.001.json
 
+      - name: Randomness beacon plan smoke test
+        run: npm run randomness-beacon-plan -- airlock-stage-zero-demo
+
+      - name: Randomness beacon plan verifier smoke test
+        run: npm run verify-randomness-beacon-plan -- ./artifacts/airlock-randomness-beacon-plan-airlock-stage-zero-demo.json
+
       - name: Stage gate policy smoke test
         run: npm run stage-gate-policy -- airlock-roadmap.001
 

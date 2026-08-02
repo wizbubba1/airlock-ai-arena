@@ -29,6 +29,8 @@ import {
   buildOperatorReadinessMarkdown,
   buildPromptRevealPolicy,
   buildPromptRevealPolicyMarkdown,
+  buildRandomnessBeaconPlan,
+  buildRandomnessBeaconPlanMarkdown,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
   buildRoleRoadmap,
@@ -63,6 +65,7 @@ import {
   verifyMarketReadiness,
   verifyOperatorReadiness,
   verifyPromptRevealPolicy,
+  verifyRandomnessBeaconPlan,
   verifyRevealSchedule,
   verifyRoleRoadmap,
   verifySanitizerAudit,
@@ -101,6 +104,7 @@ const ladder = runLadderPreview(32, 'stage-one-ci');
 const marketReadiness = buildMarketReadiness(seed);
 const operatorReadiness = buildOperatorReadiness(seed, 100, 'stage-zero-ci');
 const promptRevealPolicy = buildPromptRevealPolicy(seasonId);
+const randomnessBeaconPlan = buildRandomnessBeaconPlan(seed);
 const revealSchedule = buildRevealSchedule(seed);
 const roleRoadmap = buildRoleRoadmap();
 const sanitizerAudit = buildSanitizerAudit(seed);
@@ -141,6 +145,8 @@ const outputs = [
   writeMarkdown('airlock-operator-readiness.md', buildOperatorReadinessMarkdown(operatorReadiness)),
   writeJson('airlock-prompt-reveal-policy-stage1-preview.001.json', promptRevealPolicy),
   writeMarkdown('airlock-prompt-reveal-policy-stage1-preview.001.md', buildPromptRevealPolicyMarkdown(promptRevealPolicy)),
+  writeJson('airlock-randomness-beacon-plan-airlock-stage-zero-demo.json', randomnessBeaconPlan),
+  writeMarkdown('airlock-randomness-beacon-plan-airlock-stage-zero-demo.md', buildRandomnessBeaconPlanMarkdown(randomnessBeaconPlan)),
   writeJson('airlock-reveal-schedule-airlock-stage-zero-demo.json', revealSchedule),
   writeMarkdown('airlock-reveal-schedule-airlock-stage-zero-demo.md', buildRevealScheduleMarkdown(revealSchedule)),
   writeJson('airlock-role-roadmap-airlock-role-roadmap.001.json', roleRoadmap),
@@ -180,6 +186,7 @@ const checks = [
   { name: 'market-readiness', ...verifyMarketReadiness(marketReadiness) },
   { name: 'operator-readiness', ...verifyOperatorReadiness(operatorReadiness) },
   { name: 'prompt-reveal-policy', ...verifyPromptRevealPolicy(promptRevealPolicy) },
+  { name: 'randomness-beacon-plan', ...verifyRandomnessBeaconPlan(randomnessBeaconPlan) },
   { name: 'reveal-schedule', ...verifyRevealSchedule(revealSchedule) },
   { name: 'role-roadmap', ...verifyRoleRoadmap(roleRoadmap) },
   { name: 'sanitizer-audit', ...verifySanitizerAudit(sanitizerAudit) },

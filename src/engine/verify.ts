@@ -12,6 +12,7 @@ import { runLadderPreview } from './ladder';
 import { buildMarketReadiness } from './market-readiness';
 import { buildOperatorReadiness } from './readiness';
 import { buildPromptRevealPolicy } from './prompt-reveal-policy';
+import { buildRandomnessBeaconPlan } from './randomness-beacon-plan';
 import { runMatch } from './match';
 import { buildRevealSchedule } from './reveal-schedule';
 import { buildRoleRoadmap } from './role-roadmap';
@@ -36,6 +37,7 @@ import type { LadderSummary } from './ladder';
 import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
 import type { PromptRevealPolicy } from './prompt-reveal-policy';
+import type { RandomnessBeaconPlan } from './randomness-beacon-plan';
 import type { RevealSchedule } from './reveal-schedule';
 import type { RoleRoadmap } from './role-roadmap';
 import type { SanitizerAudit } from './sanitizer-audit';
@@ -145,6 +147,13 @@ export interface PromptRevealPolicyVerificationResult {
   seasonId: string;
   errors: string[];
   expected: PromptRevealPolicy;
+}
+
+export interface RandomnessBeaconPlanVerificationResult {
+  ok: boolean;
+  seed: string;
+  errors: string[];
+  expected: RandomnessBeaconPlan;
 }
 
 export interface SeedIndexVerificationResult {
@@ -559,6 +568,38 @@ export function verifyPromptRevealPolicy(policy: PromptRevealPolicy): PromptReve
   return {
     ok: errors.length === 0,
     seasonId: policy.seasonId,
+    errors,
+    expected,
+  };
+}
+
+export function verifyRandomnessBeaconPlan(plan: RandomnessBeaconPlan): RandomnessBeaconPlanVerificationResult {
+  const expected = buildRandomnessBeaconPlan(plan.seed);
+  const errors: string[] = [];
+
+  compare('schema', plan.schema, expected.schema, errors);
+  compare('ruleset', plan.ruleset, expected.ruleset, errors);
+  compare('policy', plan.policy, expected.policy, errors);
+  compare('entries', plan.entries, expected.entries, errors);
+  compare('planHash', plan.planHash, expected.planHash, errors);
+
+  if (!plan.policy.preMatchBettingClosesBeforeRoleEntropy) {
+    errors.push('pre-match betting must close before role entropy exists.');
+  }
+  if (!plan.policy.tickEntropyUnavailableBeforeTick) {
+    errors.push('tick entropy must be unavailable before each tick.');
+  }
+  if (plan.policy.futureSource !== 'drand-http-rounds') errors.push('future randomness source must be drand HTTP rounds.');
+  if (!plan.entries.some((entry) => entry.phase === 'role-assignment')) {
+    errors.push('randomness beacon plan must include role-assignment entropy.');
+  }
+  if (!plan.entries.some((entry) => entry.phase === 'tick-entropy')) {
+    errors.push('randomness beacon plan must include per-tick entropy.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    seed: plan.seed,
     errors,
     expected,
   };

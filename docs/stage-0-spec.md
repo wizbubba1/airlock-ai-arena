@@ -101,6 +101,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run prompt-reveal-policy -- <season-id>` writes JSON and Markdown prompt reveal policy artifacts for Stage 1 preview seasons. The artifact captures pre-season commitments, auditor-only prompt access, challenge mediation, and two-season lagged public reveal.
 
+`npm run randomness-beacon-plan -- <seed>` writes JSON and Markdown randomness-beacon plan artifacts. The artifact documents the Stage 0 placeholder and future drand timing for pre-match close, role assignment, per-tick entropy, and audit publication.
+
 `npm run stage-gate-policy -- <program-id>` writes JSON and Markdown roadmap gate artifacts. The artifact keeps Show -> Ladder -> Market sequencing explicit with kill criteria, hold-stage decisions, and B2B-feed pivot conditions.
 
 `npm run market-readiness -- <seed>` writes JSON and Markdown Stage 2 market gate artifacts. Real-money markets remain blocked unless counsel, jurisdiction policy, licensed-operator, responsible-play, and certified-feed evidence are present.
@@ -186,6 +188,8 @@ npm run collusion-controls -- stage1-preview.001
 npm run verify-collusion-controls -- ./artifacts/airlock-collusion-controls-stage1-preview.001.json
 npm run prompt-reveal-policy -- stage1-preview.001
 npm run verify-prompt-reveal-policy -- ./artifacts/airlock-prompt-reveal-policy-stage1-preview.001.json
+npm run randomness-beacon-plan -- airlock-stage-zero-demo
+npm run verify-randomness-beacon-plan -- ./artifacts/airlock-randomness-beacon-plan-airlock-stage-zero-demo.json
 npm run stage-gate-policy -- airlock-roadmap.001
 npm run verify-stage-gate-policy -- ./artifacts/airlock-stage-gate-policy-airlock-roadmap.001.json
 npm run market-readiness -- airlock-stage-zero-demo

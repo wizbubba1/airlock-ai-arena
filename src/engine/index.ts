@@ -29,6 +29,7 @@ export {
   buildMatchReport,
   buildOperatorReadinessMarkdown,
   buildPromptRevealPolicyMarkdown,
+  buildRandomnessBeaconPlanMarkdown,
   buildRevealScheduleMarkdown,
   buildRoleRoadmapMarkdown,
   buildSanitizerAuditMarkdown,
@@ -42,6 +43,7 @@ export { runLadderPreview } from './ladder';
 export { buildMarketReadiness } from './market-readiness';
 export { buildPickemReceipt, parseAgentPick, verifyPickemReceipt } from './pickem';
 export { buildPromptRevealPolicy } from './prompt-reveal-policy';
+export { buildRandomnessBeaconPlan } from './randomness-beacon-plan';
 export { buildOperatorReadiness } from './readiness';
 export { buildRevealSchedule, buildRevealScheduleFromMatch } from './reveal-schedule';
 export { buildRoleRoadmap } from './role-roadmap';
@@ -67,6 +69,7 @@ export {
   verifyMarketReadiness,
   verifyOperatorReadiness,
   verifyPromptRevealPolicy,
+  verifyRandomnessBeaconPlan,
   verifyRevealSchedule,
   verifyRoleRoadmap,
   verifySanitizerAudit,
