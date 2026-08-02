@@ -5,6 +5,7 @@ import type { ArtifactCatalog } from './artifact-catalog';
 import type { LadderSummary } from './ladder';
 import type { SeedIndex } from './seed-index';
 import type { ShowPack } from './show-pack';
+import type { TranscriptQualityReport } from './transcript-quality';
 import type { MatchState } from './types';
 
 export function buildMatchReport(match: MatchState, seed: string): string {
@@ -195,6 +196,44 @@ export function buildShowPackReport(pack: ShowPack): string {
       ``,
     );
   }
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildTranscriptQualityMarkdown(report: TranscriptQualityReport): string {
+  const lines: string[] = [
+    `# AIRLOCK Transcript Quality`,
+    ``,
+    `Seed: \`${report.seed}\``,
+    `Schema: \`${report.schema}\``,
+    `Winner: ${report.winner}`,
+    `Quality hash: \`${report.qualityHash}\``,
+    `Transcript hash: \`${report.transcriptHash}\``,
+    ``,
+    `## Event Mix`,
+    ``,
+    `| Event | Count |`,
+    `|---|---:|`,
+    `| Total | ${report.events.total} |`,
+    `| Speech | ${report.events.speech} |`,
+    `| Votes | ${report.events.votes} |`,
+    `| Reports | ${report.events.reports} |`,
+    `| Danger | ${report.events.danger} |`,
+    `| Repairs | ${report.events.repairs} |`,
+    `| Market | ${report.events.market} |`,
+    ``,
+    `## Density`,
+    ``,
+    `| Metric | Value |`,
+    `|---|---:|`,
+    `| Meetings | ${report.meetings} |`,
+    `| Ticks | ${report.ticks} |`,
+    `| Speech rate | ${report.density.speechRate} |`,
+    `| Meeting events per meeting | ${report.density.meetingEventsPerMeeting} |`,
+    `| Danger rate | ${report.density.dangerRate} |`,
+    `| Repair rate | ${report.density.repairRate} |`,
+    ``,
+  ];
 
   return `${lines.join('\n')}\n`;
 }

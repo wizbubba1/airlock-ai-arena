@@ -19,6 +19,7 @@ This repository starts with the safest build slice:
 - independent audit bundle verifier
 - challenge packet export for optimistic fairness review
 - terminal-generated Markdown match reports
+- transcript quality reports
 - canonical seed index reports
 - Stage 0 show pack export
 - artifact catalog export
@@ -63,6 +64,7 @@ npm run audit -- airlock-stage-zero-demo
 npm run challenge -- airlock-stage-zero-demo
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
+npm run transcript-quality -- airlock-stage-zero-demo
 npm run pickem -- airlock-stage-zero-demo vanta kepler
 npm run verify-pickem -- ./artifacts/airlock-pickem-airlock-stage-zero-demo.json
 npm run seed-index
@@ -91,6 +93,7 @@ npm run dev
 `npm run challenge -- <seed>` writes a challenge packet containing the audit bundle plus deterministic replay verification evidence.
 `npm run verify-audit -- <audit-bundle.json>` reruns the deterministic match for the bundle seed and fails if commitments, transcript, market, snapshots, entropy, or tick commitments drift.
 `npm run report -- <seed>` writes a Markdown match report suitable for public archives or Gists.
+`npm run transcript-quality -- <seed>` writes JSON and Markdown content-health reports for transcript event mix and meeting density.
 `npm run pickem -- <seed> <agent-id> <agent-id>` writes a spectator pick'em receipt with the actual Saboteurs, score, transcript hash, and receipt hash.
 `npm run verify-pickem -- <receipt.json>` reruns the seeded match and fails if the receipt differs.
 `npm run seed-index` writes JSON and Markdown summaries for the canonical regression seeds, including result metrics and audit hashes.

@@ -40,6 +40,9 @@ jobs:
       - name: Markdown report smoke test
         run: npm run report -- airlock-stage-zero-demo
 
+      - name: Transcript quality smoke test
+        run: npm run transcript-quality -- airlock-stage-zero-demo
+
       - name: Pickem receipt smoke test
         run: npm run pickem -- airlock-stage-zero-demo vanta kepler
 

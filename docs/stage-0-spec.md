@@ -15,6 +15,7 @@ Stage 0 includes:
 - JSON audit bundle export;
 - deterministic audit bundle verification;
 - Markdown match report export;
+- transcript quality report export;
 - pick'em receipt export and verification;
 - canonical seed index report export;
 - Stage 0 show pack export;
@@ -84,6 +85,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run report -- <seed>` writes a human-readable Markdown report over the same match.
 
+`npm run transcript-quality -- <seed>` writes JSON and Markdown reports for content-health metrics: speech, votes, reports, danger beats, repairs, market events, and meeting density.
+
 `npm run pickem -- <seed> <agent-id> <agent-id>` writes a spectator receipt for two Saboteur picks. `npm run verify-pickem -- <receipt.json>` reruns the seed and verifies the score, actual Saboteurs, transcript hash, and receipt hash.
 
 `npm run seed-index` writes JSON and Markdown reports across the canonical regression seeds. The index gives reviewers a compact table of winners, match lengths, transcript hashes, market hashes, public snapshot hashes, and entropy hashes.
@@ -139,6 +142,7 @@ npm run audit -- airlock-stage-zero-demo
 npm run challenge -- airlock-stage-zero-demo
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
+npm run transcript-quality -- airlock-stage-zero-demo
 npm run pickem -- airlock-stage-zero-demo vanta kepler
 npm run verify-pickem -- ./artifacts/airlock-pickem-airlock-stage-zero-demo.json
 npm run seed-index

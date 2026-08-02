@@ -52,6 +52,14 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Human-readable match archive with commitments, role reveal, public transcript, entropy ledger, and tick commitments.',
     },
     {
+      name: 'Transcript quality report',
+      schema: 'airlock.transcript_quality.stage0.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-transcript-quality-airlock-stage-zero-demo.json',
+      generateCommand: 'npm run transcript-quality -- airlock-stage-zero-demo',
+      purpose: 'Deterministic content-health report for speech, votes, reports, danger beats, repairs, and meeting density.',
+    },
+    {
       name: "Pick'em receipt",
       schema: 'airlock.pickem.stage0.v1',
       format: 'json',

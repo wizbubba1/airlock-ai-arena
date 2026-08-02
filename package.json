@@ -26,6 +26,7 @@
     "season": "tsx src/tests/season.ts",
     "seed-index": "tsx src/tests/seed-index.ts",
     "show-pack": "tsx src/tests/show-pack.ts",
+    "transcript-quality": "tsx src/tests/transcript-quality.ts",
     "report": "tsx src/tests/report.ts",
     "create-agent": "tsx src/tests/create-agent.ts",
     "submit-agent": "tsx src/tests/submit-agent.ts",

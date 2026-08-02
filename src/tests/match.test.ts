@@ -17,6 +17,8 @@ import {
   buildShowPack,
   buildShowPackReport,
   buildTickCommitments,
+  buildTranscriptQualityMarkdown,
+  buildTranscriptQualityReport,
   canonicalSeeds,
   profiles,
   ruleset,
@@ -449,6 +451,23 @@ describe('AIRLOCK deterministic engine', () => {
     expect(report).toContain('## Commitments');
     expect(report).toContain('## Public Transcript');
     expect(report).toContain('sha256:');
+  });
+
+  it('builds deterministic transcript quality reports', () => {
+    const first = buildTranscriptQualityReport('airlock-stage-zero-demo');
+    const second = buildTranscriptQualityReport('airlock-stage-zero-demo');
+    const markdown = buildTranscriptQualityMarkdown(first);
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.transcript_quality.stage0.v1');
+    expect(first.events.total).toBeGreaterThan(0);
+    expect(first.events.speech).toBeGreaterThan(0);
+    expect(first.density.speechRate).toBeGreaterThan(0);
+    expect(first.transcriptHash).toBe('sha256:f9c6b80b0724833cd855b85b01aa6a38bad063384bfda3b7e9d71a4868149667');
+    expect(first.qualityHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Transcript Quality');
+    expect(markdown).toContain('## Event Mix');
+    expect(markdown).toContain('## Density');
   });
 
   it('validates authored-agent manifests for the Stage 1 ladder path', () => {
