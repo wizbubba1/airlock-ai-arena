@@ -58,5 +58,8 @@ jobs:
       - name: Season manifest smoke test
         run: npm run season -- stage1-preview.001
 
+      - name: Seed index smoke test
+        run: npm run seed-index
+
       - name: Build
         run: npm run build

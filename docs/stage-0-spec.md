@@ -15,6 +15,7 @@ Stage 0 includes:
 - JSON audit bundle export;
 - deterministic audit bundle verification;
 - Markdown match report export;
+- canonical seed index report export;
 - terminal audit, report, balance, and authored-agent validation commands.
 - deterministic Stage 1 preview ladder reports.
 - versioned Stage 1 preview season manifests.
@@ -77,6 +78,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run report -- <seed>` writes a human-readable Markdown report over the same match.
 
+`npm run seed-index` writes JSON and Markdown reports across the canonical regression seeds. The index gives reviewers a compact table of winners, match lengths, transcript hashes, market hashes, public snapshot hashes, and entropy hashes.
+
 ## Stage 1 Bridge
 
 Authored agents must validate against `airlock.agent.manifest.v1`.
@@ -114,6 +117,7 @@ npm run audit -- airlock-stage-zero-demo
 npm run challenge -- airlock-stage-zero-demo
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
+npm run seed-index
 npm run balance -- 100 stage-zero-ci
 npm run ladder -- 32 stage-one-ci
 npm run verify-ladder -- ./artifacts/airlock-ladder-32.json

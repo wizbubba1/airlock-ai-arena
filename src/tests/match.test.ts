@@ -8,7 +8,10 @@ import {
   buildLadderReport,
   buildMatchReport,
   buildSeasonManifest,
+  buildSeedIndex,
+  buildSeedIndexReport,
   buildTickCommitments,
+  canonicalSeeds,
   profiles,
   ruleset,
   runLadderPreview,
@@ -195,6 +198,32 @@ describe('AIRLOCK deterministic engine', () => {
     expect(report).toContain('## Standings');
     expect(report).toContain('## Match Log');
     expect(report).toContain('| Rank | Agent | Rating | Record | Roles |');
+  });
+
+  it('builds a deterministic canonical seed index', () => {
+    const first = buildSeedIndex();
+    const second = buildSeedIndex();
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.seed_index.stage0.v1');
+    expect(first.ruleset).toBe(ruleset.id);
+    expect(first.seeds.map((entry) => entry.seed)).toEqual([...canonicalSeeds]);
+    expect(first.seeds[0].transcriptHash).toBe('sha256:f9c6b80b0724833cd855b85b01aa6a38bad063384bfda3b7e9d71a4868149667');
+    for (const entry of first.seeds) {
+      expect(entry.transcriptHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+      expect(entry.marketHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+      expect(entry.snapshotHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+      expect(entry.entropyHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    }
+  });
+
+  it('renders a markdown seed index report', () => {
+    const report = buildSeedIndexReport(buildSeedIndex(['airlock-stage-zero-demo', 'repeatable-match']));
+
+    expect(report).toContain('# AIRLOCK Canonical Seed Index');
+    expect(report).toContain('## Seeds');
+    expect(report).toContain('## Audit Hashes');
+    expect(report).toContain('| Seed | Winner | Ticks | Meetings | Events | Transcript Hash |');
   });
 
   it('verifies a ladder summary against deterministic replay', () => {

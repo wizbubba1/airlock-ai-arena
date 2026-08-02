@@ -2,6 +2,7 @@ import { agentIds, profiles } from './content';
 import { buildAuditBundle } from './bundle';
 import { ruleset } from './ruleset';
 import type { LadderSummary } from './ladder';
+import type { SeedIndex } from './seed-index';
 import type { MatchState } from './types';
 
 export function buildMatchReport(match: MatchState, seed: string): string {
@@ -93,6 +94,39 @@ export function buildLadderReport(summary: LadderSummary): string {
         `| ${index + 1} | \`${match.seed}\` | ${match.winner} | ${match.ticks} | ${match.meetings} | ${match.saboteurs
           .map((id) => profiles[id].name)
           .join(', ')} |`,
+    ),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildSeedIndexReport(index: SeedIndex): string {
+  const technicianWins = index.seeds.filter((entry) => entry.winner === 'technician').length;
+  const saboteurWins = index.seeds.length - technicianWins;
+  const lines: string[] = [
+    `# AIRLOCK Canonical Seed Index`,
+    ``,
+    `Schema: \`${index.schema}\``,
+    `Ruleset: \`${index.ruleset}\``,
+    `Seeds: ${index.seeds.length}`,
+    `Result split: Technicians ${technicianWins} / Saboteurs ${saboteurWins}`,
+    ``,
+    `## Seeds`,
+    ``,
+    `| Seed | Winner | Ticks | Meetings | Events | Transcript Hash |`,
+    `|---|---|---:|---:|---:|---|`,
+    ...index.seeds.map(
+      (entry) =>
+        `| \`${entry.seed}\` | ${entry.winner} | ${entry.ticks} | ${entry.meetings} | ${entry.transcriptEvents} | \`${entry.transcriptHash}\` |`,
+    ),
+    ``,
+    `## Audit Hashes`,
+    ``,
+    `| Seed | Market | Public snapshots | Entropy ledger |`,
+    `|---|---|---|---|`,
+    ...index.seeds.map(
+      (entry) => `| \`${entry.seed}\` | \`${entry.marketHash}\` | \`${entry.snapshotHash}\` | \`${entry.entropyHash}\` |`,
     ),
     ``,
   ];
