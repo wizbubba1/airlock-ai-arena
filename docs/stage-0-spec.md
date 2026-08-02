@@ -109,6 +109,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run reveal-schedule -- <seed>` writes JSON and Markdown timing artifacts for the commit-before-render tick schedule and fixed public reveal delay.
 
+`npm run role-roadmap -- <roadmap-id>` writes JSON and Markdown role-variety roadmap artifacts. The artifact keeps base-season roles fixed while gating future role drops behind balance passes and spectator market-impact review.
+
 `npm run sanitizer-audit -- <seed>` writes JSON and Markdown speech-sanitizer artifacts for reviewing the anti-steganography policy.
 
 `npm run stage0-evaluation` writes JSON and Markdown reports that combine balance, canonical seed coverage, show pack readiness, and transcript legibility into a reviewer-facing go/no-go summary.
@@ -190,6 +192,8 @@ npm run transcript-quality -- airlock-stage-zero-demo
 npm run verify-transcript-quality -- ./artifacts/airlock-transcript-quality-airlock-stage-zero-demo.json
 npm run reveal-schedule -- airlock-stage-zero-demo
 npm run verify-reveal-schedule -- ./artifacts/airlock-reveal-schedule-airlock-stage-zero-demo.json
+npm run role-roadmap -- airlock-role-roadmap.001
+npm run verify-role-roadmap -- ./artifacts/airlock-role-roadmap-airlock-role-roadmap.001.json
 npm run sanitizer-audit -- airlock-stage-zero-demo
 npm run verify-sanitizer-audit -- ./artifacts/airlock-sanitizer-audit-airlock-stage-zero-demo.json
 npm run stage0-evaluation

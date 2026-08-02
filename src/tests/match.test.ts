@@ -33,6 +33,8 @@ import {
   buildPickemReceipt,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
+  buildRoleRoadmap,
+  buildRoleRoadmapMarkdown,
   buildSanitizerAudit,
   buildSanitizerAuditMarkdown,
   buildSeasonManifest,
@@ -67,6 +69,7 @@ import {
   verifyPickemReceipt,
   verifyPromptRevealPolicy,
   verifyRevealSchedule,
+  verifyRoleRoadmap,
   verifySanitizerAudit,
   verifySeasonManifest,
   verifySeedIndex,
@@ -783,6 +786,33 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('scheduleHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies the role variety roadmap', () => {
+    const first = buildRoleRoadmap('airlock-role-roadmap.test');
+    const second = buildRoleRoadmap('airlock-role-roadmap.test');
+    const markdown = buildRoleRoadmapMarkdown(first);
+    const verified = verifyRoleRoadmap(first);
+    const tampered = verifyRoleRoadmap({
+      ...first,
+      roadmapHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.role_roadmap.stage1.preview.v1');
+    expect(first.baseRuleset).toBe(ruleset.id);
+    expect(first.policy.baseSeasonRoles).toBe('technicians-vs-saboteurs-only');
+    expect(first.policy.roleDropsRequireBalancePass).toBe(true);
+    expect(first.policy.noMidSeasonUncommittedRoles).toBe(true);
+    expect(first.policy.spectatorMarketImpactReview).toBe(true);
+    expect(first.drops.length).toBeGreaterThanOrEqual(3);
+    expect(first.roadmapHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Role Roadmap');
+    expect(markdown).toContain('## Drops');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('roadmapHash does not match deterministic replay.');
   });
 
   it('builds and verifies a deterministic sanitizer audit', () => {

@@ -39,6 +39,8 @@
     "verify-transcript-quality": "tsx src/tests/verify-transcript-quality.ts",
     "reveal-schedule": "tsx src/tests/reveal-schedule.ts",
     "verify-reveal-schedule": "tsx src/tests/verify-reveal-schedule.ts",
+    "role-roadmap": "tsx src/tests/role-roadmap.ts",
+    "verify-role-roadmap": "tsx src/tests/verify-role-roadmap.ts",
     "sanitizer-audit": "tsx src/tests/sanitizer-audit.ts",
     "stage-gate-policy": "tsx src/tests/stage-gate-policy.ts",
     "verify-sanitizer-audit": "tsx src/tests/verify-sanitizer-audit.ts",

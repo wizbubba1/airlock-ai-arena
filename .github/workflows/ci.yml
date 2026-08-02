@@ -106,6 +106,12 @@ jobs:
       - name: Reveal schedule verifier smoke test
         run: npm run verify-reveal-schedule -- ./artifacts/airlock-reveal-schedule-airlock-stage-zero-demo.json
 
+      - name: Role roadmap smoke test
+        run: npm run role-roadmap -- airlock-role-roadmap.001
+
+      - name: Role roadmap verifier smoke test
+        run: npm run verify-role-roadmap -- ./artifacts/airlock-role-roadmap-airlock-role-roadmap.001.json
+
       - name: Sanitizer audit smoke test
         run: npm run sanitizer-audit -- airlock-stage-zero-demo
 

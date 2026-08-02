@@ -28,6 +28,7 @@ export {
   buildOperatorReadinessMarkdown,
   buildPromptRevealPolicyMarkdown,
   buildRevealScheduleMarkdown,
+  buildRoleRoadmapMarkdown,
   buildSanitizerAuditMarkdown,
   buildSeedIndexReport,
   buildShowPackReport,
@@ -41,6 +42,7 @@ export { buildPickemReceipt, parseAgentPick, verifyPickemReceipt } from './picke
 export { buildPromptRevealPolicy } from './prompt-reveal-policy';
 export { buildOperatorReadiness } from './readiness';
 export { buildRevealSchedule, buildRevealScheduleFromMatch } from './reveal-schedule';
+export { buildRoleRoadmap } from './role-roadmap';
 export { buildSanitizerAudit, sanitizeSpeech } from './sanitizer-audit';
 export { buildSeasonManifest } from './season';
 export { buildSeedIndex, canonicalSeeds } from './seed-index';
@@ -63,6 +65,7 @@ export {
   verifyOperatorReadiness,
   verifyPromptRevealPolicy,
   verifyRevealSchedule,
+  verifyRoleRoadmap,
   verifySanitizerAudit,
   verifySeasonManifest,
   verifySeedIndex,

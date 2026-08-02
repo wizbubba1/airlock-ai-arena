@@ -29,6 +29,8 @@ import {
   buildPromptRevealPolicyMarkdown,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
+  buildRoleRoadmap,
+  buildRoleRoadmapMarkdown,
   buildSanitizerAudit,
   buildSanitizerAuditMarkdown,
   buildSeedIndex,
@@ -59,6 +61,7 @@ import {
   verifyOperatorReadiness,
   verifyPromptRevealPolicy,
   verifyRevealSchedule,
+  verifyRoleRoadmap,
   verifySanitizerAudit,
   verifySeasonManifest,
   verifySeedIndex,
@@ -95,6 +98,7 @@ const marketReadiness = buildMarketReadiness(seed);
 const operatorReadiness = buildOperatorReadiness(seed, 100, 'stage-zero-ci');
 const promptRevealPolicy = buildPromptRevealPolicy(seasonId);
 const revealSchedule = buildRevealSchedule(seed);
+const roleRoadmap = buildRoleRoadmap();
 const sanitizerAudit = buildSanitizerAudit(seed);
 const season = buildSeasonManifest(seasonId);
 const seedIndex = buildSeedIndex();
@@ -133,6 +137,8 @@ const outputs = [
   writeMarkdown('airlock-prompt-reveal-policy-stage1-preview.001.md', buildPromptRevealPolicyMarkdown(promptRevealPolicy)),
   writeJson('airlock-reveal-schedule-airlock-stage-zero-demo.json', revealSchedule),
   writeMarkdown('airlock-reveal-schedule-airlock-stage-zero-demo.md', buildRevealScheduleMarkdown(revealSchedule)),
+  writeJson('airlock-role-roadmap-airlock-role-roadmap.001.json', roleRoadmap),
+  writeMarkdown('airlock-role-roadmap-airlock-role-roadmap.001.md', buildRoleRoadmapMarkdown(roleRoadmap)),
   writeJson('airlock-sanitizer-audit-airlock-stage-zero-demo.json', sanitizerAudit),
   writeMarkdown('airlock-sanitizer-audit-airlock-stage-zero-demo.md', buildSanitizerAuditMarkdown(sanitizerAudit)),
   writeJson('airlock-season-stage1-preview.001.json', season),
@@ -168,6 +174,7 @@ const checks = [
   { name: 'operator-readiness', ...verifyOperatorReadiness(operatorReadiness) },
   { name: 'prompt-reveal-policy', ...verifyPromptRevealPolicy(promptRevealPolicy) },
   { name: 'reveal-schedule', ...verifyRevealSchedule(revealSchedule) },
+  { name: 'role-roadmap', ...verifyRoleRoadmap(roleRoadmap) },
   { name: 'sanitizer-audit', ...verifySanitizerAudit(sanitizerAudit) },
   { name: 'season', ...verifySeasonManifest(season) },
   { name: 'seed-index', ...verifySeedIndex(seedIndex) },

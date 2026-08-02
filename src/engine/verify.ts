@@ -13,6 +13,7 @@ import { buildOperatorReadiness } from './readiness';
 import { buildPromptRevealPolicy } from './prompt-reveal-policy';
 import { runMatch } from './match';
 import { buildRevealSchedule } from './reveal-schedule';
+import { buildRoleRoadmap } from './role-roadmap';
 import { buildSanitizerAudit } from './sanitizer-audit';
 import { buildSeedIndex } from './seed-index';
 import { buildSeasonManifest } from './season';
@@ -34,6 +35,7 @@ import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
 import type { PromptRevealPolicy } from './prompt-reveal-policy';
 import type { RevealSchedule } from './reveal-schedule';
+import type { RoleRoadmap } from './role-roadmap';
 import type { SanitizerAudit } from './sanitizer-audit';
 import type { SeedIndex } from './seed-index';
 import type { SeasonManifest } from './season';
@@ -183,6 +185,13 @@ export interface RevealScheduleVerificationResult {
   seed: string;
   errors: string[];
   expected: RevealSchedule;
+}
+
+export interface RoleRoadmapVerificationResult {
+  ok: boolean;
+  roadmapId: string;
+  errors: string[];
+  expected: RoleRoadmap;
 }
 
 export interface SanitizerAuditVerificationResult {
@@ -687,6 +696,34 @@ export function verifyRevealSchedule(schedule: RevealSchedule): RevealScheduleVe
   return {
     ok: errors.length === 0,
     seed: schedule.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyRoleRoadmap(roadmap: RoleRoadmap): RoleRoadmapVerificationResult {
+  const expected = buildRoleRoadmap(roadmap.roadmapId);
+  const errors: string[] = [];
+
+  compare('schema', roadmap.schema, expected.schema, errors);
+  compare('baseRuleset', roadmap.baseRuleset, expected.baseRuleset, errors);
+  compare('policy', roadmap.policy, expected.policy, errors);
+  compare('drops', roadmap.drops, expected.drops, errors);
+  compare('roadmapHash', roadmap.roadmapHash, expected.roadmapHash, errors);
+
+  if (roadmap.policy.baseSeasonRoles !== 'technicians-vs-saboteurs-only') {
+    errors.push('base season roles must remain Technicians vs Saboteurs only.');
+  }
+  if (!roadmap.policy.roleDropsRequireBalancePass) errors.push('role drops must require balance passes.');
+  if (!roadmap.policy.noMidSeasonUncommittedRoles) errors.push('roadmap must forbid uncommitted mid-season roles.');
+  if (!roadmap.policy.spectatorMarketImpactReview) {
+    errors.push('role roadmap must require spectator market impact review.');
+  }
+  if (roadmap.drops.length === 0) errors.push('role roadmap must contain planned role drops.');
+
+  return {
+    ok: errors.length === 0,
+    roadmapId: roadmap.roadmapId,
     errors,
     expected,
   };

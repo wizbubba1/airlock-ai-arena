@@ -160,6 +160,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Commit-before-render schedule with fixed public reveal delay for reviewing P2 timing and side-channel policy.',
     },
     {
+      name: 'Role roadmap',
+      schema: 'airlock.role_roadmap.stage1.preview.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-role-roadmap-airlock-role-roadmap.001.json',
+      generateCommand: 'npm run role-roadmap -- airlock-role-roadmap.001',
+      verifyCommand: 'npm run verify-role-roadmap -- ./artifacts/airlock-role-roadmap-airlock-role-roadmap.001.json',
+      purpose: 'Stage 1 role-variety roadmap for P5 anti-fragility, keeping base-season roles fixed and gating future roles behind balance and market-impact review.',
+    },
+    {
       name: 'Sanitizer audit',
       schema: 'airlock.sanitizer_audit.stage0.v1',
       format: 'json',

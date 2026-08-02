@@ -14,6 +14,7 @@ import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
 import type { PromptRevealPolicy } from './prompt-reveal-policy';
 import type { RevealSchedule } from './reveal-schedule';
+import type { RoleRoadmap } from './role-roadmap';
 import type { SanitizerAudit } from './sanitizer-audit';
 import type { SeedIndex } from './seed-index';
 import type { ShowPack } from './show-pack';
@@ -542,6 +543,38 @@ export function buildRevealScheduleMarkdown(schedule: RevealSchedule): string {
     ...schedule.entries.map(
       (entry) =>
         `| ${entry.tick} | ${entry.publicRevealSlot}s | ${entry.transcriptEvents} | ${entry.publicSnapshots} | ${entry.marketSnapshots} | \`${entry.commitment}\` |`,
+    ),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildRoleRoadmapMarkdown(roadmap: RoleRoadmap): string {
+  const lines: string[] = [
+    `# AIRLOCK Role Roadmap`,
+    ``,
+    `Roadmap: \`${roadmap.roadmapId}\``,
+    `Schema: \`${roadmap.schema}\``,
+    `Base ruleset: \`${roadmap.baseRuleset}\``,
+    `Roadmap hash: \`${roadmap.roadmapHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Base season roles | ${roadmap.policy.baseSeasonRoles} |`,
+    `| Role drops require balance pass | ${roadmap.policy.roleDropsRequireBalancePass} |`,
+    `| No mid-season uncommitted roles | ${roadmap.policy.noMidSeasonUncommittedRoles} |`,
+    `| Spectator market impact review | ${roadmap.policy.spectatorMarketImpactReview} |`,
+    ``,
+    `## Drops`,
+    ``,
+    `| Drop | Target season | Family | Status | Design goal | Release gate |`,
+    `|---|---|---|---|---|---|`,
+    ...roadmap.drops.map(
+      (drop) =>
+        `| ${drop.id} | ${drop.targetSeason} | ${drop.roleFamily} | ${drop.status} | ${drop.designGoal} | ${drop.releaseGate} |`,
     ),
     ``,
   ];

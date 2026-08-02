@@ -86,6 +86,8 @@ npm run transcript-quality -- airlock-stage-zero-demo
 npm run verify-transcript-quality -- ./artifacts/airlock-transcript-quality-airlock-stage-zero-demo.json
 npm run reveal-schedule -- airlock-stage-zero-demo
 npm run verify-reveal-schedule -- ./artifacts/airlock-reveal-schedule-airlock-stage-zero-demo.json
+npm run role-roadmap -- airlock-role-roadmap.001
+npm run verify-role-roadmap -- ./artifacts/airlock-role-roadmap-airlock-role-roadmap.001.json
 npm run sanitizer-audit -- airlock-stage-zero-demo
 npm run verify-sanitizer-audit -- ./artifacts/airlock-sanitizer-audit-airlock-stage-zero-demo.json
 npm run stage0-evaluation
@@ -144,6 +146,8 @@ npm run dev
 `npm run verify-transcript-quality -- <transcript-quality.json>` reruns the seeded transcript quality report and fails if event counts, density, transcript hash, or quality hash drift.
 `npm run reveal-schedule -- <seed>` writes JSON and Markdown timing artifacts for commit-before-render ticks and fixed public reveal delay.
 `npm run verify-reveal-schedule -- <reveal-schedule.json>` reruns the seeded reveal schedule and fails if policy, tick commitments, reveal slots, or schedule hash drift.
+`npm run role-roadmap -- <roadmap-id>` writes JSON and Markdown role-variety roadmap artifacts for planned P5 role drops.
+`npm run verify-role-roadmap -- <role-roadmap.json>` reconstructs the roadmap and fails if base-role policy, future drop gates, or roadmap hash drift.
 `npm run sanitizer-audit -- <seed>` writes JSON and Markdown speech-sanitizer audit artifacts for the anti-steganography policy.
 `npm run verify-sanitizer-audit -- <sanitizer-audit.json>` reruns the seeded sanitizer audit and fails if policy, speech entries, sanitized hashes, or audit hash drift.
 `npm run stage0-evaluation` writes a reviewer-facing go/no-go summary combining balance, seed coverage, show pack readiness, and transcript legibility gates.
