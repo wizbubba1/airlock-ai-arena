@@ -43,6 +43,8 @@ import {
 } from './engine';
 import sampleManifest from './tests/fixtures/agents/vanta-author.json';
 import { promptCommitment, validateAgentManifest } from './authoring/manifest';
+import { buildAgentSubmissionPacket } from './authoring/submission';
+import type { AuthoredAgentManifest } from './authoring/manifest';
 import type { AgentId, TranscriptEvent } from './engine';
 import './styles.css';
 
@@ -81,7 +83,8 @@ function App() {
   const auditVerification = useMemo(() => verifyAuditBundle(auditBundle), [auditBundle]);
   const challengePacket = useMemo(() => buildChallengePacket(seed), [seed]);
   const digests = auditDigests(match);
-  const sampleManifestResult = validateAgentManifest(sampleManifest);
+  const authoredManifest = sampleManifest as AuthoredAgentManifest;
+  const sampleManifestResult = validateAgentManifest(authoredManifest);
   const samplePromptCommitment = promptCommitment(samplePrivatePrompt);
   const promptMatchesManifest = samplePromptCommitment === sampleManifest.promptCommitment;
   const evaluation = useMemo(() => buildEvaluation(seed), [seed]);
@@ -91,6 +94,7 @@ function App() {
   const seasonManifest = useMemo(() => buildSeasonManifest('stage1-preview.001'), []);
   const showPack = useMemo(() => buildShowPack([seed, `${seed}-show-1`, `${seed}-show-2`, `${seed}-show-3`]), [seed]);
   const artifactCatalog = useMemo(() => buildArtifactCatalog(), []);
+  const agentSubmission = useMemo(() => buildAgentSubmissionPacket(authoredManifest, seasonManifest.seasonId), [authoredManifest, seasonManifest.seasonId]);
 
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -150,6 +154,11 @@ function App() {
   function downloadSeasonManifest() {
     const blob = new Blob([JSON.stringify(seasonManifest, null, 2)], { type: 'application/json' });
     downloadBlob(blob, `airlock-season-${seasonManifest.seasonId}.json`);
+  }
+
+  function downloadAgentSubmission() {
+    const blob = new Blob([JSON.stringify(agentSubmission, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, `airlock-agent-submission-${agentSubmission.receivedManifest.id}.json`);
   }
 
   function downloadShowPackJson() {
@@ -602,6 +611,10 @@ function App() {
                 <Download size={18} />
                 Index
               </button>
+              <button className="icon-button" onClick={downloadAgentSubmission} type="button">
+                <Download size={18} />
+                Submit
+              </button>
               <button className="icon-button" onClick={downloadSeasonManifest} type="button">
                 <Download size={18} />
                 Season
@@ -626,6 +639,10 @@ function App() {
                 <dd>{sampleManifestResult.manifestHash ?? 'unavailable'}</dd>
               </div>
               <div>
+                <dt>Submission hash</dt>
+                <dd>{agentSubmission.submissionHash}</dd>
+              </div>
+              <div>
                 <dt>Prompt cap</dt>
                 <dd>4,000 chars</dd>
               </div>
@@ -638,6 +655,10 @@ function App() {
               <p>
                 <span>Artifact catalog</span>
                 <code>{artifactCatalog.catalogHash}</code>
+              </p>
+              <p>
+                <span>Season manifest</span>
+                <code>{agentSubmission.seasonManifestHash}</code>
               </p>
               <p>
                 <span>Prompt commitment</span>
