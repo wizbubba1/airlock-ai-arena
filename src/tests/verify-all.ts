@@ -3,6 +3,8 @@ import { resolve } from 'node:path';
 import {
   buildArtifactCatalog,
   buildArtifactCatalogReport,
+  buildAnalyticsSchema,
+  buildAnalyticsSchemaMarkdown,
   buildAuditBundle,
   buildB2BFeedPacket,
   buildB2BFeedPacketMarkdown,
@@ -43,6 +45,7 @@ import {
   evaluateBalance,
   runLadderPreview,
   runMatch,
+  verifyAnalyticsSchema,
   verifyAuditBundle,
   verifyB2BFeedPacket,
   verifyBalancePatchSchedule,
@@ -73,9 +76,11 @@ mkdirSync(artifactDir, { recursive: true });
 
 const seed = 'airlock-stage-zero-demo';
 const seasonId = 'stage1-preview.001';
+const programId = 'airlock-roadmap.001';
 const manifest = sampleManifest as AuthoredAgentManifest;
 
 const match = runMatch(seed);
+const analyticsSchema = buildAnalyticsSchema(programId);
 const audit = buildAuditBundle(match, seed);
 const b2bFeedPacket = buildB2BFeedPacket(seed);
 const balancePatchSchedule = buildBalancePatchSchedule(seasonId);
@@ -94,13 +99,15 @@ const sanitizerAudit = buildSanitizerAudit(seed);
 const season = buildSeasonManifest(seasonId);
 const seedIndex = buildSeedIndex();
 const showPack = buildShowPack();
-const stageGatePolicy = buildStageGatePolicy();
+const stageGatePolicy = buildStageGatePolicy(programId);
 const transcriptQuality = buildTranscriptQualityReport(seed);
 const stage0Evaluation = buildStage0Evaluation(seed, 100, 'stage-zero-ci');
 const agentSubmission = buildAgentSubmissionPacket(manifest, seasonId);
 const catalog = buildArtifactCatalog();
 
 const outputs = [
+  writeJson('airlock-analytics-schema-airlock-roadmap.001.json', analyticsSchema),
+  writeMarkdown('airlock-analytics-schema-airlock-roadmap.001.md', buildAnalyticsSchemaMarkdown(analyticsSchema)),
   writeJson('airlock-audit-airlock-stage-zero-demo.json', audit),
   writeJson('airlock-b2b-feed-packet-airlock-stage-zero-demo.json', b2bFeedPacket),
   writeMarkdown('airlock-b2b-feed-packet-airlock-stage-zero-demo.md', buildB2BFeedPacketMarkdown(b2bFeedPacket)),
@@ -145,6 +152,7 @@ const outputs = [
 ];
 
 const checks = [
+  { name: 'analytics-schema', ...verifyAnalyticsSchema(analyticsSchema) },
   { name: 'audit', ...verifyAuditBundle(audit) },
   { name: 'b2b-feed-packet', ...verifyB2BFeedPacket(b2bFeedPacket) },
   { name: 'balance-patch-schedule', ...verifyBalancePatchSchedule(balancePatchSchedule) },

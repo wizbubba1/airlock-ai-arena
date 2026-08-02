@@ -28,6 +28,12 @@ jobs:
       - name: Artifact catalog smoke test
         run: npm run artifact-catalog
 
+      - name: Analytics schema smoke test
+        run: npm run analytics-schema -- airlock-roadmap.001
+
+      - name: Analytics schema verifier smoke test
+        run: npm run verify-analytics-schema -- ./artifacts/airlock-analytics-schema-airlock-roadmap.001.json
+
       - name: Audit bundle smoke test
         run: npm run audit -- airlock-stage-zero-demo
 

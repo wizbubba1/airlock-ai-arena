@@ -1,3 +1,4 @@
+import { buildAnalyticsSchema } from './analytics-schema';
 import { buildB2BFeedPacket } from './b2b-feed-packet';
 import { buildBalancePatchSchedule } from './balance-patch-schedule';
 import { buildBalanceSummary } from './balance';
@@ -19,6 +20,7 @@ import { buildShowPack } from './show-pack';
 import { buildStageGatePolicy } from './stage-gate-policy';
 import { buildStage0Evaluation } from './stage0-evaluation';
 import { buildTranscriptQualityReport } from './transcript-quality';
+import type { AnalyticsSchema } from './analytics-schema';
 import type { B2BFeedPacket } from './b2b-feed-packet';
 import type { BalancePatchSchedule } from './balance-patch-schedule';
 import type { BalanceSummary } from './balance';
@@ -45,6 +47,13 @@ export interface AuditVerificationResult {
   seed: string;
   errors: string[];
   expected: AuditBundle;
+}
+
+export interface AnalyticsSchemaVerificationResult {
+  ok: boolean;
+  programId: string;
+  errors: string[];
+  expected: AnalyticsSchema;
 }
 
 export interface BalanceVerificationResult {
@@ -199,6 +208,34 @@ export function verifyAuditBundle(bundle: AuditBundle): AuditVerificationResult 
   return {
     ok: errors.length === 0,
     seed: bundle.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyAnalyticsSchema(schema: AnalyticsSchema): AnalyticsSchemaVerificationResult {
+  const expected = buildAnalyticsSchema(schema.programId);
+  const errors: string[] = [];
+
+  compare('schema', schema.schema, expected.schema, errors);
+  compare('privacyPolicy', schema.privacyPolicy, expected.privacyPolicy, errors);
+  compare('events', schema.events, expected.events, errors);
+  compare('derivedMetrics', schema.derivedMetrics, expected.derivedMetrics, errors);
+  compare('analyticsHash', schema.analyticsHash, expected.analyticsHash, errors);
+
+  if (schema.privacyPolicy.accountRequired) errors.push('Stage 0 analytics must not require accounts.');
+  if (schema.privacyPolicy.storesPrivatePrompts) errors.push('Stage 0 analytics must not store private prompts.');
+  if (schema.privacyPolicy.storesRolesBeforeReveal) errors.push('Stage 0 analytics must not store roles before reveal.');
+  if (!schema.events.some((event) => event.name === 'pickem_submitted')) {
+    errors.push('analytics schema must include pickem_submitted for stage gate metrics.');
+  }
+  if (!schema.derivedMetrics.some((metric) => metric.id === 'd7-spectator-return-rate')) {
+    errors.push('analytics schema must include D7 spectator return metric.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    programId: schema.programId,
     errors,
     expected,
   };

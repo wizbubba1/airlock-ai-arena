@@ -19,6 +19,15 @@ export interface ArtifactCatalog {
 export function buildArtifactCatalog(): ArtifactCatalog {
   const entries: ArtifactCatalogEntry[] = [
     {
+      name: 'Analytics schema',
+      schema: 'airlock.analytics_schema.stage0.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-analytics-schema-airlock-roadmap.001.json',
+      generateCommand: 'npm run analytics-schema -- airlock-roadmap.001',
+      verifyCommand: 'npm run verify-analytics-schema -- ./artifacts/airlock-analytics-schema-airlock-roadmap.001.json',
+      purpose: 'Stage 0 product analytics contract for measuring D7 return, pickem participation, transcript completion, and stage-gate metrics without accounts or private prompt storage.',
+    },
+    {
       name: 'Audit bundle',
       schema: 'airlock.audit.stage0.v1',
       format: 'json',

@@ -5,6 +5,8 @@ import {
   auditDigests,
   buildArtifactCatalog,
   buildArtifactCatalogReport,
+  buildAnalyticsSchema,
+  buildAnalyticsSchemaMarkdown,
   buildB2BFeedPacket,
   buildB2BFeedPacketMarkdown,
   buildBalancePatchSchedule,
@@ -50,6 +52,7 @@ import {
   ruleset,
   runLadderPreview,
   runMatch,
+  verifyAnalyticsSchema,
   verifyAuditBundle,
   verifyB2BFeedPacket,
   verifyBalancePatchSchedule,
@@ -174,6 +177,32 @@ describe('AIRLOCK deterministic engine', () => {
     expect(first.rolesHash).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(first.personaHash).toMatch(/^sha256:[0-9a-f]{64}$/);
     expect(first.entropyHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+  });
+
+  it('builds and verifies the Stage 0 analytics schema', () => {
+    const first = buildAnalyticsSchema('airlock-roadmap.test');
+    const second = buildAnalyticsSchema('airlock-roadmap.test');
+    const markdown = buildAnalyticsSchemaMarkdown(first);
+    const verified = verifyAnalyticsSchema(first);
+    const tampered = verifyAnalyticsSchema({
+      ...first,
+      analyticsHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.analytics_schema.stage0.v1');
+    expect(first.privacyPolicy.accountRequired).toBe(false);
+    expect(first.privacyPolicy.storesPrivatePrompts).toBe(false);
+    expect(first.privacyPolicy.storesRolesBeforeReveal).toBe(false);
+    expect(first.events.some((event) => event.name === 'pickem_submitted')).toBe(true);
+    expect(first.derivedMetrics.some((metric) => metric.id === 'd7-spectator-return-rate')).toBe(true);
+    expect(first.analyticsHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Analytics Schema');
+    expect(markdown).toContain('## Derived Metrics');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('analyticsHash does not match deterministic replay.');
   });
 
   it('builds stable per-tick commitments that cover every public snapshot tick', () => {

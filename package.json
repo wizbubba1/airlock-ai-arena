@@ -7,6 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc && vite build",
     "test": "vitest run",
+    "analytics-schema": "tsx src/tests/analytics-schema.ts",
     "artifact-catalog": "tsx src/tests/artifact-catalog.ts",
     "simulate": "tsx src/tests/simulate.ts",
     "audit": "tsx src/tests/audit.ts",
@@ -59,7 +60,8 @@
     "submit-agent": "tsx src/tests/submit-agent.ts",
     "verify-agent-submission": "tsx src/tests/verify-agent-submission.ts",
     "commit-prompt": "tsx src/tests/commit-prompt.ts",
-    "validate-agent": "tsx src/tests/validate-agent.ts"
+    "validate-agent": "tsx src/tests/validate-agent.ts",
+    "verify-analytics-schema": "tsx src/tests/verify-analytics-schema.ts"
   },
   "dependencies": {
     "@noble/hashes": "^2.2.0",

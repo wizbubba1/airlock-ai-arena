@@ -1,6 +1,7 @@
 import { agentIds, profiles } from './content';
 import { buildAuditBundle } from './bundle';
 import { ruleset } from './ruleset';
+import type { AnalyticsSchema } from './analytics-schema';
 import type { ArtifactCatalog } from './artifact-catalog';
 import type { B2BFeedPacket } from './b2b-feed-packet';
 import type { BalancePatchSchedule } from './balance-patch-schedule';
@@ -77,6 +78,45 @@ export function buildMatchReport(match: MatchState, seed: string): string {
     `|---:|---:|---:|---:|---|`,
     ...bundle.tickCommitments.map(
       (entry) => `| ${entry.tick} | ${entry.eventCount} | ${entry.snapshotCount} | ${entry.marketCount} | \`${entry.commitment}\` |`,
+    ),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildAnalyticsSchemaMarkdown(schema: AnalyticsSchema): string {
+  const lines: string[] = [
+    `# AIRLOCK Analytics Schema`,
+    ``,
+    `Program: \`${schema.programId}\``,
+    `Schema: \`${schema.schema}\``,
+    `Analytics hash: \`${schema.analyticsHash}\``,
+    ``,
+    `## Privacy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Account required | ${schema.privacyPolicy.accountRequired} |`,
+    `| Stores private prompts | ${schema.privacyPolicy.storesPrivatePrompts} |`,
+    `| Stores roles before reveal | ${schema.privacyPolicy.storesRolesBeforeReveal} |`,
+    `| Default retention | ${schema.privacyPolicy.defaultRetention} |`,
+    ``,
+    `## Events`,
+    ``,
+    `| Event | Required fields | Stage gate use | Retention |`,
+    `|---|---|---|---|`,
+    ...schema.events.map(
+      (event) =>
+        `| ${event.name} | ${event.requiredFields.join(', ')} | ${event.stageGateUse} | ${event.retentionPolicy} |`,
+    ),
+    ``,
+    `## Derived Metrics`,
+    ``,
+    `| Metric | Formula | Source events |`,
+    `|---|---|---|`,
+    ...schema.derivedMetrics.map(
+      (metric) => `| ${metric.id} | ${metric.formula} | ${metric.sourceEvents.join(', ')} |`,
     ),
     ``,
   ];
