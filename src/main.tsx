@@ -18,7 +18,18 @@ import {
   Trophy,
   XCircle,
 } from 'lucide-react';
-import { agentIds, auditDigests, buildAuditBundle, buildMatchReport, graph, profiles, ruleset, runLadderPreview, runMatch } from './engine';
+import {
+  agentIds,
+  auditDigests,
+  buildAuditBundle,
+  buildLadderReport,
+  buildMatchReport,
+  graph,
+  profiles,
+  ruleset,
+  runLadderPreview,
+  runMatch,
+} from './engine';
 import sampleManifest from './tests/fixtures/agents/vanta-author.json';
 import { promptCommitment, validateAgentManifest } from './authoring/manifest';
 import type { AgentId, TranscriptEvent } from './engine';
@@ -99,6 +110,11 @@ function App() {
   function downloadLadderPreview() {
     const blob = new Blob([JSON.stringify(ladder, null, 2)], { type: 'application/json' });
     downloadBlob(blob, `airlock-ladder-${seed}.json`);
+  }
+
+  function downloadLadderReport() {
+    const blob = new Blob([buildLadderReport(ladder)], { type: 'text/markdown' });
+    downloadBlob(blob, `airlock-ladder-${seed}.md`);
   }
 
   function downloadBlob(blob: Blob, filename: string) {
@@ -425,6 +441,10 @@ function App() {
             <h2>Ladder Preview</h2>
             <div className="button-pair">
               <span>{ladder.matchCount} matches</span>
+              <button className="icon-button" onClick={downloadLadderReport} type="button">
+                <Download size={18} />
+                Report
+              </button>
               <button className="icon-button" onClick={downloadLadderPreview} type="button">
                 <Download size={18} />
                 JSON
