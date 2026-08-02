@@ -91,5 +91,8 @@ jobs:
       - name: Show pack verifier smoke test
         run: npm run verify-show-pack -- ./artifacts/airlock-show-pack.json
 
+      - name: Full artifact verification smoke test
+        run: npm run verify-all
+
       - name: Build
         run: npm run build

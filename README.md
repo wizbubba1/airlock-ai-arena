@@ -56,6 +56,7 @@ The bundled simulator currently runs a 1,000-match balance pass with this observ
 ```bash
 npm install
 npm test
+npm run verify-all
 npm run artifact-catalog
 npm run simulate
 npm run audit -- airlock-stage-zero-demo
@@ -85,6 +86,7 @@ npm run dev
 ```
 
 `npm run audit -- <seed>` writes a reproducible JSON audit bundle to `artifacts/` unless you pass an explicit output path as the second argument.
+`npm run verify-all` regenerates the core artifact set and runs the deterministic verifier path in one command.
 `npm run artifact-catalog` writes JSON and Markdown indexes of every generated artifact, its schema, command, verifier, and review purpose.
 `npm run challenge -- <seed>` writes a challenge packet containing the audit bundle plus deterministic replay verification evidence.
 `npm run verify-audit -- <audit-bundle.json>` reruns the deterministic match for the bundle seed and fails if commitments, transcript, market, snapshots, entropy, or tick commitments drift.

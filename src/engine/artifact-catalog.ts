@@ -28,6 +28,14 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Full deterministic match audit data: commitments, transcript, market snapshots, public snapshots, entropy, and tick commitments.',
     },
     {
+      name: 'Full verification bundle',
+      schema: 'airlock.verify_all.local',
+      format: 'json',
+      defaultPath: './artifacts/',
+      generateCommand: 'npm run verify-all',
+      purpose: 'Single reviewer command that regenerates the core artifact set and runs deterministic verification checks in one pass.',
+    },
+    {
       name: 'Challenge packet',
       schema: 'airlock.challenge.stage0.v1',
       format: 'json',

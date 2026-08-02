@@ -133,6 +133,7 @@ Local verification commands:
 
 ```bash
 npm test
+npm run verify-all
 npm run artifact-catalog
 npm run audit -- airlock-stage-zero-demo
 npm run challenge -- airlock-stage-zero-demo
@@ -157,5 +158,7 @@ npm run verify-agent-submission -- ./artifacts/airlock-agent-submission.json
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
 npm run build
 ```
+
+`npm run verify-all` is the shortest reviewer path: it regenerates the core artifacts under `artifacts/` and verifies the deterministic replay checks in one pass.
 
 GitHub Actions runs the same smoke path on `main`.
