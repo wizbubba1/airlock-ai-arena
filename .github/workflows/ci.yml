@@ -55,6 +55,12 @@ jobs:
       - name: Agent manifest generator smoke test
         run: npm run create-agent -- --prompt src/tests/fixtures/agents/vanta-private-prompt.txt --out ./artifacts/generated-agent.json
 
+      - name: Agent submission packet smoke test
+        run: npm run submit-agent -- src/tests/fixtures/agents/vanta-author.json stage1-preview.001
+
+      - name: Agent submission verifier smoke test
+        run: npm run verify-agent-submission -- ./artifacts/airlock-agent-submission.json
+
       - name: Balance report smoke test
         run: npm run balance:check
 

@@ -33,6 +33,8 @@ import {
 import goodManifest from './fixtures/agents/vanta-author.json';
 import badManifest from './fixtures/agents/bad-agent.json';
 import { promptCommitment, validateAgentManifest } from '../authoring/manifest';
+import type { AuthoredAgentManifest } from '../authoring/manifest';
+import { buildAgentSubmissionPacket, verifyAgentSubmissionPacket } from '../authoring/submission';
 
 describe('AIRLOCK deterministic engine', () => {
   it('preserves canonical seeded regression outputs', () => {
@@ -460,6 +462,27 @@ describe('AIRLOCK deterministic engine', () => {
     expect(bad.ok).toBe(false);
     expect(bad.errors.length).toBeGreaterThan(4);
     expect(promptCommitment('Hold claims to route evidence.')).toMatch(/^sha256:[0-9a-f]{64}$/);
+  });
+
+  it('builds and verifies agent submission packets for Stage 1 intake', () => {
+    const manifest = goodManifest as AuthoredAgentManifest;
+    const packet = buildAgentSubmissionPacket(manifest, 'stage1-preview.test');
+    const repeated = buildAgentSubmissionPacket(manifest, 'stage1-preview.test');
+    const verified = verifyAgentSubmissionPacket(packet);
+    const tampered = verifyAgentSubmissionPacket({
+      ...packet,
+      submissionHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(repeated).toEqual(packet);
+    expect(packet.schema).toBe('airlock.agent.submission.v1');
+    expect(packet.validation.ok).toBe(true);
+    expect(packet.validation.manifestHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(packet.seasonManifestHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(packet.submissionHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(verified.ok).toBe(true);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('agent submission packet does not match deterministic reconstruction.');
   });
 
   it('generates manifest-compatible prompt commitments from private prompts', () => {

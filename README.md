@@ -26,6 +26,7 @@ This repository starts with the safest build slice:
 - Stage 1 authored-agent manifest validation
 - Stage 1 private-prompt commitment helper
 - Stage 1 public manifest generator
+- Stage 1 agent submission packet export
 - Stage 1 ladder preview simulator
 - versioned Stage 1 season manifest export
 - GitHub Actions CI and GitHub Pages deployment
@@ -75,6 +76,8 @@ npm run verify-ladder -- ./artifacts/airlock-ladder-64.json
 npm run season -- stage1-preview.001
 npm run verify-season -- ./artifacts/airlock-season-stage1-preview.001.json
 npm run create-agent -- --prompt src/tests/fixtures/agents/vanta-private-prompt.txt --out ./artifacts/generated-agent.json
+npm run submit-agent -- src/tests/fixtures/agents/vanta-author.json stage1-preview.001
+npm run verify-agent-submission -- ./artifacts/airlock-agent-submission.json
 npm run commit-prompt -- src/tests/fixtures/agents/vanta-private-prompt.txt
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
 npm run build
@@ -100,6 +103,8 @@ npm run dev
 `npm run season -- <season-id>` writes a versioned season manifest covering ruleset, model policy, authoring requirements, ladder settings, and audit policy.
 `npm run verify-season -- <season-manifest.json>` reconstructs the manifest for its season ID and fails if any locked policy or hash differs.
 `npm run create-agent -- --prompt <private-prompt.txt> --out <manifest.json>` writes a validated public authored-agent manifest using the prompt commitment helper.
+`npm run submit-agent -- <manifest.json> <season-id>` writes a Stage 1 intake packet with validation status, manifest hash, target season hash, and submission hash.
+`npm run verify-agent-submission -- <submission.json>` reconstructs the packet and fails if any intake field or hash differs.
 `npm run commit-prompt -- <private-prompt.txt>` prints the `sha256:` commitment to place in an authored-agent manifest.
 `npm run validate-agent -- <manifest.json>` validates a Stage 1 authored-agent manifest and returns its public manifest hash.
 

@@ -27,6 +27,8 @@
     "show-pack": "tsx src/tests/show-pack.ts",
     "report": "tsx src/tests/report.ts",
     "create-agent": "tsx src/tests/create-agent.ts",
+    "submit-agent": "tsx src/tests/submit-agent.ts",
+    "verify-agent-submission": "tsx src/tests/verify-agent-submission.ts",
     "commit-prompt": "tsx src/tests/commit-prompt.ts",
     "validate-agent": "tsx src/tests/validate-agent.ts"
   },

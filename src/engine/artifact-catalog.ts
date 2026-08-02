@@ -80,6 +80,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Locked preview-season policy manifest covering ruleset, model policy, authoring requirements, ladder settings, and audit policy.',
     },
     {
+      name: 'Agent submission packet',
+      schema: 'airlock.agent.submission.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-agent-submission.json',
+      generateCommand: 'npm run submit-agent -- src/tests/fixtures/agents/vanta-author.json stage1-preview.001',
+      verifyCommand: 'npm run verify-agent-submission -- ./artifacts/airlock-agent-submission.json',
+      purpose: 'Stage 1 author intake packet containing a public manifest, validation output, target season hash, and submission hash.',
+    },
+    {
       name: 'Canonical seed index',
       schema: 'airlock.seed_index.stage0.v1',
       format: 'json',
