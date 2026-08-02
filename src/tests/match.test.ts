@@ -275,4 +275,16 @@ describe('AIRLOCK deterministic engine', () => {
     expect(bad.errors.length).toBeGreaterThan(4);
     expect(promptCommitment('Hold claims to route evidence.')).toMatch(/^sha256:[0-9a-f]{64}$/);
   });
+
+  it('generates manifest-compatible prompt commitments from private prompts', () => {
+    const privatePrompt = readFileSync('src/tests/fixtures/agents/vanta-private-prompt.txt', 'utf8').trim();
+    const generated = {
+      ...goodManifest,
+      promptCommitment: promptCommitment(privatePrompt),
+    };
+    const result = validateAgentManifest(generated);
+
+    expect(result.ok).toBe(true);
+    expect(generated.promptCommitment).toBe(goodManifest.promptCommitment);
+  });
 });

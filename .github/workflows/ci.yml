@@ -43,6 +43,9 @@ jobs:
       - name: Prompt commitment smoke test
         run: npm run commit-prompt -- src/tests/fixtures/agents/vanta-private-prompt.txt
 
+      - name: Agent manifest generator smoke test
+        run: npm run create-agent -- --prompt src/tests/fixtures/agents/vanta-private-prompt.txt --out ./artifacts/generated-agent.json
+
       - name: Balance report smoke test
         run: npm run balance:check
 
