@@ -5,6 +5,8 @@ import {
   auditDigests,
   buildArtifactCatalog,
   buildArtifactCatalogReport,
+  buildB2BFeedPacket,
+  buildB2BFeedPacketMarkdown,
   buildBalancePatchSchedule,
   buildBalancePatchScheduleMarkdown,
   buildBalanceSummary,
@@ -49,6 +51,7 @@ import {
   runLadderPreview,
   runMatch,
   verifyAuditBundle,
+  verifyB2BFeedPacket,
   verifyBalancePatchSchedule,
   verifyBalanceSummary,
   verifyCertifiedEventFeed,
@@ -204,6 +207,33 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('commitments does not match deterministic replay.');
+  });
+
+  it('builds and verifies a B2B feed partner packet', () => {
+    const first = buildB2BFeedPacket('airlock-stage-zero-demo', 'airlock-roadmap.test');
+    const second = buildB2BFeedPacket('airlock-stage-zero-demo', 'airlock-roadmap.test');
+    const markdown = buildB2BFeedPacketMarkdown(first);
+    const verified = verifyB2BFeedPacket(first);
+    const tampered = verifyB2BFeedPacket({
+      ...first,
+      packetHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.b2b_feed_packet.stage2.v1');
+    expect(first.audience).toBe('licensed-operator-or-media-partner');
+    expect(first.commercialPosture.directConsumerBetting).toBe('not-implemented');
+    expect(first.commercialPosture.settlementRole).toBe('external-licensed-partner-only');
+    expect(first.evidence.certifiedFeed.events.length).toBeGreaterThan(0);
+    expect(first.evidence.marketReadiness.mode).toBe('real-money-blocked');
+    expect(first.reviewChecklist.some((gate) => gate.id === 'licensed-operator-gate' && gate.status === 'blocked')).toBe(true);
+    expect(first.packetHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK B2B Feed Packet');
+    expect(markdown).toContain('## Review Checklist');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('packetHash does not match deterministic replay.');
   });
 
   it('builds a challenge packet with audit verification evidence', () => {

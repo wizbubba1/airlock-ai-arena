@@ -28,6 +28,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Full deterministic match audit data: commitments, transcript, market snapshots, public snapshots, entropy, and tick commitments.',
     },
     {
+      name: 'B2B feed packet',
+      schema: 'airlock.b2b_feed_packet.stage2.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-b2b-feed-packet-airlock-stage-zero-demo.json',
+      generateCommand: 'npm run b2b-feed-packet -- airlock-stage-zero-demo airlock-roadmap.001',
+      verifyCommand: 'npm run verify-b2b-feed-packet -- ./artifacts/airlock-b2b-feed-packet-airlock-stage-zero-demo.json',
+      purpose: 'Licensed-operator or media partner packet that bundles the certified event feed, market readiness gates, stage-gate policy, and no direct consumer betting posture.',
+    },
+    {
       name: 'Full verification bundle',
       schema: 'airlock.verify_all.local',
       format: 'json',

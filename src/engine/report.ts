@@ -2,6 +2,7 @@ import { agentIds, profiles } from './content';
 import { buildAuditBundle } from './bundle';
 import { ruleset } from './ruleset';
 import type { ArtifactCatalog } from './artifact-catalog';
+import type { B2BFeedPacket } from './b2b-feed-packet';
 import type { BalancePatchSchedule } from './balance-patch-schedule';
 import type { CertifiedEventFeed } from './event-feed';
 import type { CollusionControls } from './collusion-controls';
@@ -101,6 +102,43 @@ export function buildArtifactCatalogReport(catalog: ArtifactCatalog): string {
     `## Review Use`,
     ``,
     ...catalog.entries.map((entry) => `- **${entry.name}:** ${entry.purpose}`),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildB2BFeedPacketMarkdown(packet: B2BFeedPacket): string {
+  const lines: string[] = [
+    `# AIRLOCK B2B Feed Packet`,
+    ``,
+    `Seed: \`${packet.seed}\``,
+    `Program: \`${packet.programId}\``,
+    `Schema: \`${packet.schema}\``,
+    `Packet hash: \`${packet.packetHash}\``,
+    ``,
+    `## Commercial Posture`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Audience | ${packet.audience} |`,
+    `| Direct consumer betting | ${packet.commercialPosture.directConsumerBetting} |`,
+    `| Operator role | ${packet.commercialPosture.operatorRole} |`,
+    `| Settlement role | ${packet.commercialPosture.settlementRole} |`,
+    ``,
+    `## Evidence`,
+    ``,
+    `| Artifact | Hash |`,
+    `|---|---|`,
+    `| Certified feed | \`${packet.evidence.certifiedFeed.feedHash}\` |`,
+    `| Market readiness | \`${packet.evidence.marketReadiness.readinessHash}\` |`,
+    `| Stage gate policy | \`${packet.evidence.stageGatePolicy.policyHash}\` |`,
+    ``,
+    `## Review Checklist`,
+    ``,
+    `| Gate | Status | Summary |`,
+    `|---|---|---|`,
+    ...packet.reviewChecklist.map((gate) => `| ${gate.id} | ${gate.status} | ${gate.summary} |`),
     ``,
   ];
 

@@ -1,3 +1,4 @@
+import { buildB2BFeedPacket } from './b2b-feed-packet';
 import { buildBalancePatchSchedule } from './balance-patch-schedule';
 import { buildBalanceSummary } from './balance';
 import { buildAuditBundle } from './bundle';
@@ -18,6 +19,7 @@ import { buildShowPack } from './show-pack';
 import { buildStageGatePolicy } from './stage-gate-policy';
 import { buildStage0Evaluation } from './stage0-evaluation';
 import { buildTranscriptQualityReport } from './transcript-quality';
+import type { B2BFeedPacket } from './b2b-feed-packet';
 import type { BalancePatchSchedule } from './balance-patch-schedule';
 import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
@@ -51,6 +53,14 @@ export interface BalanceVerificationResult {
   seedPrefix: string;
   errors: string[];
   expected: BalanceSummary;
+}
+
+export interface B2BFeedPacketVerificationResult {
+  ok: boolean;
+  seed: string;
+  programId: string;
+  errors: string[];
+  expected: B2BFeedPacket;
 }
 
 export interface BalancePatchScheduleVerificationResult {
@@ -208,6 +218,37 @@ export function verifyBalanceSummary(summary: BalanceSummary): BalanceVerificati
     ok: errors.length === 0,
     matchCount: summary.matchCount,
     seedPrefix: summary.seedPrefix,
+    errors,
+    expected,
+  };
+}
+
+export function verifyB2BFeedPacket(packet: B2BFeedPacket): B2BFeedPacketVerificationResult {
+  const expected = buildB2BFeedPacket(packet.seed, packet.programId);
+  const errors: string[] = [];
+
+  compare('schema', packet.schema, expected.schema, errors);
+  compare('audience', packet.audience, expected.audience, errors);
+  compare('commercialPosture', packet.commercialPosture, expected.commercialPosture, errors);
+  compare('evidence', packet.evidence, expected.evidence, errors);
+  compare('reviewChecklist', packet.reviewChecklist, expected.reviewChecklist, errors);
+  compare('packetHash', packet.packetHash, expected.packetHash, errors);
+
+  if (packet.commercialPosture.directConsumerBetting !== 'not-implemented') {
+    errors.push('B2B feed packet must not implement direct consumer betting.');
+  }
+  if (packet.commercialPosture.settlementRole !== 'external-licensed-partner-only') {
+    errors.push('B2B feed packet settlement must remain external licensed partner only.');
+  }
+  if (packet.evidence.certifiedFeed.events.length === 0) errors.push('B2B feed packet has no certified feed events.');
+  if (!packet.reviewChecklist.some((gate) => gate.id === 'licensed-operator-gate' && gate.status === 'blocked')) {
+    errors.push('B2B feed packet must show licensed-operator gate as blocked until evidence is supplied.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    seed: packet.seed,
+    programId: packet.programId,
     errors,
     expected,
   };

@@ -61,6 +61,8 @@ npm run verify-all
 npm run artifact-catalog
 npm run simulate
 npm run audit -- airlock-stage-zero-demo
+npm run b2b-feed-packet -- airlock-stage-zero-demo airlock-roadmap.001
+npm run verify-b2b-feed-packet -- ./artifacts/airlock-b2b-feed-packet-airlock-stage-zero-demo.json
 npm run balance-patch-schedule -- stage1-preview.001
 npm run verify-balance-patch-schedule -- ./artifacts/airlock-balance-patch-schedule-stage1-preview.001.json
 npm run collusion-controls -- stage1-preview.001
@@ -113,6 +115,8 @@ npm run dev
 ```
 
 `npm run audit -- <seed>` writes a reproducible JSON audit bundle to `artifacts/` unless you pass an explicit output path as the second argument.
+`npm run b2b-feed-packet -- <seed> <program-id>` writes JSON and Markdown partner-review packets bundling the certified event feed, market readiness gates, stage-gate policy, and no direct consumer betting posture.
+`npm run verify-b2b-feed-packet -- <b2b-feed-packet.json>` reconstructs the packet and fails if commercial posture, evidence, checklist, or packet hash drift.
 `npm run verify-all` regenerates the core artifact set and runs the deterministic verifier path in one command.
 `npm run artifact-catalog` writes JSON and Markdown indexes of every generated artifact, its schema, command, verifier, and review purpose.
 `npm run balance-patch-schedule -- <season-id>` writes JSON and Markdown precommitted balance-patch schedules for Stage 1 preview seasons.

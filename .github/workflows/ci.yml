@@ -31,6 +31,12 @@ jobs:
       - name: Audit bundle smoke test
         run: npm run audit -- airlock-stage-zero-demo
 
+      - name: B2B feed packet smoke test
+        run: npm run b2b-feed-packet -- airlock-stage-zero-demo airlock-roadmap.001
+
+      - name: B2B feed packet verifier smoke test
+        run: npm run verify-b2b-feed-packet -- ./artifacts/airlock-b2b-feed-packet-airlock-stage-zero-demo.json
+
       - name: Balance patch schedule smoke test
         run: npm run balance-patch-schedule -- stage1-preview.001
 

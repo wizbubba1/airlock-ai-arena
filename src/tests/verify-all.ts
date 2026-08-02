@@ -4,6 +4,8 @@ import {
   buildArtifactCatalog,
   buildArtifactCatalogReport,
   buildAuditBundle,
+  buildB2BFeedPacket,
+  buildB2BFeedPacketMarkdown,
   buildBalancePatchSchedule,
   buildBalancePatchScheduleMarkdown,
   buildBalanceSummary,
@@ -42,6 +44,7 @@ import {
   runLadderPreview,
   runMatch,
   verifyAuditBundle,
+  verifyB2BFeedPacket,
   verifyBalancePatchSchedule,
   verifyBalanceSummary,
   verifyCertifiedEventFeed,
@@ -74,6 +77,7 @@ const manifest = sampleManifest as AuthoredAgentManifest;
 
 const match = runMatch(seed);
 const audit = buildAuditBundle(match, seed);
+const b2bFeedPacket = buildB2BFeedPacket(seed);
 const balancePatchSchedule = buildBalancePatchSchedule(seasonId);
 const challenge = buildChallengePacket(seed);
 const collusionControls = buildCollusionControls(seasonId);
@@ -98,6 +102,8 @@ const catalog = buildArtifactCatalog();
 
 const outputs = [
   writeJson('airlock-audit-airlock-stage-zero-demo.json', audit),
+  writeJson('airlock-b2b-feed-packet-airlock-stage-zero-demo.json', b2bFeedPacket),
+  writeMarkdown('airlock-b2b-feed-packet-airlock-stage-zero-demo.md', buildB2BFeedPacketMarkdown(b2bFeedPacket)),
   writeJson('airlock-balance-patch-schedule-stage1-preview.001.json', balancePatchSchedule),
   writeMarkdown('airlock-balance-patch-schedule-stage1-preview.001.md', buildBalancePatchScheduleMarkdown(balancePatchSchedule)),
   writeJson('airlock-challenge-airlock-stage-zero-demo.json', challenge),
@@ -140,6 +146,7 @@ const outputs = [
 
 const checks = [
   { name: 'audit', ...verifyAuditBundle(audit) },
+  { name: 'b2b-feed-packet', ...verifyB2BFeedPacket(b2bFeedPacket) },
   { name: 'balance-patch-schedule', ...verifyBalancePatchSchedule(balancePatchSchedule) },
   { name: 'challenge', ok: challenge.verification.ok, errors: challenge.verification.errors },
   { name: 'collusion-controls', ...verifyCollusionControls(collusionControls) },

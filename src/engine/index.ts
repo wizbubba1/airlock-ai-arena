@@ -2,6 +2,7 @@ export { createMatch, runActionTick, runMatch } from './match';
 export { agentIds, graph, profiles, rooms } from './content';
 export { ruleset } from './ruleset';
 export { auditDigests, digest, stableStringify } from './audit';
+export { buildB2BFeedPacket } from './b2b-feed-packet';
 export { buildArtifactCatalog } from './artifact-catalog';
 export { buildBalancePatchSchedule } from './balance-patch-schedule';
 export { buildBalanceSummary, evaluateBalance, roundBalance } from './balance';
@@ -13,6 +14,7 @@ export { buildFallbackDrill } from './fallback-drill';
 export { buildInferenceReceipts } from './inference-receipts';
 export {
   buildArtifactCatalogReport,
+  buildB2BFeedPacketMarkdown,
   buildBalancePatchScheduleMarkdown,
   buildCertifiedEventFeedMarkdown,
   buildCollusionControlsMarkdown,
@@ -46,6 +48,7 @@ export { buildStage0Evaluation } from './stage0-evaluation';
 export { buildTranscriptQualityReport } from './transcript-quality';
 export {
   verifyAuditBundle,
+  verifyB2BFeedPacket,
   verifyBalancePatchSchedule,
   verifyBalanceSummary,
   verifyCertifiedEventFeed,
