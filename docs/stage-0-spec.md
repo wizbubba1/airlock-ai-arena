@@ -121,6 +121,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run operator-readiness` writes JSON and Markdown reports that aggregate the Stage 0 evaluation with inference receipts, reveal timing, sanitizer, and fallback evidence into one reviewer checklist.
 
+`npm run operations-runbook -- <program-id>` writes JSON and Markdown incident response runbooks for delayed reveals, fallback spikes, audit drift, private leaks, and quality regressions.
+
 `npm run pickem -- <seed> <agent-id> <agent-id>` writes a spectator receipt for two Saboteur picks. `npm run verify-pickem -- <receipt.json>` reruns the seed and verifies the score, actual Saboteurs, transcript hash, and receipt hash.
 
 `npm run seed-index` writes JSON and Markdown reports across the canonical regression seeds. The index gives reviewers a compact table of winners, match lengths, transcript hashes, market hashes, public snapshot hashes, and entropy hashes.
@@ -206,6 +208,8 @@ npm run sanitizer-audit -- airlock-stage-zero-demo
 npm run verify-sanitizer-audit -- ./artifacts/airlock-sanitizer-audit-airlock-stage-zero-demo.json
 npm run stage0-evaluation
 npm run verify-stage0-evaluation -- ./artifacts/airlock-stage0-evaluation.json
+npm run operations-runbook -- airlock-roadmap.001
+npm run verify-operations-runbook -- ./artifacts/airlock-operations-runbook-airlock-roadmap.001.json
 npm run pickem -- airlock-stage-zero-demo vanta kepler
 npm run verify-pickem -- ./artifacts/airlock-pickem-airlock-stage-zero-demo.json
 npm run seed-index

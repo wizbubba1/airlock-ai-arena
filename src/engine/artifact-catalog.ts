@@ -90,6 +90,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Single readiness checklist over Stage 0 product gates plus P1/P2/P4/P9 evidence artifacts.',
     },
     {
+      name: 'Operations runbook',
+      schema: 'airlock.operations_runbook.stage0.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-operations-runbook-airlock-roadmap.001.json',
+      generateCommand: 'npm run operations-runbook -- airlock-roadmap.001',
+      verifyCommand: 'npm run verify-operations-runbook -- ./artifacts/airlock-operations-runbook-airlock-roadmap.001.json',
+      purpose: 'Stage 0 incident response runbook for delayed reveals, fallback spikes, audit drift, private leaks, transcript quality regressions, public status, and post-incident review.',
+    },
+    {
       name: 'Market readiness',
       schema: 'airlock.market_readiness.stage2.v1',
       format: 'json',

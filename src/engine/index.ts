@@ -28,6 +28,7 @@ export {
   buildMarketReadinessMarkdown,
   buildMatchReport,
   buildOperatorReadinessMarkdown,
+  buildOperationsRunbookMarkdown,
   buildPromptRevealPolicyMarkdown,
   buildRandomnessBeaconPlanMarkdown,
   buildRevealScheduleMarkdown,
@@ -41,6 +42,7 @@ export {
 } from './report';
 export { runLadderPreview } from './ladder';
 export { buildMarketReadiness } from './market-readiness';
+export { buildOperationsRunbook } from './operations-runbook';
 export { buildPickemReceipt, parseAgentPick, verifyPickemReceipt } from './pickem';
 export { buildPromptRevealPolicy } from './prompt-reveal-policy';
 export { buildRandomnessBeaconPlan } from './randomness-beacon-plan';
@@ -68,6 +70,7 @@ export {
   verifyLadderSummary,
   verifyMarketReadiness,
   verifyOperatorReadiness,
+  verifyOperationsRunbook,
   verifyPromptRevealPolicy,
   verifyRandomnessBeaconPlan,
   verifyRevealSchedule,

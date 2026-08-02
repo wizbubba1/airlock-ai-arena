@@ -30,6 +30,8 @@ import {
   buildMatchReport,
   buildOperatorReadiness,
   buildOperatorReadinessMarkdown,
+  buildOperationsRunbook,
+  buildOperationsRunbookMarkdown,
   buildPromptRevealPolicy,
   buildPromptRevealPolicyMarkdown,
   buildRandomnessBeaconPlan,
@@ -71,6 +73,7 @@ import {
   verifyLadderSummary,
   verifyMarketReadiness,
   verifyOperatorReadiness,
+  verifyOperationsRunbook,
   verifyPickemReceipt,
   verifyPromptRevealPolicy,
   verifyRandomnessBeaconPlan,
@@ -923,6 +926,33 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('drillHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies a Stage 0 operations runbook', () => {
+    const first = buildOperationsRunbook('airlock-roadmap.001');
+    const second = buildOperationsRunbook('airlock-roadmap.001');
+    const markdown = buildOperationsRunbookMarkdown(first);
+    const verified = verifyOperationsRunbook(first);
+    const tampered = verifyOperationsRunbook({
+      ...first,
+      runbookHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.operations_runbook.stage0.v1');
+    expect(first.policy.moneyMarketsEnabled).toBe(false);
+    expect(first.policy.publicIncidentLogRequired).toBe(true);
+    expect(first.triggers.some((trigger) => trigger.id === 'audit-drift' && trigger.severity === 'sev1')).toBe(true);
+    expect(first.triggers.some((trigger) => trigger.id === 'private-leak' && trigger.severity === 'sev1')).toBe(true);
+    expect(first.steps.some((step) => step.phase === 'contain')).toBe(true);
+    expect(first.evidenceArtifacts).toContain('airlock-stage0-evaluation.json');
+    expect(first.runbookHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Operations Runbook');
+    expect(markdown).toContain('## Triggers');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('runbookHash does not match deterministic replay.');
   });
 
   it('builds and verifies deterministic inference receipts', () => {

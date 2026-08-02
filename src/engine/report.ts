@@ -13,6 +13,7 @@ import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
 import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
+import type { OperationsRunbook } from './operations-runbook';
 import type { PromptRevealPolicy } from './prompt-reveal-policy';
 import type { RandomnessBeaconPlan } from './randomness-beacon-plan';
 import type { RevealSchedule } from './reveal-schedule';
@@ -582,6 +583,49 @@ export function buildRandomnessBeaconPlanMarkdown(plan: RandomnessBeaconPlan): s
     `| Entry | Phase | Source | Timing | Purpose |`,
     `|---|---|---|---|---|`,
     ...plan.entries.map((entry) => `| ${entry.id} | ${entry.phase} | ${entry.source} | ${entry.timing} | ${entry.purpose} |`),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildOperationsRunbookMarkdown(runbook: OperationsRunbook): string {
+  const lines: string[] = [
+    `# AIRLOCK Operations Runbook`,
+    ``,
+    `Program: \`${runbook.programId}\``,
+    `Schema: \`${runbook.schema}\``,
+    `Runbook hash: \`${runbook.runbookHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Money markets enabled | ${runbook.policy.moneyMarketsEnabled} |`,
+    `| Public incident log required | ${runbook.policy.publicIncidentLogRequired} |`,
+    `| Frozen match policy | ${runbook.policy.frozenMatchPolicy} |`,
+    `| Audit dispute policy | ${runbook.policy.auditDisputePolicy} |`,
+    ``,
+    `## Triggers`,
+    ``,
+    `| Trigger | Severity | Signal | Threshold | Owner | Action |`,
+    `|---|---|---|---|---|---|`,
+    ...runbook.triggers.map(
+      (trigger) =>
+        `| ${trigger.id} | ${trigger.severity} | ${trigger.signal} | ${trigger.threshold} | ${trigger.owner} | ${trigger.action} |`,
+    ),
+    ``,
+    `## Response Steps`,
+    ``,
+    `| Step | Phase | Owner | Max delay | Action |`,
+    `|---|---|---|---:|---|`,
+    ...runbook.steps.map(
+      (step) => `| ${step.id} | ${step.phase} | ${step.owner} | ${step.maxDelayMinutes}m | ${step.action} |`,
+    ),
+    ``,
+    `## Evidence Artifacts`,
+    ``,
+    ...runbook.evidenceArtifacts.map((artifact) => `- \`${artifact}\``),
     ``,
   ];
 

@@ -27,6 +27,8 @@ import {
   buildMarketReadinessMarkdown,
   buildOperatorReadiness,
   buildOperatorReadinessMarkdown,
+  buildOperationsRunbook,
+  buildOperationsRunbookMarkdown,
   buildPromptRevealPolicy,
   buildPromptRevealPolicyMarkdown,
   buildRandomnessBeaconPlan,
@@ -64,6 +66,7 @@ import {
   verifyLadderSummary,
   verifyMarketReadiness,
   verifyOperatorReadiness,
+  verifyOperationsRunbook,
   verifyPromptRevealPolicy,
   verifyRandomnessBeaconPlan,
   verifyRevealSchedule,
@@ -103,6 +106,7 @@ const inferenceReceipts = buildInferenceReceipts(seed);
 const ladder = runLadderPreview(32, 'stage-one-ci');
 const marketReadiness = buildMarketReadiness(seed);
 const operatorReadiness = buildOperatorReadiness(seed, 100, 'stage-zero-ci');
+const operationsRunbook = buildOperationsRunbook(programId);
 const promptRevealPolicy = buildPromptRevealPolicy(seasonId);
 const randomnessBeaconPlan = buildRandomnessBeaconPlan(seed);
 const revealSchedule = buildRevealSchedule(seed);
@@ -143,6 +147,8 @@ const outputs = [
   writeMarkdown('airlock-market-readiness-airlock-stage-zero-demo.md', buildMarketReadinessMarkdown(marketReadiness)),
   writeJson('airlock-operator-readiness.json', operatorReadiness),
   writeMarkdown('airlock-operator-readiness.md', buildOperatorReadinessMarkdown(operatorReadiness)),
+  writeJson('airlock-operations-runbook-airlock-roadmap.001.json', operationsRunbook),
+  writeMarkdown('airlock-operations-runbook-airlock-roadmap.001.md', buildOperationsRunbookMarkdown(operationsRunbook)),
   writeJson('airlock-prompt-reveal-policy-stage1-preview.001.json', promptRevealPolicy),
   writeMarkdown('airlock-prompt-reveal-policy-stage1-preview.001.md', buildPromptRevealPolicyMarkdown(promptRevealPolicy)),
   writeJson('airlock-randomness-beacon-plan-airlock-stage-zero-demo.json', randomnessBeaconPlan),
@@ -185,6 +191,7 @@ const checks = [
   { name: 'ladder', ...verifyLadderSummary(ladder) },
   { name: 'market-readiness', ...verifyMarketReadiness(marketReadiness) },
   { name: 'operator-readiness', ...verifyOperatorReadiness(operatorReadiness) },
+  { name: 'operations-runbook', ...verifyOperationsRunbook(operationsRunbook) },
   { name: 'prompt-reveal-policy', ...verifyPromptRevealPolicy(promptRevealPolicy) },
   { name: 'randomness-beacon-plan', ...verifyRandomnessBeaconPlan(randomnessBeaconPlan) },
   { name: 'reveal-schedule', ...verifyRevealSchedule(revealSchedule) },

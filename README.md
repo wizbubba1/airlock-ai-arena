@@ -100,6 +100,8 @@ npm run market-readiness -- airlock-stage-zero-demo
 npm run verify-market-readiness -- ./artifacts/airlock-market-readiness-airlock-stage-zero-demo.json
 npm run operator-readiness
 npm run verify-operator-readiness -- ./artifacts/airlock-operator-readiness.json
+npm run operations-runbook -- airlock-roadmap.001
+npm run verify-operations-runbook -- ./artifacts/airlock-operations-runbook-airlock-roadmap.001.json
 npm run pickem -- airlock-stage-zero-demo vanta kepler
 npm run verify-pickem -- ./artifacts/airlock-pickem-airlock-stage-zero-demo.json
 npm run seed-index
@@ -164,6 +166,8 @@ npm run dev
 `npm run verify-market-readiness -- <market-readiness.json>` reruns the seeded market-readiness bundle and fails if policy, gates, evidence, or readiness hash drift.
 `npm run operator-readiness` writes a single JSON and Markdown readiness checklist over the Stage 0 product gates plus P1/P2/P4/P9 evidence artifacts.
 `npm run verify-operator-readiness -- <operator-readiness.json>` reruns the readiness bundle and fails if any gate, nested artifact, recommendation, or readiness hash drifts.
+`npm run operations-runbook -- <program-id>` writes JSON and Markdown incident response runbooks for delayed reveals, fallback spikes, audit drift, private leaks, and quality regressions.
+`npm run verify-operations-runbook -- <operations-runbook.json>` reconstructs the runbook and fails if incident policy, triggers, response steps, evidence artifacts, or runbook hash drift.
 `npm run pickem -- <seed> <agent-id> <agent-id>` writes a spectator pick'em receipt with the actual Saboteurs, score, transcript hash, and receipt hash.
 `npm run verify-pickem -- <receipt.json>` reruns the seeded match and fails if the receipt differs.
 `npm run seed-index` writes JSON and Markdown summaries for the canonical regression seeds, including result metrics and audit hashes.

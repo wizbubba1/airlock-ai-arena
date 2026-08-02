@@ -11,6 +11,7 @@ import { buildInferenceReceipts } from './inference-receipts';
 import { runLadderPreview } from './ladder';
 import { buildMarketReadiness } from './market-readiness';
 import { buildOperatorReadiness } from './readiness';
+import { buildOperationsRunbook } from './operations-runbook';
 import { buildPromptRevealPolicy } from './prompt-reveal-policy';
 import { buildRandomnessBeaconPlan } from './randomness-beacon-plan';
 import { runMatch } from './match';
@@ -36,6 +37,7 @@ import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
 import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
+import type { OperationsRunbook } from './operations-runbook';
 import type { PromptRevealPolicy } from './prompt-reveal-policy';
 import type { RandomnessBeaconPlan } from './randomness-beacon-plan';
 import type { RevealSchedule } from './reveal-schedule';
@@ -133,6 +135,13 @@ export interface OperatorReadinessVerificationResult {
   seed: string;
   errors: string[];
   expected: OperatorReadiness;
+}
+
+export interface OperationsRunbookVerificationResult {
+  ok: boolean;
+  programId: string;
+  errors: string[];
+  expected: OperationsRunbook;
 }
 
 export interface MarketReadinessVerificationResult {
@@ -505,6 +514,43 @@ export function verifyOperatorReadiness(readiness: OperatorReadiness): OperatorR
   return {
     ok: errors.length === 0,
     seed: readiness.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyOperationsRunbook(runbook: OperationsRunbook): OperationsRunbookVerificationResult {
+  const expected = buildOperationsRunbook(runbook.programId);
+  const errors: string[] = [];
+
+  compare('schema', runbook.schema, expected.schema, errors);
+  compare('policy', runbook.policy, expected.policy, errors);
+  compare('triggers', runbook.triggers, expected.triggers, errors);
+  compare('steps', runbook.steps, expected.steps, errors);
+  compare('evidenceArtifacts', runbook.evidenceArtifacts, expected.evidenceArtifacts, errors);
+  compare('runbookHash', runbook.runbookHash, expected.runbookHash, errors);
+
+  if (runbook.policy.moneyMarketsEnabled) errors.push('Stage 0 operations runbook must keep money markets disabled.');
+  if (!runbook.policy.publicIncidentLogRequired) errors.push('operations runbook must require public incident logs.');
+  if (!runbook.triggers.some((trigger) => trigger.id === 'audit-drift' && trigger.severity === 'sev1')) {
+    errors.push('operations runbook must define audit drift as a sev1 trigger.');
+  }
+  if (!runbook.triggers.some((trigger) => trigger.id === 'private-leak' && trigger.severity === 'sev1')) {
+    errors.push('operations runbook must define private leak as a sev1 trigger.');
+  }
+  if (!runbook.steps.some((step) => step.phase === 'contain' && step.action.includes('freeze'))) {
+    errors.push('operations runbook must contain a freeze step.');
+  }
+  if (!runbook.steps.some((step) => step.phase === 'review')) {
+    errors.push('operations runbook must include post-incident review.');
+  }
+  if (!runbook.evidenceArtifacts.includes('airlock-stage0-evaluation.json')) {
+    errors.push('operations runbook must cite stage0 evaluation evidence.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    programId: runbook.programId,
     errors,
     expected,
   };
