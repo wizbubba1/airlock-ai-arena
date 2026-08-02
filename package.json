@@ -7,6 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc && vite build",
     "test": "vitest run",
+    "artifact-catalog": "tsx src/tests/artifact-catalog.ts",
     "simulate": "tsx src/tests/simulate.ts",
     "audit": "tsx src/tests/audit.ts",
     "challenge": "tsx src/tests/challenge.ts",

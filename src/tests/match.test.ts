@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 import {
   agentIds,
   auditDigests,
+  buildArtifactCatalog,
+  buildArtifactCatalogReport,
   buildBalanceSummary,
   buildAuditBundle,
   buildChallengePacket,
@@ -197,6 +199,27 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('manifestHash does not match deterministic replay.');
+  });
+
+  it('builds a deterministic artifact catalog', () => {
+    const first = buildArtifactCatalog();
+    const second = buildArtifactCatalog();
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.artifact_catalog.v1');
+    expect(first.entries.length).toBeGreaterThanOrEqual(8);
+    expect(first.entries.some((entry) => entry.schema === 'airlock.audit.stage0.v1')).toBe(true);
+    expect(first.entries.some((entry) => entry.verifyCommand?.includes('verify-season'))).toBe(true);
+    expect(first.catalogHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+  });
+
+  it('renders a markdown artifact catalog report', () => {
+    const report = buildArtifactCatalogReport(buildArtifactCatalog());
+
+    expect(report).toContain('# AIRLOCK Artifact Catalog');
+    expect(report).toContain('| Artifact | Schema | Format | Generate | Verify |');
+    expect(report).toContain('## Review Use');
+    expect(report).toContain('npm run verify-audit');
   });
 
   it('runs a deterministic Stage 1 ladder preview', () => {

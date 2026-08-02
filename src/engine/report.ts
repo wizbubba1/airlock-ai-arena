@@ -1,6 +1,7 @@
 import { agentIds, profiles } from './content';
 import { buildAuditBundle } from './bundle';
 import { ruleset } from './ruleset';
+import type { ArtifactCatalog } from './artifact-catalog';
 import type { LadderSummary } from './ladder';
 import type { SeedIndex } from './seed-index';
 import type { ShowPack } from './show-pack';
@@ -63,6 +64,30 @@ export function buildMatchReport(match: MatchState, seed: string): string {
     ...bundle.tickCommitments.map(
       (entry) => `| ${entry.tick} | ${entry.eventCount} | ${entry.snapshotCount} | ${entry.marketCount} | \`${entry.commitment}\` |`,
     ),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildArtifactCatalogReport(catalog: ArtifactCatalog): string {
+  const lines: string[] = [
+    `# AIRLOCK Artifact Catalog`,
+    ``,
+    `Schema: \`${catalog.schema}\``,
+    `Artifacts: ${catalog.entries.length}`,
+    `Catalog hash: \`${catalog.catalogHash}\``,
+    ``,
+    `| Artifact | Schema | Format | Generate | Verify |`,
+    `|---|---|---|---|---|`,
+    ...catalog.entries.map(
+      (entry) =>
+        `| ${entry.name} | \`${entry.schema}\` | ${entry.format} | \`${entry.generateCommand}\` | ${entry.verifyCommand ? `\`${entry.verifyCommand}\`` : 'manual review'} |`,
+    ),
+    ``,
+    `## Review Use`,
+    ``,
+    ...catalog.entries.map((entry) => `- **${entry.name}:** ${entry.purpose}`),
     ``,
   ];
 

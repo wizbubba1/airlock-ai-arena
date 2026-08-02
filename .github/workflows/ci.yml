@@ -25,6 +25,9 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Artifact catalog smoke test
+        run: npm run artifact-catalog
+
       - name: Audit bundle smoke test
         run: npm run audit -- airlock-stage-zero-demo
 

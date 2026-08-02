@@ -21,6 +21,7 @@ This repository starts with the safest build slice:
 - terminal-generated Markdown match reports
 - canonical seed index reports
 - Stage 0 show pack export
+- artifact catalog export
 - pick'em receipt export and verification
 - Stage 1 authored-agent manifest validation
 - Stage 1 private-prompt commitment helper
@@ -54,6 +55,7 @@ The bundled simulator currently runs a 1,000-match balance pass with this observ
 ```bash
 npm install
 npm test
+npm run artifact-catalog
 npm run simulate
 npm run audit -- airlock-stage-zero-demo
 npm run challenge -- airlock-stage-zero-demo
@@ -80,6 +82,7 @@ npm run dev
 ```
 
 `npm run audit -- <seed>` writes a reproducible JSON audit bundle to `artifacts/` unless you pass an explicit output path as the second argument.
+`npm run artifact-catalog` writes JSON and Markdown indexes of every generated artifact, its schema, command, verifier, and review purpose.
 `npm run challenge -- <seed>` writes a challenge packet containing the audit bundle plus deterministic replay verification evidence.
 `npm run verify-audit -- <audit-bundle.json>` reruns the deterministic match for the bundle seed and fails if commitments, transcript, market, snapshots, entropy, or tick commitments drift.
 `npm run report -- <seed>` writes a Markdown match report suitable for public archives or Gists.

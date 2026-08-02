@@ -18,6 +18,7 @@ Stage 0 includes:
 - pick'em receipt export and verification;
 - canonical seed index report export;
 - Stage 0 show pack export;
+- artifact catalog export;
 - terminal audit, report, balance, and authored-agent validation commands.
 - deterministic Stage 1 preview ladder reports.
 - versioned Stage 1 preview season manifests.
@@ -74,6 +75,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 - per-tick public commitments;
 - SHA-256 commitments for roles, personas, transcript, market, snapshots, and entropy.
 
+`npm run artifact-catalog` writes a JSON and Markdown index of all generated artifacts, including schemas, generation commands, verifier commands, and intended review use.
+
 `npm run verify-audit -- <audit-bundle.json>` reruns the match for the bundle seed and compares every public artifact against the deterministic replay. A mismatch fails with the bundle sections that drifted.
 
 `npm run challenge -- <seed>` writes a single challenge packet containing the audit bundle plus deterministic replay verification evidence. This is the Stage 0 stand-in for the optimistic challenge workflow in the patched product spec.
@@ -125,6 +128,7 @@ Local verification commands:
 
 ```bash
 npm test
+npm run artifact-catalog
 npm run audit -- airlock-stage-zero-demo
 npm run challenge -- airlock-stage-zero-demo
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
