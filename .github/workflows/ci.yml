@@ -34,6 +34,12 @@ jobs:
       - name: Analytics schema verifier smoke test
         run: npm run verify-analytics-schema -- ./artifacts/airlock-analytics-schema-airlock-roadmap.001.json
 
+      - name: Engagement baseline smoke test
+        run: npm run engagement-baseline -- airlock-roadmap.001
+
+      - name: Engagement baseline verifier smoke test
+        run: npm run verify-engagement-baseline -- ./artifacts/airlock-engagement-baseline-airlock-roadmap.001.json
+
       - name: Author intake registry smoke test
         run: npm run author-intake-registry -- stage1-preview.001
 

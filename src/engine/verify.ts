@@ -6,6 +6,7 @@ import { buildBalanceSummary } from './balance';
 import { buildAuditBundle } from './bundle';
 import { buildCertifiedEventFeed } from './event-feed';
 import { buildCollusionControls } from './collusion-controls';
+import { buildEngagementBaseline } from './engagement-baseline';
 import { buildFallbackDrill } from './fallback-drill';
 import { buildInferenceReceipts } from './inference-receipts';
 import { buildJurisdictionPolicy } from './jurisdiction-policy';
@@ -35,6 +36,7 @@ import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
 import type { CertifiedEventFeed } from './event-feed';
 import type { CollusionControls } from './collusion-controls';
+import type { EngagementBaseline } from './engagement-baseline';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
 import type { JurisdictionPolicy } from './jurisdiction-policy';
@@ -112,6 +114,13 @@ export interface CollusionControlsVerificationResult {
   seasonId: string;
   errors: string[];
   expected: CollusionControls;
+}
+
+export interface EngagementBaselineVerificationResult {
+  ok: boolean;
+  programId: string;
+  errors: string[];
+  expected: EngagementBaseline;
 }
 
 export interface FallbackDrillVerificationResult {
@@ -462,6 +471,37 @@ export function verifyCollusionControls(controls: CollusionControls): CollusionC
   return {
     ok: errors.length === 0,
     seasonId: controls.seasonId,
+    errors,
+    expected,
+  };
+}
+
+export function verifyEngagementBaseline(baseline: EngagementBaseline): EngagementBaselineVerificationResult {
+  const expected = buildEngagementBaseline(baseline.programId);
+  const errors: string[] = [];
+
+  compare('schema', baseline.schema, expected.schema, errors);
+  compare('policy', baseline.policy, expected.policy, errors);
+  compare('metrics', baseline.metrics, expected.metrics, errors);
+  compare('evidence', baseline.evidence, expected.evidence, errors);
+  compare('baselineHash', baseline.baselineHash, expected.baselineHash, errors);
+
+  if (baseline.policy.usesPrivatePrompts) errors.push('engagement baseline must not use private prompts.');
+  if (baseline.policy.requiresAccounts) errors.push('Stage 0 engagement baseline must not require accounts.');
+  if (!baseline.policy.liveAnalyticsRequired) errors.push('engagement baseline must require live analytics before Stage 0 decision.');
+  if (!baseline.metrics.some((metric) => metric.id === 'd7-spectator-return-rate')) {
+    errors.push('engagement baseline must include D7 spectator return.');
+  }
+  if (!baseline.metrics.some((metric) => metric.id === 'pickem-participation-rate')) {
+    errors.push('engagement baseline must include pickem participation.');
+  }
+  if (!baseline.metrics.every((metric) => metric.status === 'needs-live-data')) {
+    errors.push('engagement baseline metrics must remain needs-live-data until production analytics are supplied.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    programId: baseline.programId,
     errors,
     expected,
   };

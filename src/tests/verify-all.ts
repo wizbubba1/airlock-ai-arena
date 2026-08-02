@@ -18,6 +18,8 @@ import {
   buildCertifiedEventFeedMarkdown,
   buildCollusionControls,
   buildCollusionControlsMarkdown,
+  buildEngagementBaseline,
+  buildEngagementBaselineMarkdown,
   buildFallbackDrill,
   buildFallbackDrillMarkdown,
   buildInferenceReceipts,
@@ -67,6 +69,7 @@ import {
   verifyBalanceSummary,
   verifyCertifiedEventFeed,
   verifyCollusionControls,
+  verifyEngagementBaseline,
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyJurisdictionPolicy,
@@ -108,6 +111,7 @@ const b2bFeedPacket = buildB2BFeedPacket(seed);
 const balancePatchSchedule = buildBalancePatchSchedule(seasonId);
 const challenge = buildChallengePacket(seed);
 const collusionControls = buildCollusionControls(seasonId);
+const engagementBaseline = buildEngagementBaseline(programId);
 const eventFeed = buildCertifiedEventFeed(seed);
 const balance = buildBalanceSummary(100, 'stage-zero-ci');
 const fallbackDrill = buildFallbackDrill(seed);
@@ -146,6 +150,8 @@ const outputs = [
   writeJson('airlock-challenge-airlock-stage-zero-demo.json', challenge),
   writeJson('airlock-collusion-controls-stage1-preview.001.json', collusionControls),
   writeMarkdown('airlock-collusion-controls-stage1-preview.001.md', buildCollusionControlsMarkdown(collusionControls)),
+  writeJson('airlock-engagement-baseline-airlock-roadmap.001.json', engagementBaseline),
+  writeMarkdown('airlock-engagement-baseline-airlock-roadmap.001.md', buildEngagementBaselineMarkdown(engagementBaseline)),
   writeJson('airlock-event-feed-airlock-stage-zero-demo.json', eventFeed),
   writeMarkdown('airlock-event-feed-airlock-stage-zero-demo.md', buildCertifiedEventFeedMarkdown(eventFeed)),
   writeJson('airlock-balance-ci.json', balance),
@@ -201,6 +207,7 @@ const checks = [
   { name: 'balance-patch-schedule', ...verifyBalancePatchSchedule(balancePatchSchedule) },
   { name: 'challenge', ok: challenge.verification.ok, errors: challenge.verification.errors },
   { name: 'collusion-controls', ...verifyCollusionControls(collusionControls) },
+  { name: 'engagement-baseline', ...verifyEngagementBaseline(engagementBaseline) },
   { name: 'event-feed', ...verifyCertifiedEventFeed(eventFeed) },
   { name: 'balance-guard', ...evaluateBalance(balance) },
   { name: 'balance', ...verifyBalanceSummary(balance) },

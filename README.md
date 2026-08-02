@@ -60,6 +60,8 @@ npm test
 npm run verify-all
 npm run analytics-schema -- airlock-roadmap.001
 npm run verify-analytics-schema -- ./artifacts/airlock-analytics-schema-airlock-roadmap.001.json
+npm run engagement-baseline -- airlock-roadmap.001
+npm run verify-engagement-baseline -- ./artifacts/airlock-engagement-baseline-airlock-roadmap.001.json
 npm run author-intake-registry -- stage1-preview.001
 npm run verify-author-intake-registry -- ./artifacts/airlock-author-intake-registry-stage1-preview.001.json
 npm run artifact-catalog
@@ -133,6 +135,8 @@ npm run dev
 `npm run audit -- <seed>` writes a reproducible JSON audit bundle to `artifacts/` unless you pass an explicit output path as the second argument.
 `npm run analytics-schema -- <program-id>` writes JSON and Markdown Stage 0 analytics schema artifacts for D7 return, pick'em participation, transcript completion, and stage-gate metrics.
 `npm run verify-analytics-schema -- <analytics-schema.json>` reconstructs the schema and fails if privacy policy, events, derived metrics, or analytics hash drift.
+`npm run engagement-baseline -- <program-id>` writes JSON and Markdown Stage 0 engagement baseline artifacts for D7 return, pick'em participation, transcript completion, and audit-export metrics.
+`npm run verify-engagement-baseline -- <engagement-baseline.json>` reconstructs the baseline and fails if policy, metrics, evidence, or baseline hash drift.
 `npm run author-intake-registry -- <season-id>` writes JSON and Markdown Stage 1 author intake registry artifacts for valid manifests, prompt commitments, duplicate identity review, and the 100 active-agent target.
 `npm run verify-author-intake-registry -- <author-intake-registry.json>` reconstructs the registry and fails if intake policy, gates, sample status, season hash, or registry hash drift.
 `npm run b2b-feed-packet -- <seed> <program-id>` writes JSON and Markdown partner-review packets bundling the certified event feed, market readiness gates, stage-gate policy, and no direct consumer betting posture.

@@ -20,6 +20,8 @@ import {
   buildCertifiedEventFeedMarkdown,
   buildCollusionControls,
   buildCollusionControlsMarkdown,
+  buildEngagementBaseline,
+  buildEngagementBaselineMarkdown,
   buildFallbackDrill,
   buildFallbackDrillMarkdown,
   buildInferenceReceipts,
@@ -74,6 +76,7 @@ import {
   verifyBalanceSummary,
   verifyCertifiedEventFeed,
   verifyCollusionControls,
+  verifyEngagementBaseline,
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyJurisdictionPolicy,
@@ -224,6 +227,34 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('analyticsHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies the Stage 0 engagement baseline', () => {
+    const first = buildEngagementBaseline('airlock-roadmap.test');
+    const second = buildEngagementBaseline('airlock-roadmap.test');
+    const markdown = buildEngagementBaselineMarkdown(first);
+    const verified = verifyEngagementBaseline(first);
+    const tampered = verifyEngagementBaseline({
+      ...first,
+      baselineHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.engagement_baseline.stage0.v1');
+    expect(first.policy.usesPrivatePrompts).toBe(false);
+    expect(first.policy.requiresAccounts).toBe(false);
+    expect(first.policy.stage0Decision).toBe('needs-live-data');
+    expect(first.policy.liveAnalyticsRequired).toBe(true);
+    expect(first.metrics.some((metric) => metric.id === 'd7-spectator-return-rate')).toBe(true);
+    expect(first.metrics.some((metric) => metric.id === 'pickem-participation-rate')).toBe(true);
+    expect(first.metrics.every((metric) => metric.status === 'needs-live-data')).toBe(true);
+    expect(first.baselineHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Engagement Baseline');
+    expect(markdown).toContain('## Metrics');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('baselineHash does not match deterministic replay.');
   });
 
   it('builds and verifies the Stage 1 author intake registry', () => {

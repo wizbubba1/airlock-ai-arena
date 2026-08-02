@@ -8,6 +8,7 @@ import type { B2BFeedPacket } from './b2b-feed-packet';
 import type { BalancePatchSchedule } from './balance-patch-schedule';
 import type { CertifiedEventFeed } from './event-feed';
 import type { CollusionControls } from './collusion-controls';
+import type { EngagementBaseline } from './engagement-baseline';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
 import type { JurisdictionPolicy } from './jurisdiction-policy';
@@ -269,6 +270,44 @@ export function buildCertifiedEventFeedMarkdown(feed: CertifiedEventFeed): strin
     `Winner: ${feed.terminal.winner}`,
     `Reason: ${feed.terminal.reason}`,
     `Saboteurs: ${feed.terminal.saboteurs.map((id) => profiles[id].name).join(', ')}`,
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildEngagementBaselineMarkdown(baseline: EngagementBaseline): string {
+  const lines: string[] = [
+    `# AIRLOCK Engagement Baseline`,
+    ``,
+    `Program: \`${baseline.programId}\``,
+    `Schema: \`${baseline.schema}\``,
+    `Baseline hash: \`${baseline.baselineHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Uses private prompts | ${baseline.policy.usesPrivatePrompts} |`,
+    `| Requires accounts | ${baseline.policy.requiresAccounts} |`,
+    `| Stage 0 decision | ${baseline.policy.stage0Decision} |`,
+    `| Live analytics required | ${baseline.policy.liveAnalyticsRequired} |`,
+    ``,
+    `## Metrics`,
+    ``,
+    `| Metric | Numerator | Denominator | Value | Threshold | Status | Source |`,
+    `|---|---:|---:|---:|---|---|---|`,
+    ...baseline.metrics.map(
+      (metric) =>
+        `| ${metric.id} | ${metric.numerator} | ${metric.denominator} | ${metric.value} | ${metric.threshold} | ${metric.status} | ${metric.source} |`,
+    ),
+    ``,
+    `## Evidence`,
+    ``,
+    `| Artifact | Hash |`,
+    `|---|---|`,
+    `| Analytics schema | \`${baseline.evidence.analyticsSchemaHash}\` |`,
+    `| Stage gate policy | \`${baseline.evidence.stageGatePolicyHash}\` |`,
     ``,
   ];
 

@@ -28,6 +28,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Stage 0 product analytics contract for measuring D7 return, pickem participation, transcript completion, and stage-gate metrics without accounts or private prompt storage.',
     },
     {
+      name: 'Engagement baseline',
+      schema: 'airlock.engagement_baseline.stage0.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-engagement-baseline-airlock-roadmap.001.json',
+      generateCommand: 'npm run engagement-baseline -- airlock-roadmap.001',
+      verifyCommand: 'npm run verify-engagement-baseline -- ./artifacts/airlock-engagement-baseline-airlock-roadmap.001.json',
+      purpose: 'Stage 0 live analytics baseline for D7 return, pickem participation, transcript completion, and audit-export metrics before any Show -> Ladder decision.',
+    },
+    {
       name: 'Author intake registry',
       schema: 'airlock.author_intake_registry.stage1.preview.v1',
       format: 'json',

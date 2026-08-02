@@ -12,6 +12,7 @@ export { buildAuditBundle, buildTickCommitments } from './bundle';
 export { buildChallengePacket } from './challenge';
 export { buildCertifiedEventFeed } from './event-feed';
 export { buildCollusionControls } from './collusion-controls';
+export { buildEngagementBaseline } from './engagement-baseline';
 export { buildFallbackDrill } from './fallback-drill';
 export { buildInferenceReceipts } from './inference-receipts';
 export {
@@ -22,6 +23,7 @@ export {
   buildBalancePatchScheduleMarkdown,
   buildCertifiedEventFeedMarkdown,
   buildCollusionControlsMarkdown,
+  buildEngagementBaselineMarkdown,
   buildFallbackDrillMarkdown,
   buildInferenceReceiptsMarkdown,
   buildJurisdictionPolicyMarkdown,
@@ -71,6 +73,7 @@ export {
   verifyBalanceSummary,
   verifyCertifiedEventFeed,
   verifyCollusionControls,
+  verifyEngagementBaseline,
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyJurisdictionPolicy,
