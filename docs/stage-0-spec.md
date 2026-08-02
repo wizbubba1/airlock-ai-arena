@@ -81,6 +81,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run analytics-schema -- <program-id>` writes JSON and Markdown Stage 0 analytics schema artifacts. The artifact defines privacy-safe events and derived metrics for D7 return, pick'em participation, transcript completion, and stage-gate review.
 
+`npm run author-intake-registry -- <season-id>` writes JSON and Markdown Stage 1 author intake registry artifacts. The artifact gates valid manifests, prompt commitments, duplicate identity review, and the 100 active authored-agent target.
+
 `npm run b2b-feed-packet -- <seed> <program-id>` writes JSON and Markdown licensed-operator or media partner packets. The artifact bundles certified feed evidence, market readiness gates, stage-gate policy, and the no direct consumer betting posture.
 
 `npm run verify-audit -- <audit-bundle.json>` reruns the match for the bundle seed and compares every public artifact against the deterministic replay. A mismatch fails with the bundle sections that drifted.
@@ -169,6 +171,8 @@ npm test
 npm run verify-all
 npm run analytics-schema -- airlock-roadmap.001
 npm run verify-analytics-schema -- ./artifacts/airlock-analytics-schema-airlock-roadmap.001.json
+npm run author-intake-registry -- stage1-preview.001
+npm run verify-author-intake-registry -- ./artifacts/airlock-author-intake-registry-stage1-preview.001.json
 npm run artifact-catalog
 npm run audit -- airlock-stage-zero-demo
 npm run b2b-feed-packet -- airlock-stage-zero-demo airlock-roadmap.001

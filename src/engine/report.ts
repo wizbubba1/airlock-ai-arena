@@ -3,6 +3,7 @@ import { buildAuditBundle } from './bundle';
 import { ruleset } from './ruleset';
 import type { AnalyticsSchema } from './analytics-schema';
 import type { ArtifactCatalog } from './artifact-catalog';
+import type { AuthorIntakeRegistry } from './author-intake-registry';
 import type { B2BFeedPacket } from './b2b-feed-packet';
 import type { BalancePatchSchedule } from './balance-patch-schedule';
 import type { CertifiedEventFeed } from './event-feed';
@@ -119,6 +120,43 @@ export function buildAnalyticsSchemaMarkdown(schema: AnalyticsSchema): string {
     ...schema.derivedMetrics.map(
       (metric) => `| ${metric.id} | ${metric.formula} | ${metric.sourceEvents.join(', ')} |`,
     ),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildAuthorIntakeRegistryMarkdown(registry: AuthorIntakeRegistry): string {
+  const lines: string[] = [
+    `# AIRLOCK Author Intake Registry`,
+    ``,
+    `Season: \`${registry.seasonId}\``,
+    `Schema: \`${registry.schema}\``,
+    `Season manifest: \`${registry.seasonManifestHash}\``,
+    `Registry hash: \`${registry.registryHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Active author target | ${registry.policy.activeAuthorTarget} |`,
+    `| Valid submission required | ${registry.policy.validSubmissionRequired} |`,
+    `| Prompt commit required | ${registry.policy.promptCommitRequired} |`,
+    `| Duplicate identity review | ${registry.policy.duplicateIdentityReview} |`,
+    ``,
+    `## Gates`,
+    ``,
+    `| Gate | Threshold | Source | Status |`,
+    `|---|---|---|---|`,
+    ...registry.gates.map((gate) => `| ${gate.id} | ${gate.threshold} | ${gate.sourceArtifact} | ${gate.status} |`),
+    ``,
+    `## Sample Intake`,
+    ``,
+    `| Metric | Value |`,
+    `|---|---:|`,
+    `| Valid submissions | ${registry.sampleIntake.validSubmissions} |`,
+    `| Invalid submissions | ${registry.sampleIntake.invalidSubmissions} |`,
+    `| Active author target | ${registry.sampleIntake.activeAuthorTarget} |`,
     ``,
   ];
 

@@ -5,6 +5,8 @@ import {
   buildArtifactCatalogReport,
   buildAnalyticsSchema,
   buildAnalyticsSchemaMarkdown,
+  buildAuthorIntakeRegistry,
+  buildAuthorIntakeRegistryMarkdown,
   buildAuditBundle,
   buildB2BFeedPacket,
   buildB2BFeedPacketMarkdown,
@@ -48,6 +50,7 @@ import {
   runLadderPreview,
   runMatch,
   verifyAnalyticsSchema,
+  verifyAuthorIntakeRegistry,
   verifyAuditBundle,
   verifyB2BFeedPacket,
   verifyBalancePatchSchedule,
@@ -84,6 +87,7 @@ const manifest = sampleManifest as AuthoredAgentManifest;
 
 const match = runMatch(seed);
 const analyticsSchema = buildAnalyticsSchema(programId);
+const authorIntakeRegistry = buildAuthorIntakeRegistry(seasonId);
 const audit = buildAuditBundle(match, seed);
 const b2bFeedPacket = buildB2BFeedPacket(seed);
 const balancePatchSchedule = buildBalancePatchSchedule(seasonId);
@@ -112,6 +116,8 @@ const catalog = buildArtifactCatalog();
 const outputs = [
   writeJson('airlock-analytics-schema-airlock-roadmap.001.json', analyticsSchema),
   writeMarkdown('airlock-analytics-schema-airlock-roadmap.001.md', buildAnalyticsSchemaMarkdown(analyticsSchema)),
+  writeJson('airlock-author-intake-registry-stage1-preview.001.json', authorIntakeRegistry),
+  writeMarkdown('airlock-author-intake-registry-stage1-preview.001.md', buildAuthorIntakeRegistryMarkdown(authorIntakeRegistry)),
   writeJson('airlock-audit-airlock-stage-zero-demo.json', audit),
   writeJson('airlock-b2b-feed-packet-airlock-stage-zero-demo.json', b2bFeedPacket),
   writeMarkdown('airlock-b2b-feed-packet-airlock-stage-zero-demo.md', buildB2BFeedPacketMarkdown(b2bFeedPacket)),
@@ -159,6 +165,7 @@ const outputs = [
 
 const checks = [
   { name: 'analytics-schema', ...verifyAnalyticsSchema(analyticsSchema) },
+  { name: 'author-intake-registry', ...verifyAuthorIntakeRegistry(authorIntakeRegistry) },
   { name: 'audit', ...verifyAuditBundle(audit) },
   { name: 'b2b-feed-packet', ...verifyB2BFeedPacket(b2bFeedPacket) },
   { name: 'balance-patch-schedule', ...verifyBalancePatchSchedule(balancePatchSchedule) },

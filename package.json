@@ -9,6 +9,7 @@
     "test": "vitest run",
     "analytics-schema": "tsx src/tests/analytics-schema.ts",
     "artifact-catalog": "tsx src/tests/artifact-catalog.ts",
+    "author-intake-registry": "tsx src/tests/author-intake-registry.ts",
     "simulate": "tsx src/tests/simulate.ts",
     "audit": "tsx src/tests/audit.ts",
     "b2b-feed-packet": "tsx src/tests/b2b-feed-packet.ts",
@@ -63,7 +64,8 @@
     "verify-agent-submission": "tsx src/tests/verify-agent-submission.ts",
     "commit-prompt": "tsx src/tests/commit-prompt.ts",
     "validate-agent": "tsx src/tests/validate-agent.ts",
-    "verify-analytics-schema": "tsx src/tests/verify-analytics-schema.ts"
+    "verify-analytics-schema": "tsx src/tests/verify-analytics-schema.ts",
+    "verify-author-intake-registry": "tsx src/tests/verify-author-intake-registry.ts"
   },
   "dependencies": {
     "@noble/hashes": "^2.2.0",

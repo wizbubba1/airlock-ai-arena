@@ -7,6 +7,8 @@ import {
   buildArtifactCatalogReport,
   buildAnalyticsSchema,
   buildAnalyticsSchemaMarkdown,
+  buildAuthorIntakeRegistry,
+  buildAuthorIntakeRegistryMarkdown,
   buildB2BFeedPacket,
   buildB2BFeedPacketMarkdown,
   buildBalancePatchSchedule,
@@ -55,6 +57,7 @@ import {
   runLadderPreview,
   runMatch,
   verifyAnalyticsSchema,
+  verifyAuthorIntakeRegistry,
   verifyAuditBundle,
   verifyB2BFeedPacket,
   verifyBalancePatchSchedule,
@@ -206,6 +209,32 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('analyticsHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies the Stage 1 author intake registry', () => {
+    const first = buildAuthorIntakeRegistry('stage1-preview.test');
+    const second = buildAuthorIntakeRegistry('stage1-preview.test');
+    const markdown = buildAuthorIntakeRegistryMarkdown(first);
+    const verified = verifyAuthorIntakeRegistry(first);
+    const tampered = verifyAuthorIntakeRegistry({
+      ...first,
+      registryHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.author_intake_registry.stage1.preview.v1');
+    expect(first.policy.activeAuthorTarget).toBe(100);
+    expect(first.policy.validSubmissionRequired).toBe(true);
+    expect(first.policy.promptCommitRequired).toBe(true);
+    expect(first.policy.duplicateIdentityReview).toBe(true);
+    expect(first.gates.some((gate) => gate.id === 'active-author-count' && gate.status === 'blocked-until-live-intake')).toBe(true);
+    expect(first.registryHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Author Intake Registry');
+    expect(markdown).toContain('## Gates');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('registryHash does not match deterministic replay.');
   });
 
   it('builds stable per-tick commitments that cover every public snapshot tick', () => {

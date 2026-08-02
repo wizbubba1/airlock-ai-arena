@@ -28,6 +28,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Stage 0 product analytics contract for measuring D7 return, pickem participation, transcript completion, and stage-gate metrics without accounts or private prompt storage.',
     },
     {
+      name: 'Author intake registry',
+      schema: 'airlock.author_intake_registry.stage1.preview.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-author-intake-registry-stage1-preview.001.json',
+      generateCommand: 'npm run author-intake-registry -- stage1-preview.001',
+      verifyCommand: 'npm run verify-author-intake-registry -- ./artifacts/airlock-author-intake-registry-stage1-preview.001.json',
+      purpose: 'Stage 1 author intake gate artifact for validating manifests, prompt commitments, duplicate identity review, and the 100 active authored-agent target.',
+    },
+    {
       name: 'Audit bundle',
       schema: 'airlock.audit.stage0.v1',
       format: 'json',

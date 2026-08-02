@@ -1,4 +1,5 @@
 import { buildAnalyticsSchema } from './analytics-schema';
+import { buildAuthorIntakeRegistry } from './author-intake-registry';
 import { buildB2BFeedPacket } from './b2b-feed-packet';
 import { buildBalancePatchSchedule } from './balance-patch-schedule';
 import { buildBalanceSummary } from './balance';
@@ -22,6 +23,7 @@ import { buildStageGatePolicy } from './stage-gate-policy';
 import { buildStage0Evaluation } from './stage0-evaluation';
 import { buildTranscriptQualityReport } from './transcript-quality';
 import type { AnalyticsSchema } from './analytics-schema';
+import type { AuthorIntakeRegistry } from './author-intake-registry';
 import type { B2BFeedPacket } from './b2b-feed-packet';
 import type { BalancePatchSchedule } from './balance-patch-schedule';
 import type { BalanceSummary } from './balance';
@@ -56,6 +58,13 @@ export interface AnalyticsSchemaVerificationResult {
   programId: string;
   errors: string[];
   expected: AnalyticsSchema;
+}
+
+export interface AuthorIntakeRegistryVerificationResult {
+  ok: boolean;
+  seasonId: string;
+  errors: string[];
+  expected: AuthorIntakeRegistry;
 }
 
 export interface BalanceVerificationResult {
@@ -245,6 +254,33 @@ export function verifyAnalyticsSchema(schema: AnalyticsSchema): AnalyticsSchemaV
   return {
     ok: errors.length === 0,
     programId: schema.programId,
+    errors,
+    expected,
+  };
+}
+
+export function verifyAuthorIntakeRegistry(registry: AuthorIntakeRegistry): AuthorIntakeRegistryVerificationResult {
+  const expected = buildAuthorIntakeRegistry(registry.seasonId);
+  const errors: string[] = [];
+
+  compare('schema', registry.schema, expected.schema, errors);
+  compare('seasonManifestHash', registry.seasonManifestHash, expected.seasonManifestHash, errors);
+  compare('policy', registry.policy, expected.policy, errors);
+  compare('gates', registry.gates, expected.gates, errors);
+  compare('sampleIntake', registry.sampleIntake, expected.sampleIntake, errors);
+  compare('registryHash', registry.registryHash, expected.registryHash, errors);
+
+  if (registry.policy.activeAuthorTarget < 100) errors.push('author intake target must be at least 100 active authored agents.');
+  if (!registry.policy.validSubmissionRequired) errors.push('valid author submissions must be required.');
+  if (!registry.policy.promptCommitRequired) errors.push('prompt commitments must be required.');
+  if (!registry.policy.duplicateIdentityReview) errors.push('duplicate identity review must be required.');
+  if (!registry.gates.some((gate) => gate.id === 'active-author-count' && gate.status === 'blocked-until-live-intake')) {
+    errors.push('active author count gate must remain blocked until live intake exists.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    seasonId: registry.seasonId,
     errors,
     expected,
   };
