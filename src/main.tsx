@@ -27,6 +27,8 @@ import {
   buildMatchReport,
   buildPickemReceipt,
   buildSeasonManifest,
+  buildShowPack,
+  buildShowPackReport,
   graph,
   profiles,
   ruleset,
@@ -83,6 +85,7 @@ function App() {
   const ladder = useMemo(() => runLadderPreview(32, `${seed}-ladder`), [seed]);
   const ladderVerification = useMemo(() => verifyLadderSummary(ladder), [ladder]);
   const seasonManifest = useMemo(() => buildSeasonManifest('stage1-preview.001'), []);
+  const showPack = useMemo(() => buildShowPack([seed, `${seed}-show-1`, `${seed}-show-2`, `${seed}-show-3`]), [seed]);
 
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -142,6 +145,16 @@ function App() {
   function downloadSeasonManifest() {
     const blob = new Blob([JSON.stringify(seasonManifest, null, 2)], { type: 'application/json' });
     downloadBlob(blob, `airlock-season-${seasonManifest.seasonId}.json`);
+  }
+
+  function downloadShowPackJson() {
+    const blob = new Blob([JSON.stringify(showPack, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, `airlock-show-pack-${seed}.json`);
+  }
+
+  function downloadShowPackReport() {
+    const blob = new Blob([buildShowPackReport(showPack)], { type: 'text/markdown' });
+    downloadBlob(blob, `airlock-show-pack-${seed}.md`);
   }
 
   function downloadBlob(blob: Blob, filename: string) {
@@ -444,9 +457,27 @@ function App() {
         <section className="panel evaluation-panel" aria-label="Stage 0 evaluation batch">
           <div className="panel-header">
             <h2>Evaluation Batch</h2>
-            <span>{evaluation.matchCount} seeded matches</span>
+            <div className="button-pair">
+              <span>{evaluation.matchCount} seeded matches</span>
+              <button className="icon-button" onClick={downloadShowPackReport} type="button">
+                <Download size={18} />
+                Show
+              </button>
+              <button className="icon-button" onClick={downloadShowPackJson} type="button">
+                <Download size={18} />
+                Pack
+              </button>
+            </div>
           </div>
           <div className="evaluation-body">
+            <div className="show-pack-status">
+              <FileCheck2 size={24} />
+              <div>
+                <span>Show pack</span>
+                <strong>{showPack.matches.length} verified demo seeds</strong>
+                <code>{showPack.packHash.slice(0, 18)}...{showPack.packHash.slice(-8)}</code>
+              </div>
+            </div>
             <div className="evaluation-meter">
               <p>Win balance</p>
               <div aria-label="Technician and Saboteur win balance">

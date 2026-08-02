@@ -689,6 +689,46 @@ dd {
   padding: 14px;
 }
 
+.show-pack-status {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #0b1010;
+  padding: 12px;
+}
+
+.show-pack-status svg {
+  color: var(--accent);
+  flex: 0 0 auto;
+}
+
+.show-pack-status div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.show-pack-status span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.show-pack-status strong {
+  color: var(--text);
+}
+
+.show-pack-status code {
+  overflow-wrap: anywhere;
+  color: var(--amber);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 0.76rem;
+}
+
 .evaluation-meter {
   display: grid;
   align-content: start;
