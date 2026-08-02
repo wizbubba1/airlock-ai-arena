@@ -21,6 +21,7 @@ import {
 import {
   agentIds,
   auditDigests,
+  buildBalanceSummary,
   buildAuditBundle,
   buildChallengePacket,
   buildLadderReport,
@@ -31,6 +32,7 @@ import {
   buildShowPackReport,
   graph,
   profiles,
+  roundBalance,
   ruleset,
   runLadderPreview,
   runMatch,
@@ -682,28 +684,11 @@ function buildEventDensity(events: TranscriptEvent[]) {
 
 function buildEvaluation(seed: string) {
   const matchCount = 32;
-  const pairCounts = new Map<string, number>();
-  let technicianWins = 0;
-  let saboteurWins = 0;
-  let totalTicks = 0;
-  let totalMeetings = 0;
-  let totalEvents = 0;
+  const summary = buildBalanceSummary(matchCount, `${seed}-eval`);
 
   const outcomes = Array.from({ length: matchCount }, (_, index) => {
     const matchSeed = `${seed}-eval-${index}`;
     const result = runMatch(matchSeed);
-    const pair = agentIds
-      .filter((id) => result.agents[id].role === 'saboteur')
-      .map((id) => profiles[id].name)
-      .sort()
-      .join(' + ');
-    pairCounts.set(pair, (pairCounts.get(pair) ?? 0) + 1);
-
-    if (result.winner === 'technician') technicianWins += 1;
-    if (result.winner === 'saboteur') saboteurWins += 1;
-    totalTicks += result.tick;
-    totalMeetings += result.meetingCount;
-    totalEvents += result.transcript.length;
 
     return {
       seed: matchSeed,
@@ -712,22 +697,23 @@ function buildEvaluation(seed: string) {
     };
   });
 
-  const topSaboteurPair = [...pairCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? 'none';
+  const topSaboteurPair =
+    Object.entries(summary.saboteurPairs)
+      .sort((a, b) => b[1] - a[1])[0]?.[0]
+      .split('+')
+      .map((id) => profiles[id as AgentId].name)
+      .join(' + ') ?? 'none';
 
   return {
     matchCount,
-    technicianRate: Math.round((technicianWins / matchCount) * 100),
-    saboteurRate: Math.round((saboteurWins / matchCount) * 100),
-    averageTicks: roundMetric(totalTicks / matchCount),
-    averageMeetings: roundMetric(totalMeetings / matchCount),
-    averageEvents: roundMetric(totalEvents / matchCount),
+    technicianRate: Math.round((summary.wins.technician / matchCount) * 100),
+    saboteurRate: Math.round((summary.wins.saboteur / matchCount) * 100),
+    averageTicks: roundBalance(summary.averages.ticks),
+    averageMeetings: roundBalance(summary.averages.meetings),
+    averageEvents: roundBalance(summary.averages.transcriptEvents),
     topSaboteurPair,
     outcomes,
   };
-}
-
-function roundMetric(value: number): number {
-  return Number(value.toFixed(1));
 }
 
 function readSeedFromUrl(): string {

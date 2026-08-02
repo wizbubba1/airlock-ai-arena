@@ -2,6 +2,7 @@ export { createMatch, runActionTick, runMatch } from './match';
 export { agentIds, graph, profiles, rooms } from './content';
 export { ruleset } from './ruleset';
 export { auditDigests, digest, stableStringify } from './audit';
+export { buildBalanceSummary, evaluateBalance, roundBalance } from './balance';
 export { buildAuditBundle, buildTickCommitments } from './bundle';
 export { buildChallengePacket } from './challenge';
 export { buildLadderReport, buildMatchReport, buildSeedIndexReport, buildShowPackReport } from './report';
