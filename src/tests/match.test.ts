@@ -18,6 +18,7 @@ import {
   runMatch,
   verifyAuditBundle,
   verifyLadderSummary,
+  verifySeedIndex,
 } from '../engine';
 import goodManifest from './fixtures/agents/vanta-author.json';
 import badManifest from './fixtures/agents/bad-agent.json';
@@ -224,6 +225,26 @@ describe('AIRLOCK deterministic engine', () => {
     expect(report).toContain('## Seeds');
     expect(report).toContain('## Audit Hashes');
     expect(report).toContain('| Seed | Winner | Ticks | Meetings | Events | Transcript Hash |');
+  });
+
+  it('verifies a seed index against deterministic replay', () => {
+    const index = buildSeedIndex(['airlock-stage-zero-demo', 'repeatable-match']);
+    const verified = verifySeedIndex(index);
+    const tampered = verifySeedIndex({
+      ...index,
+      seeds: [
+        {
+          ...index.seeds[0],
+          transcriptHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+        },
+        ...index.seeds.slice(1),
+      ],
+    });
+
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('seeds does not match deterministic replay.');
   });
 
   it('verifies a ladder summary against deterministic replay', () => {

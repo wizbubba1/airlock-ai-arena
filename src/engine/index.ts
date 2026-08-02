@@ -8,5 +8,5 @@ export { buildLadderReport, buildMatchReport, buildSeedIndexReport } from './rep
 export { runLadderPreview } from './ladder';
 export { buildSeasonManifest } from './season';
 export { buildSeedIndex, canonicalSeeds } from './seed-index';
-export { verifyAuditBundle, verifyLadderSummary } from './verify';
+export { verifyAuditBundle, verifyLadderSummary, verifySeedIndex } from './verify';
 export type * from './types';

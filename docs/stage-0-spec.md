@@ -80,6 +80,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run seed-index` writes JSON and Markdown reports across the canonical regression seeds. The index gives reviewers a compact table of winners, match lengths, transcript hashes, market hashes, public snapshot hashes, and entropy hashes.
 
+`npm run verify-seed-index -- <seed-index.json>` reruns every listed seed and fails if any result metric or audit hash differs from deterministic replay.
+
 ## Stage 1 Bridge
 
 Authored agents must validate against `airlock.agent.manifest.v1`.
@@ -118,6 +120,7 @@ npm run challenge -- airlock-stage-zero-demo
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
 npm run seed-index
+npm run verify-seed-index -- ./artifacts/airlock-seed-index.json
 npm run balance -- 100 stage-zero-ci
 npm run ladder -- 32 stage-one-ci
 npm run verify-ladder -- ./artifacts/airlock-ladder-32.json

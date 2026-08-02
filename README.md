@@ -58,6 +58,7 @@ npm run challenge -- airlock-stage-zero-demo
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
 npm run seed-index
+npm run verify-seed-index -- ./artifacts/airlock-seed-index.json
 npm run balance -- 1000 stage-zero
 npm run balance:check
 npm run ladder -- 64 stage-one-preview
@@ -75,6 +76,7 @@ npm run dev
 `npm run verify-audit -- <audit-bundle.json>` reruns the deterministic match for the bundle seed and fails if commitments, transcript, market, snapshots, entropy, or tick commitments drift.
 `npm run report -- <seed>` writes a Markdown match report suitable for public archives or Gists.
 `npm run seed-index` writes JSON and Markdown summaries for the canonical regression seeds, including result metrics and audit hashes.
+`npm run verify-seed-index -- <seed-index.json>` reruns every listed seed and fails if any result or hash drifts.
 `npm run balance -- <count> <seed-prefix>` writes a many-match balance report with win rates, match-length averages, terminal reasons, and Saboteur pair frequencies.
 `npm run balance:check` runs the CI balance guard and fails if the simulator drifts into an obviously broken meta.
 `npm run ladder -- <count> <seed-prefix>` writes deterministic Stage 1 preview ladder JSON and Markdown reports with Elo-style standings across repeated seeded matches.
