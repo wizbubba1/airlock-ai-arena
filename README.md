@@ -66,6 +66,8 @@ npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
 npm run transcript-quality -- airlock-stage-zero-demo
 npm run verify-transcript-quality -- ./artifacts/airlock-transcript-quality-airlock-stage-zero-demo.json
+npm run reveal-schedule -- airlock-stage-zero-demo
+npm run verify-reveal-schedule -- ./artifacts/airlock-reveal-schedule-airlock-stage-zero-demo.json
 npm run stage0-evaluation
 npm run verify-stage0-evaluation -- ./artifacts/airlock-stage0-evaluation.json
 npm run pickem -- airlock-stage-zero-demo vanta kepler
@@ -98,6 +100,8 @@ npm run dev
 `npm run report -- <seed>` writes a Markdown match report suitable for public archives or Gists.
 `npm run transcript-quality -- <seed>` writes JSON and Markdown content-health reports for transcript event mix and meeting density.
 `npm run verify-transcript-quality -- <transcript-quality.json>` reruns the seeded transcript quality report and fails if event counts, density, transcript hash, or quality hash drift.
+`npm run reveal-schedule -- <seed>` writes JSON and Markdown timing artifacts for commit-before-render ticks and fixed public reveal delay.
+`npm run verify-reveal-schedule -- <reveal-schedule.json>` reruns the seeded reveal schedule and fails if policy, tick commitments, reveal slots, or schedule hash drift.
 `npm run stage0-evaluation` writes a reviewer-facing go/no-go summary combining balance, seed coverage, show pack readiness, and transcript legibility gates.
 `npm run verify-stage0-evaluation -- <stage0-evaluation.json>` reruns the evaluation inputs and fails if any gate, aggregate, artifact, or evaluation hash drifts.
 `npm run pickem -- <seed> <agent-id> <agent-id>` writes a spectator pick'em receipt with the actual Saboteurs, score, transcript hash, and receipt hash.

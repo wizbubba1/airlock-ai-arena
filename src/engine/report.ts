@@ -3,6 +3,7 @@ import { buildAuditBundle } from './bundle';
 import { ruleset } from './ruleset';
 import type { ArtifactCatalog } from './artifact-catalog';
 import type { LadderSummary } from './ladder';
+import type { RevealSchedule } from './reveal-schedule';
 import type { SeedIndex } from './seed-index';
 import type { ShowPack } from './show-pack';
 import type { Stage0Evaluation } from './stage0-evaluation';
@@ -290,6 +291,36 @@ export function buildStage0EvaluationMarkdown(evaluation: Stage0Evaluation): str
   if (evaluation.balanceGuard.errors.length > 0) {
     lines.push(`## Balance Guard Errors`, ``, ...evaluation.balanceGuard.errors.map((error) => `- ${error}`), ``);
   }
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildRevealScheduleMarkdown(schedule: RevealSchedule): string {
+  const lines: string[] = [
+    `# AIRLOCK Reveal Schedule`,
+    ``,
+    `Seed: \`${schedule.seed}\``,
+    `Schema: \`${schedule.schema}\``,
+    `Schedule hash: \`${schedule.scheduleHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Operator UI delay | ${schedule.policy.operatorUiDelaySeconds}s |`,
+    `| Live pool closes | ${schedule.policy.livePoolCloses} |`,
+    `| Latency side-channel policy | ${schedule.policy.latencySideChannelPolicy} |`,
+    ``,
+    `## Tick Commits`,
+    ``,
+    `| Tick | Reveal slot | Events | Snapshots | Market | Commitment |`,
+    `|---:|---:|---:|---:|---:|---|`,
+    ...schedule.entries.map(
+      (entry) =>
+        `| ${entry.tick} | ${entry.publicRevealSlot}s | ${entry.transcriptEvents} | ${entry.publicSnapshots} | ${entry.marketSnapshots} | \`${entry.commitment}\` |`,
+    ),
+    ``,
+  ];
 
   return `${lines.join('\n')}\n`;
 }

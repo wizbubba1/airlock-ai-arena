@@ -11,6 +11,8 @@ import {
   buildLadderReport,
   buildMatchReport,
   buildPickemReceipt,
+  buildRevealSchedule,
+  buildRevealScheduleMarkdown,
   buildSeasonManifest,
   buildSeedIndex,
   buildSeedIndexReport,
@@ -30,6 +32,7 @@ import {
   verifyBalanceSummary,
   verifyLadderSummary,
   verifyPickemReceipt,
+  verifyRevealSchedule,
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,
@@ -507,6 +510,32 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('evaluationHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies a fixed-delay reveal schedule', () => {
+    const first = buildRevealSchedule('airlock-stage-zero-demo', 30);
+    const second = buildRevealSchedule('airlock-stage-zero-demo', 30);
+    const markdown = buildRevealScheduleMarkdown(first);
+    const verified = verifyRevealSchedule(first);
+    const tampered = verifyRevealSchedule({
+      ...first,
+      scheduleHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.reveal_schedule.stage0.v1');
+    expect(first.policy.operatorUiDelaySeconds).toBe(30);
+    expect(first.policy.latencySideChannelPolicy).toBe('fixed-delay-public-render');
+    expect(first.entries.length).toBeGreaterThan(0);
+    expect(first.entries[0].commitPhase).toBe('commit-before-render');
+    expect(first.entries[0].publicRevealSlot).toBe(first.entries[0].tick * 30);
+    expect(first.scheduleHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Reveal Schedule');
+    expect(markdown).toContain('## Tick Commits');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('scheduleHash does not match deterministic replay.');
   });
 
   it('validates authored-agent manifests for the Stage 1 ladder path', () => {

@@ -10,6 +10,7 @@ export {
   buildArtifactCatalogReport,
   buildLadderReport,
   buildMatchReport,
+  buildRevealScheduleMarkdown,
   buildSeedIndexReport,
   buildShowPackReport,
   buildStage0EvaluationMarkdown,
@@ -17,6 +18,7 @@ export {
 } from './report';
 export { runLadderPreview } from './ladder';
 export { buildPickemReceipt, parseAgentPick, verifyPickemReceipt } from './pickem';
+export { buildRevealSchedule, buildRevealScheduleFromMatch } from './reveal-schedule';
 export { buildSeasonManifest } from './season';
 export { buildSeedIndex, canonicalSeeds } from './seed-index';
 export { buildShowPack, defaultShowSeeds } from './show-pack';
@@ -26,6 +28,7 @@ export {
   verifyAuditBundle,
   verifyBalanceSummary,
   verifyLadderSummary,
+  verifyRevealSchedule,
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,

@@ -70,6 +70,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Deterministic content-health report for speech, votes, reports, danger beats, repairs, and meeting density.',
     },
     {
+      name: 'Reveal schedule',
+      schema: 'airlock.reveal_schedule.stage0.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-reveal-schedule-airlock-stage-zero-demo.json',
+      generateCommand: 'npm run reveal-schedule -- airlock-stage-zero-demo',
+      verifyCommand: 'npm run verify-reveal-schedule -- ./artifacts/airlock-reveal-schedule-airlock-stage-zero-demo.json',
+      purpose: 'Commit-before-render schedule with fixed public reveal delay for reviewing P2 timing and side-channel policy.',
+    },
+    {
       name: "Pick'em receipt",
       schema: 'airlock.pickem.stage0.v1',
       format: 'json',

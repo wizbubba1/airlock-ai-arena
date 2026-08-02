@@ -7,6 +7,8 @@ import {
   buildBalanceSummary,
   buildChallengePacket,
   buildLadderReport,
+  buildRevealSchedule,
+  buildRevealScheduleMarkdown,
   buildSeedIndex,
   buildSeedIndexReport,
   buildSeasonManifest,
@@ -22,6 +24,7 @@ import {
   verifyAuditBundle,
   verifyBalanceSummary,
   verifyLadderSummary,
+  verifyRevealSchedule,
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,
@@ -44,6 +47,7 @@ const audit = buildAuditBundle(match, seed);
 const challenge = buildChallengePacket(seed);
 const balance = buildBalanceSummary(100, 'stage-zero-ci');
 const ladder = runLadderPreview(32, 'stage-one-ci');
+const revealSchedule = buildRevealSchedule(seed);
 const season = buildSeasonManifest(seasonId);
 const seedIndex = buildSeedIndex();
 const showPack = buildShowPack();
@@ -58,6 +62,8 @@ const outputs = [
   writeJson('airlock-balance-ci.json', balance),
   writeJson('airlock-ladder-32.json', ladder),
   writeMarkdown('airlock-ladder-32.md', buildLadderReport(ladder)),
+  writeJson('airlock-reveal-schedule-airlock-stage-zero-demo.json', revealSchedule),
+  writeMarkdown('airlock-reveal-schedule-airlock-stage-zero-demo.md', buildRevealScheduleMarkdown(revealSchedule)),
   writeJson('airlock-season-stage1-preview.001.json', season),
   writeJson('airlock-seed-index.json', seedIndex),
   writeMarkdown('airlock-seed-index.md', buildSeedIndexReport(seedIndex)),
@@ -78,6 +84,7 @@ const checks = [
   { name: 'balance-guard', ...evaluateBalance(balance) },
   { name: 'balance', ...verifyBalanceSummary(balance) },
   { name: 'ladder', ...verifyLadderSummary(ladder) },
+  { name: 'reveal-schedule', ...verifyRevealSchedule(revealSchedule) },
   { name: 'season', ...verifySeasonManifest(season) },
   { name: 'seed-index', ...verifySeedIndex(seedIndex) },
   { name: 'show-pack', ...verifyShowPack(showPack) },

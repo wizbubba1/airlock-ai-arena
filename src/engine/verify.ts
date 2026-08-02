@@ -2,6 +2,7 @@ import { buildBalanceSummary } from './balance';
 import { buildAuditBundle } from './bundle';
 import { runLadderPreview } from './ladder';
 import { runMatch } from './match';
+import { buildRevealSchedule } from './reveal-schedule';
 import { buildSeedIndex } from './seed-index';
 import { buildSeasonManifest } from './season';
 import { buildShowPack } from './show-pack';
@@ -10,6 +11,7 @@ import { buildTranscriptQualityReport } from './transcript-quality';
 import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
 import type { LadderSummary } from './ladder';
+import type { RevealSchedule } from './reveal-schedule';
 import type { SeedIndex } from './seed-index';
 import type { SeasonManifest } from './season';
 import type { ShowPack } from './show-pack';
@@ -72,6 +74,13 @@ export interface Stage0EvaluationVerificationResult {
   seed: string;
   errors: string[];
   expected: Stage0Evaluation;
+}
+
+export interface RevealScheduleVerificationResult {
+  ok: boolean;
+  seed: string;
+  errors: string[];
+  expected: RevealSchedule;
 }
 
 export function verifyAuditBundle(bundle: AuditBundle): AuditVerificationResult {
@@ -228,6 +237,30 @@ export function verifyStage0Evaluation(evaluation: Stage0Evaluation): Stage0Eval
   return {
     ok: errors.length === 0,
     seed: evaluation.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyRevealSchedule(schedule: RevealSchedule): RevealScheduleVerificationResult {
+  const expected = buildRevealSchedule(schedule.seed, schedule.policy.operatorUiDelaySeconds);
+  const errors: string[] = [];
+
+  compare('schema', schedule.schema, expected.schema, errors);
+  compare('policy', schedule.policy, expected.policy, errors);
+  compare('entries', schedule.entries, expected.entries, errors);
+  compare('scheduleHash', schedule.scheduleHash, expected.scheduleHash, errors);
+
+  if (schedule.entries.length === 0) errors.push('reveal schedule has no tick commitments.');
+  for (const entry of schedule.entries) {
+    if (entry.publicRevealSlot !== entry.tick * entry.revealDelaySeconds) {
+      errors.push(`tick ${entry.tick} reveal slot does not match configured delay.`);
+    }
+  }
+
+  return {
+    ok: errors.length === 0,
+    seed: schedule.seed,
     errors,
     expected,
   };
