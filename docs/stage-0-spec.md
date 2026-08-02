@@ -88,6 +88,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run show-pack` writes a deterministic JSON and Markdown demo pack across several seeded matches. Each match includes a spectator pick prompt, public transcript excerpts, final reveal, terminal market suspects, and audit hashes.
 
+`npm run verify-show-pack -- <show-pack.json>` reruns the show pack seeds and fails if the pack summary, transcript excerpts, reveal data, or hash has drifted.
+
 ## Stage 1 Bridge
 
 Authored agents must validate against `airlock.agent.manifest.v1`.
@@ -130,6 +132,7 @@ npm run verify-pickem -- ./artifacts/airlock-pickem-airlock-stage-zero-demo.json
 npm run seed-index
 npm run verify-seed-index -- ./artifacts/airlock-seed-index.json
 npm run show-pack
+npm run verify-show-pack -- ./artifacts/airlock-show-pack.json
 npm run balance -- 100 stage-zero-ci
 npm run ladder -- 32 stage-one-ci
 npm run verify-ladder -- ./artifacts/airlock-ladder-32.json

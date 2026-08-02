@@ -23,6 +23,7 @@ import {
   verifyLadderSummary,
   verifyPickemReceipt,
   verifySeedIndex,
+  verifyShowPack,
 } from '../engine';
 import goodManifest from './fixtures/agents/vanta-author.json';
 import badManifest from './fixtures/agents/bad-agent.json';
@@ -297,6 +298,20 @@ describe('AIRLOCK deterministic engine', () => {
     expect(report).toContain('### Public Setup');
     expect(report).toContain('### First Meeting Signals');
     expect(report).toContain('### Reveal');
+  });
+
+  it('verifies a show pack against deterministic replay', () => {
+    const pack = buildShowPack(['airlock-stage-zero-demo', 'repeatable-match']);
+    const verified = verifyShowPack(pack);
+    const tampered = verifyShowPack({
+      ...pack,
+      packHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('packHash does not match deterministic replay.');
   });
 
   it('verifies a ladder summary against deterministic replay', () => {
