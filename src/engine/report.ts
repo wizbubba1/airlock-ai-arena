@@ -10,6 +10,7 @@ import type { CertifiedEventFeed } from './event-feed';
 import type { CollusionControls } from './collusion-controls';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
+import type { JurisdictionPolicy } from './jurisdiction-policy';
 import type { LadderSummary } from './ladder';
 import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
@@ -854,6 +855,38 @@ export function buildMarketReadinessMarkdown(readiness: MarketReadiness): string
     `| Jurisdiction policy | ${readiness.evidence.jurisdictionPolicyHash ? `\`${readiness.evidence.jurisdictionPolicyHash}\`` : 'missing'} |`,
     `| Licensed operator | ${readiness.evidence.licensedOperatorHash ? `\`${readiness.evidence.licensedOperatorHash}\`` : 'missing'} |`,
     `| Responsible play | ${readiness.evidence.responsiblePlayPolicyHash ? `\`${readiness.evidence.responsiblePlayPolicyHash}\`` : 'missing'} |`,
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildJurisdictionPolicyMarkdown(policy: JurisdictionPolicy): string {
+  const lines: string[] = [
+    `# AIRLOCK Jurisdiction Policy`,
+    ``,
+    `Program: \`${policy.programId}\``,
+    `Schema: \`${policy.schema}\``,
+    `Policy hash: \`${policy.policyHash}\``,
+    ``,
+    `## Posture`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Default global rail | ${policy.posture.defaultGlobalRail} |`,
+    `| Real-money markets | ${policy.posture.realMoneyMarkets} |`,
+    `| Direct consumer betting | ${policy.posture.directConsumerBetting} |`,
+    `| B2B feed | ${policy.posture.b2bFeedAllowed} |`,
+    ``,
+    `## Gates`,
+    ``,
+    `| Gate | Status | Summary |`,
+    `|---|---|---|`,
+    ...policy.gates.map((gate) => `| ${gate.id} | ${gate.status} | ${gate.summary} |`),
+    ``,
+    `## Required Evidence`,
+    ``,
+    ...policy.requiredEvidence.map((evidence) => `- \`${evidence}\``),
     ``,
   ];
 

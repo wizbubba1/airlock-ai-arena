@@ -100,6 +100,12 @@ jobs:
       - name: Inference receipts verifier smoke test
         run: npm run verify-inference-receipts -- ./artifacts/airlock-inference-receipts-airlock-stage-zero-demo.json
 
+      - name: Jurisdiction policy smoke test
+        run: npm run jurisdiction-policy -- airlock-roadmap.001
+
+      - name: Jurisdiction policy verifier smoke test
+        run: npm run verify-jurisdiction-policy -- ./artifacts/airlock-jurisdiction-policy-airlock-roadmap.001.json
+
       - name: Audit verifier smoke test
         run: npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 

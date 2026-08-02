@@ -95,6 +95,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run inference-receipts -- <seed>` writes JSON and Markdown speech-generation receipt artifacts for prompt hashes, output hashes, token counts, logprob commitments, and receipt hashes. This is the Stage 0 stand-in for P1 attested inference receipts.
 
+`npm run jurisdiction-policy -- <program-id>` writes JSON and Markdown Stage 2 jurisdiction posture artifacts. The artifact keeps direct real-money markets blocked while listing required evidence for counsel, geo-fencing, sweeps rails, and licensed partner review.
+
 `npm run balance-patch-schedule -- <season-id>` writes JSON and Markdown precommitted balance-patch schedules for Stage 1 preview seasons. The artifact keeps mid-season mutations reviewable without giving the operator discretionary patch power.
 
 `npm run collusion-controls -- <season-id>` writes JSON and Markdown anti-collusion control artifacts for Stage 1 preview seasons. The artifact covers superlinear entry bonds, speech-sanitizer controls, throw-detection metrics, and season escrow actions.
@@ -184,6 +186,8 @@ npm run verify-b2b-feed-packet -- ./artifacts/airlock-b2b-feed-packet-airlock-st
 npm run challenge -- airlock-stage-zero-demo
 npm run fallback-drill -- airlock-stage-zero-demo
 npm run verify-fallback-drill -- ./artifacts/airlock-fallback-drill-airlock-stage-zero-demo.json
+npm run jurisdiction-policy -- airlock-roadmap.001
+npm run verify-jurisdiction-policy -- ./artifacts/airlock-jurisdiction-policy-airlock-roadmap.001.json
 npm run balance-patch-schedule -- stage1-preview.001
 npm run verify-balance-patch-schedule -- ./artifacts/airlock-balance-patch-schedule-stage1-preview.001.json
 npm run collusion-controls -- stage1-preview.001

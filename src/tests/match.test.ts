@@ -24,6 +24,8 @@ import {
   buildFallbackDrillMarkdown,
   buildInferenceReceipts,
   buildInferenceReceiptsMarkdown,
+  buildJurisdictionPolicy,
+  buildJurisdictionPolicyMarkdown,
   buildLadderReport,
   buildMarketReadiness,
   buildMarketReadinessMarkdown,
@@ -70,6 +72,7 @@ import {
   verifyCollusionControls,
   verifyFallbackDrill,
   verifyInferenceReceipts,
+  verifyJurisdictionPolicy,
   verifyLadderSummary,
   verifyMarketReadiness,
   verifyOperatorReadiness,
@@ -981,6 +984,34 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('receiptsHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies a Stage 2 jurisdiction policy', () => {
+    const first = buildJurisdictionPolicy('airlock-roadmap.001');
+    const second = buildJurisdictionPolicy('airlock-roadmap.001');
+    const markdown = buildJurisdictionPolicyMarkdown(first);
+    const verified = verifyJurisdictionPolicy(first);
+    const tampered = verifyJurisdictionPolicy({
+      ...first,
+      policyHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.jurisdiction_policy.stage2.v1');
+    expect(first.posture.defaultGlobalRail).toBe('points-or-sweepstakes-only');
+    expect(first.posture.realMoneyMarkets).toBe('blocked');
+    expect(first.posture.directConsumerBetting).toBe('not-implemented');
+    expect(first.gates.some((gate) => gate.id === 'counsel-review' && gate.status === 'blocked')).toBe(true);
+    expect(first.gates.some((gate) => gate.id === 'geo-fencing' && gate.status === 'blocked')).toBe(true);
+    expect(first.gates.some((gate) => gate.id === 'b2b-feed' && gate.status === 'ready')).toBe(true);
+    expect(first.requiredEvidence).toContain('responsible-play-policy-hash');
+    expect(first.policyHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Jurisdiction Policy');
+    expect(markdown).toContain('## Required Evidence');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('policyHash does not match deterministic replay.');
   });
 
   it('builds and verifies operator readiness across Stage 0 evidence', () => {

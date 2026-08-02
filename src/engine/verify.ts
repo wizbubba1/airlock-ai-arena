@@ -8,6 +8,7 @@ import { buildCertifiedEventFeed } from './event-feed';
 import { buildCollusionControls } from './collusion-controls';
 import { buildFallbackDrill } from './fallback-drill';
 import { buildInferenceReceipts } from './inference-receipts';
+import { buildJurisdictionPolicy } from './jurisdiction-policy';
 import { runLadderPreview } from './ladder';
 import { buildMarketReadiness } from './market-readiness';
 import { buildOperatorReadiness } from './readiness';
@@ -34,6 +35,7 @@ import type { CertifiedEventFeed } from './event-feed';
 import type { CollusionControls } from './collusion-controls';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
+import type { JurisdictionPolicy } from './jurisdiction-policy';
 import type { LadderSummary } from './ladder';
 import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
@@ -128,6 +130,13 @@ export interface InferenceReceiptsVerificationResult {
   seed: string;
   errors: string[];
   expected: InferenceReceipts;
+}
+
+export interface JurisdictionPolicyVerificationResult {
+  ok: boolean;
+  programId: string;
+  errors: string[];
+  expected: JurisdictionPolicy;
 }
 
 export interface OperatorReadinessVerificationResult {
@@ -485,6 +494,39 @@ export function verifyInferenceReceipts(receipts: InferenceReceipts): InferenceR
   return {
     ok: errors.length === 0,
     seed: receipts.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyJurisdictionPolicy(policy: JurisdictionPolicy): JurisdictionPolicyVerificationResult {
+  const expected = buildJurisdictionPolicy(policy.programId);
+  const errors: string[] = [];
+
+  compare('schema', policy.schema, expected.schema, errors);
+  compare('posture', policy.posture, expected.posture, errors);
+  compare('gates', policy.gates, expected.gates, errors);
+  compare('requiredEvidence', policy.requiredEvidence, expected.requiredEvidence, errors);
+  compare('policyHash', policy.policyHash, expected.policyHash, errors);
+
+  if (policy.posture.realMoneyMarkets !== 'blocked') errors.push('real-money markets must remain blocked.');
+  if (policy.posture.directConsumerBetting !== 'not-implemented') {
+    errors.push('direct consumer betting must remain unimplemented.');
+  }
+  if (!policy.gates.some((gate) => gate.id === 'counsel-review' && gate.status === 'blocked')) {
+    errors.push('jurisdiction policy must keep counsel review blocked until evidence is attached.');
+  }
+  if (!policy.gates.some((gate) => gate.id === 'geo-fencing' && gate.status === 'blocked')) {
+    errors.push('jurisdiction policy must keep geo-fencing blocked until evidence is attached.');
+  }
+  if (!policy.gates.some((gate) => gate.id === 'b2b-feed' && gate.status === 'ready')) {
+    errors.push('jurisdiction policy must allow certified B2B feed review.');
+  }
+  if (policy.requiredEvidence.length < 5) errors.push('jurisdiction policy must list required evidence.');
+
+  return {
+    ok: errors.length === 0,
+    programId: policy.programId,
     errors,
     expected,
   };

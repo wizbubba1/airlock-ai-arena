@@ -24,6 +24,7 @@ export {
   buildCollusionControlsMarkdown,
   buildFallbackDrillMarkdown,
   buildInferenceReceiptsMarkdown,
+  buildJurisdictionPolicyMarkdown,
   buildLadderReport,
   buildMarketReadinessMarkdown,
   buildMatchReport,
@@ -42,6 +43,7 @@ export {
 } from './report';
 export { runLadderPreview } from './ladder';
 export { buildMarketReadiness } from './market-readiness';
+export { buildJurisdictionPolicy } from './jurisdiction-policy';
 export { buildOperationsRunbook } from './operations-runbook';
 export { buildPickemReceipt, parseAgentPick, verifyPickemReceipt } from './pickem';
 export { buildPromptRevealPolicy } from './prompt-reveal-policy';
@@ -67,6 +69,7 @@ export {
   verifyCollusionControls,
   verifyFallbackDrill,
   verifyInferenceReceipts,
+  verifyJurisdictionPolicy,
   verifyLadderSummary,
   verifyMarketReadiness,
   verifyOperatorReadiness,

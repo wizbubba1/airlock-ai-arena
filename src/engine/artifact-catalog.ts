@@ -108,6 +108,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Stage 2 gate artifact that keeps real-money markets blocked unless counsel, jurisdiction, operator, and responsible-play evidence hashes are supplied.',
     },
     {
+      name: 'Jurisdiction policy',
+      schema: 'airlock.jurisdiction_policy.stage2.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-jurisdiction-policy-airlock-roadmap.001.json',
+      generateCommand: 'npm run jurisdiction-policy -- airlock-roadmap.001',
+      verifyCommand: 'npm run verify-jurisdiction-policy -- ./artifacts/airlock-jurisdiction-policy-airlock-roadmap.001.json',
+      purpose: 'Stage 2 jurisdiction posture artifact that keeps direct real-money markets blocked while documenting evidence required for geo-fencing, sweeps rails, responsible play, and licensed partner review.',
+    },
+    {
       name: 'Collusion controls',
       schema: 'airlock.collusion_controls.stage1.preview.v1',
       format: 'json',
