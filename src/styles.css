@@ -757,6 +757,37 @@ dd {
   font-size: 0.76rem;
 }
 
+.gate-strip {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.gate-strip span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #0b1010;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 8px 10px;
+  text-transform: uppercase;
+}
+
+.gate-strip .ok {
+  color: var(--accent);
+}
+
+.gate-strip .fail {
+  color: var(--danger);
+}
+
 .evaluation-meter {
   display: grid;
   align-content: start;

@@ -23,7 +23,6 @@ import {
   auditDigests,
   buildArtifactCatalog,
   buildArtifactCatalogReport,
-  buildBalanceSummary,
   buildAuditBundle,
   buildChallengePacket,
   buildLadderReport,
@@ -32,14 +31,16 @@ import {
   buildSeasonManifest,
   buildShowPack,
   buildShowPackReport,
+  buildStage0Evaluation,
+  buildStage0EvaluationMarkdown,
   graph,
   profiles,
-  roundBalance,
   ruleset,
   runLadderPreview,
   runMatch,
   verifyAuditBundle,
   verifyLadderSummary,
+  verifyStage0Evaluation,
 } from './engine';
 import sampleManifest from './tests/fixtures/agents/vanta-author.json';
 import { promptCommitment, validateAgentManifest } from './authoring/manifest';
@@ -87,7 +88,17 @@ function App() {
   const sampleManifestResult = validateAgentManifest(authoredManifest);
   const samplePromptCommitment = promptCommitment(samplePrivatePrompt);
   const promptMatchesManifest = samplePromptCommitment === sampleManifest.promptCommitment;
-  const evaluation = useMemo(() => buildEvaluation(seed), [seed]);
+  const stage0Evaluation = useMemo(() => buildStage0Evaluation(seed, 32, `${seed}-eval`), [seed]);
+  const stage0Verification = useMemo(() => verifyStage0Evaluation(stage0Evaluation), [stage0Evaluation]);
+  const topSaboteurPair = useMemo(() => {
+    return (
+      Object.entries(stage0Evaluation.balance.saboteurPairs)
+        .sort((a, b) => b[1] - a[1])[0]?.[0]
+        .split('+')
+        .map((id) => profiles[id as AgentId].name)
+        .join(' + ') ?? 'none'
+    );
+  }, [stage0Evaluation.balance.saboteurPairs]);
   const eventDensity = useMemo(() => buildEventDensity(match.transcript), [match.transcript]);
   const ladder = useMemo(() => runLadderPreview(32, `${seed}-ladder`), [seed]);
   const ladderVerification = useMemo(() => verifyLadderSummary(ladder), [ladder]);
@@ -169,6 +180,16 @@ function App() {
   function downloadShowPackReport() {
     const blob = new Blob([buildShowPackReport(showPack)], { type: 'text/markdown' });
     downloadBlob(blob, `airlock-show-pack-${seed}.md`);
+  }
+
+  function downloadStage0EvaluationJson() {
+    const blob = new Blob([JSON.stringify(stage0Evaluation, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, `airlock-stage0-evaluation-${seed}.json`);
+  }
+
+  function downloadStage0EvaluationReport() {
+    const blob = new Blob([buildStage0EvaluationMarkdown(stage0Evaluation)], { type: 'text/markdown' });
+    downloadBlob(blob, `airlock-stage0-evaluation-${seed}.md`);
   }
 
   function downloadArtifactCatalogJson() {
@@ -484,9 +505,17 @@ function App() {
 
         <section className="panel evaluation-panel" aria-label="Stage 0 evaluation batch">
           <div className="panel-header">
-            <h2>Evaluation Batch</h2>
+            <h2>Stage 0 Evaluation</h2>
             <div className="button-pair">
-              <span>{evaluation.matchCount} seeded matches</span>
+              <span>{stage0Evaluation.balance.matchCount} seeded matches</span>
+              <button className="icon-button" onClick={downloadStage0EvaluationReport} type="button">
+                <Download size={18} />
+                Eval
+              </button>
+              <button className="icon-button" onClick={downloadStage0EvaluationJson} type="button">
+                <Download size={18} />
+                JSON
+              </button>
               <button className="icon-button" onClick={downloadShowPackReport} type="button">
                 <Download size={18} />
                 Show
@@ -499,37 +528,45 @@ function App() {
           </div>
           <div className="evaluation-body">
             <div className="show-pack-status">
-              <FileCheck2 size={24} />
+              {stage0Verification.ok ? <FileCheck2 size={24} /> : <XCircle size={24} />}
               <div>
-                <span>Show pack</span>
-                <strong>{showPack.matches.length} verified demo seeds</strong>
-                <code>{showPack.packHash.slice(0, 18)}...{showPack.packHash.slice(-8)}</code>
+                <span>{stage0Verification.ok ? 'Evaluation verified' : 'Evaluation drift'}</span>
+                <strong>{stage0Evaluation.recommendation.replaceAll('-', ' ')}</strong>
+                <code>{stage0Evaluation.evaluationHash.slice(0, 18)}...{stage0Evaluation.evaluationHash.slice(-8)}</code>
               </div>
+            </div>
+            <div className="gate-strip" aria-label="Stage 0 evaluation gates">
+              {Object.entries(stage0Evaluation.gates).map(([label, ok]) => (
+                <span className={ok ? 'ok' : 'fail'} key={label}>
+                  {ok ? <CheckCircle2 size={15} /> : <XCircle size={15} />}
+                  {label.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                </span>
+              ))}
             </div>
             <div className="evaluation-meter">
               <p>Win balance</p>
               <div aria-label="Technician and Saboteur win balance">
-                <span style={{ width: `${evaluation.technicianRate}%` }} />
-                <strong>{evaluation.technicianRate}% Tech</strong>
-                <em>{evaluation.saboteurRate}% Sab</em>
+                <span style={{ width: `${Math.round(stage0Evaluation.balanceGuard.technicianRate * 100)}%` }} />
+                <strong>{Math.round(stage0Evaluation.balanceGuard.technicianRate * 100)}% Tech</strong>
+                <em>{Math.round(stage0Evaluation.balanceGuard.saboteurRate * 100)}% Sab</em>
               </div>
             </div>
             <dl>
               <div>
                 <dt>Avg ticks</dt>
-                <dd>{evaluation.averageTicks}</dd>
+                <dd>{stage0Evaluation.balance.averages.ticks}</dd>
               </div>
               <div>
                 <dt>Avg meetings</dt>
-                <dd>{evaluation.averageMeetings}</dd>
+                <dd>{stage0Evaluation.balance.averages.meetings}</dd>
               </div>
               <div>
                 <dt>Avg transcript</dt>
-                <dd>{evaluation.averageEvents}</dd>
+                <dd>{stage0Evaluation.balance.averages.transcriptEvents}</dd>
               </div>
               <div>
                 <dt>Top pair</dt>
-                <dd>{evaluation.topSaboteurPair}</dd>
+                <dd>{topSaboteurPair}</dd>
               </div>
             </dl>
             <div className="density-strip" aria-label="Current match event density">
@@ -541,7 +578,7 @@ function App() {
               ))}
             </div>
             <div className="evaluation-list" aria-label="Recent batch outcomes">
-              {evaluation.outcomes.map((outcome) => (
+              {stage0Evaluation.seedIndex.seeds.map((outcome) => (
                 <button
                   className={outcome.winner}
                   key={outcome.seed}
@@ -549,7 +586,7 @@ function App() {
                   title={outcome.seed}
                   type="button"
                 >
-                  T{outcome.tick}
+                  T{outcome.ticks}
                 </button>
               ))}
             </div>
@@ -730,40 +767,6 @@ function buildEventDensity(events: TranscriptEvent[]) {
     { label: 'danger', value: events.filter((event) => event.kind === 'kill' || event.kind === 'report').length },
     { label: 'repairs', value: events.filter((event) => event.kind === 'task').length },
   ];
-}
-
-function buildEvaluation(seed: string) {
-  const matchCount = 32;
-  const summary = buildBalanceSummary(matchCount, `${seed}-eval`);
-
-  const outcomes = Array.from({ length: matchCount }, (_, index) => {
-    const matchSeed = `${seed}-eval-${index}`;
-    const result = runMatch(matchSeed);
-
-    return {
-      seed: matchSeed,
-      winner: result.winner ?? 'technician',
-      tick: result.tick,
-    };
-  });
-
-  const topSaboteurPair =
-    Object.entries(summary.saboteurPairs)
-      .sort((a, b) => b[1] - a[1])[0]?.[0]
-      .split('+')
-      .map((id) => profiles[id as AgentId].name)
-      .join(' + ') ?? 'none';
-
-  return {
-    matchCount,
-    technicianRate: Math.round((summary.wins.technician / matchCount) * 100),
-    saboteurRate: Math.round((summary.wins.saboteur / matchCount) * 100),
-    averageTicks: roundBalance(summary.averages.ticks),
-    averageMeetings: roundBalance(summary.averages.meetings),
-    averageEvents: roundBalance(summary.averages.transcriptEvents),
-    topSaboteurPair,
-    outcomes,
-  };
 }
 
 function readSeedFromUrl(): string {
