@@ -71,6 +71,7 @@ function App() {
   const samplePromptCommitment = promptCommitment(samplePrivatePrompt);
   const promptMatchesManifest = samplePromptCommitment === sampleManifest.promptCommitment;
   const evaluation = useMemo(() => buildEvaluation(seed), [seed]);
+  const eventDensity = useMemo(() => buildEventDensity(match.transcript), [match.transcript]);
   const ladder = useMemo(() => runLadderPreview(32, `${seed}-ladder`), [seed]);
 
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
@@ -420,6 +421,14 @@ function App() {
                 <dd>{evaluation.topSaboteurPair}</dd>
               </div>
             </dl>
+            <div className="density-strip" aria-label="Current match event density">
+              {eventDensity.map((item) => (
+                <span key={item.label}>
+                  <strong>{item.value}</strong>
+                  {item.label}
+                </span>
+              ))}
+            </div>
             <div className="evaluation-list" aria-label="Recent batch outcomes">
               {evaluation.outcomes.map((outcome) => (
                 <button
@@ -563,6 +572,16 @@ function transcriptFilterMatches(event: TranscriptEvent, filter: TranscriptFilte
   if (filter === 'reports') return event.kind === 'report';
   if (filter === 'votes') return event.kind === 'vote';
   return event.kind === 'kill' || event.kind === 'report' || event.kind === 'end';
+}
+
+function buildEventDensity(events: TranscriptEvent[]) {
+  return [
+    { label: 'speech', value: events.filter((event) => event.kind === 'speech').length },
+    { label: 'votes', value: events.filter((event) => event.kind === 'vote').length },
+    { label: 'reports', value: events.filter((event) => event.kind === 'report').length },
+    { label: 'danger', value: events.filter((event) => event.kind === 'kill' || event.kind === 'report').length },
+    { label: 'repairs', value: events.filter((event) => event.kind === 'task').length },
+  ];
 }
 
 function buildEvaluation(seed: string) {

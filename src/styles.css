@@ -671,6 +671,34 @@ dd {
   margin: 0;
 }
 
+.density-strip {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.density-strip span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  min-height: 46px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #0b1010;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 8px 10px;
+  text-transform: uppercase;
+}
+
+.density-strip strong {
+  color: var(--accent);
+  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  font-size: 1rem;
+}
+
 .evaluation-list {
   display: grid;
   grid-column: 1 / -1;
@@ -898,6 +926,10 @@ meter::-webkit-meter-optimum-value {
     grid-template-columns: repeat(8, minmax(0, 1fr));
   }
 
+  .density-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .ladder-head,
   .ladder-row {
     grid-template-columns: 42px minmax(100px, 1fr) 76px 74px;
@@ -951,6 +983,10 @@ meter::-webkit-meter-optimum-value {
   }
 
   .transcript-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .density-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
