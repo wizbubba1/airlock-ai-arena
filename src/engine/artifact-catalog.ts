@@ -79,6 +79,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Commit-before-render schedule with fixed public reveal delay for reviewing P2 timing and side-channel policy.',
     },
     {
+      name: 'Sanitizer audit',
+      schema: 'airlock.sanitizer_audit.stage0.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-sanitizer-audit-airlock-stage-zero-demo.json',
+      generateCommand: 'npm run sanitizer-audit -- airlock-stage-zero-demo',
+      verifyCommand: 'npm run verify-sanitizer-audit -- ./artifacts/airlock-sanitizer-audit-airlock-stage-zero-demo.json',
+      purpose: 'Deterministic meeting-speech sanitizer audit for reviewing anti-steganography policy before agents receive speech.',
+    },
+    {
       name: "Pick'em receipt",
       schema: 'airlock.pickem.stage0.v1',
       format: 'json',

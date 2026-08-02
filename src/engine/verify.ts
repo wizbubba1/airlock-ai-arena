@@ -3,6 +3,7 @@ import { buildAuditBundle } from './bundle';
 import { runLadderPreview } from './ladder';
 import { runMatch } from './match';
 import { buildRevealSchedule } from './reveal-schedule';
+import { buildSanitizerAudit } from './sanitizer-audit';
 import { buildSeedIndex } from './seed-index';
 import { buildSeasonManifest } from './season';
 import { buildShowPack } from './show-pack';
@@ -12,6 +13,7 @@ import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
 import type { LadderSummary } from './ladder';
 import type { RevealSchedule } from './reveal-schedule';
+import type { SanitizerAudit } from './sanitizer-audit';
 import type { SeedIndex } from './seed-index';
 import type { SeasonManifest } from './season';
 import type { ShowPack } from './show-pack';
@@ -81,6 +83,13 @@ export interface RevealScheduleVerificationResult {
   seed: string;
   errors: string[];
   expected: RevealSchedule;
+}
+
+export interface SanitizerAuditVerificationResult {
+  ok: boolean;
+  seed: string;
+  errors: string[];
+  expected: SanitizerAudit;
 }
 
 export function verifyAuditBundle(bundle: AuditBundle): AuditVerificationResult {
@@ -261,6 +270,26 @@ export function verifyRevealSchedule(schedule: RevealSchedule): RevealScheduleVe
   return {
     ok: errors.length === 0,
     seed: schedule.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifySanitizerAudit(audit: SanitizerAudit): SanitizerAuditVerificationResult {
+  const expected = buildSanitizerAudit(audit.seed);
+  const errors: string[] = [];
+
+  compare('schema', audit.schema, expected.schema, errors);
+  compare('policy', audit.policy, expected.policy, errors);
+  compare('entries', audit.entries, expected.entries, errors);
+  compare('changedEntries', audit.changedEntries, expected.changedEntries, errors);
+  compare('auditHash', audit.auditHash, expected.auditHash, errors);
+
+  if (audit.entries.length === 0) errors.push('sanitizer audit has no speech entries.');
+
+  return {
+    ok: errors.length === 0,
+    seed: audit.seed,
     errors,
     expected,
   };

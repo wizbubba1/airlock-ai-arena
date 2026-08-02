@@ -11,6 +11,7 @@ export {
   buildLadderReport,
   buildMatchReport,
   buildRevealScheduleMarkdown,
+  buildSanitizerAuditMarkdown,
   buildSeedIndexReport,
   buildShowPackReport,
   buildStage0EvaluationMarkdown,
@@ -19,6 +20,7 @@ export {
 export { runLadderPreview } from './ladder';
 export { buildPickemReceipt, parseAgentPick, verifyPickemReceipt } from './pickem';
 export { buildRevealSchedule, buildRevealScheduleFromMatch } from './reveal-schedule';
+export { buildSanitizerAudit, sanitizeSpeech } from './sanitizer-audit';
 export { buildSeasonManifest } from './season';
 export { buildSeedIndex, canonicalSeeds } from './seed-index';
 export { buildShowPack, defaultShowSeeds } from './show-pack';
@@ -29,6 +31,7 @@ export {
   verifyBalanceSummary,
   verifyLadderSummary,
   verifyRevealSchedule,
+  verifySanitizerAudit,
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,

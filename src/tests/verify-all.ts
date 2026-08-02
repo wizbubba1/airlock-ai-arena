@@ -9,6 +9,8 @@ import {
   buildLadderReport,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
+  buildSanitizerAudit,
+  buildSanitizerAuditMarkdown,
   buildSeedIndex,
   buildSeedIndexReport,
   buildSeasonManifest,
@@ -25,6 +27,7 @@ import {
   verifyBalanceSummary,
   verifyLadderSummary,
   verifyRevealSchedule,
+  verifySanitizerAudit,
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,
@@ -48,6 +51,7 @@ const challenge = buildChallengePacket(seed);
 const balance = buildBalanceSummary(100, 'stage-zero-ci');
 const ladder = runLadderPreview(32, 'stage-one-ci');
 const revealSchedule = buildRevealSchedule(seed);
+const sanitizerAudit = buildSanitizerAudit(seed);
 const season = buildSeasonManifest(seasonId);
 const seedIndex = buildSeedIndex();
 const showPack = buildShowPack();
@@ -64,6 +68,8 @@ const outputs = [
   writeMarkdown('airlock-ladder-32.md', buildLadderReport(ladder)),
   writeJson('airlock-reveal-schedule-airlock-stage-zero-demo.json', revealSchedule),
   writeMarkdown('airlock-reveal-schedule-airlock-stage-zero-demo.md', buildRevealScheduleMarkdown(revealSchedule)),
+  writeJson('airlock-sanitizer-audit-airlock-stage-zero-demo.json', sanitizerAudit),
+  writeMarkdown('airlock-sanitizer-audit-airlock-stage-zero-demo.md', buildSanitizerAuditMarkdown(sanitizerAudit)),
   writeJson('airlock-season-stage1-preview.001.json', season),
   writeJson('airlock-seed-index.json', seedIndex),
   writeMarkdown('airlock-seed-index.md', buildSeedIndexReport(seedIndex)),
@@ -85,6 +91,7 @@ const checks = [
   { name: 'balance', ...verifyBalanceSummary(balance) },
   { name: 'ladder', ...verifyLadderSummary(ladder) },
   { name: 'reveal-schedule', ...verifyRevealSchedule(revealSchedule) },
+  { name: 'sanitizer-audit', ...verifySanitizerAudit(sanitizerAudit) },
   { name: 'season', ...verifySeasonManifest(season) },
   { name: 'seed-index', ...verifySeedIndex(seedIndex) },
   { name: 'show-pack', ...verifyShowPack(showPack) },

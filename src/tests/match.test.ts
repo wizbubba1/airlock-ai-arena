@@ -13,6 +13,8 @@ import {
   buildPickemReceipt,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
+  buildSanitizerAudit,
+  buildSanitizerAuditMarkdown,
   buildSeasonManifest,
   buildSeedIndex,
   buildSeedIndexReport,
@@ -33,6 +35,7 @@ import {
   verifyLadderSummary,
   verifyPickemReceipt,
   verifyRevealSchedule,
+  verifySanitizerAudit,
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,
@@ -536,6 +539,31 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('scheduleHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies a deterministic sanitizer audit', () => {
+    const first = buildSanitizerAudit('airlock-stage-zero-demo');
+    const second = buildSanitizerAudit('airlock-stage-zero-demo');
+    const markdown = buildSanitizerAuditMarkdown(first);
+    const verified = verifySanitizerAudit(first);
+    const tampered = verifySanitizerAudit({
+      ...first,
+      auditHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.sanitizer_audit.stage0.v1');
+    expect(first.policy.agentVisibility).toBe('sanitized-speech-only');
+    expect(first.entries.length).toBeGreaterThan(0);
+    expect(first.entries[0].originalHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(first.entries[0].sanitizedHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(first.auditHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Sanitizer Audit');
+    expect(markdown).toContain('## Speech Entries');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('auditHash does not match deterministic replay.');
   });
 
   it('validates authored-agent manifests for the Stage 1 ladder path', () => {

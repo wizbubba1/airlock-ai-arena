@@ -4,6 +4,7 @@ import { ruleset } from './ruleset';
 import type { ArtifactCatalog } from './artifact-catalog';
 import type { LadderSummary } from './ladder';
 import type { RevealSchedule } from './reveal-schedule';
+import type { SanitizerAudit } from './sanitizer-audit';
 import type { SeedIndex } from './seed-index';
 import type { ShowPack } from './show-pack';
 import type { Stage0Evaluation } from './stage0-evaluation';
@@ -318,6 +319,36 @@ export function buildRevealScheduleMarkdown(schedule: RevealSchedule): string {
     ...schedule.entries.map(
       (entry) =>
         `| ${entry.tick} | ${entry.publicRevealSlot}s | ${entry.transcriptEvents} | ${entry.publicSnapshots} | ${entry.marketSnapshots} | \`${entry.commitment}\` |`,
+    ),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildSanitizerAuditMarkdown(audit: SanitizerAudit): string {
+  const lines: string[] = [
+    `# AIRLOCK Sanitizer Audit`,
+    ``,
+    `Seed: \`${audit.seed}\``,
+    `Schema: \`${audit.schema}\``,
+    `Audit hash: \`${audit.auditHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Sanitizer | ${audit.policy.sanitizer} |`,
+    `| Agent visibility | ${audit.policy.agentVisibility} |`,
+    `| Spectator visibility | ${audit.policy.spectatorVisibility} |`,
+    ``,
+    `## Speech Entries`,
+    ``,
+    `| Tick | Speaker | Changed | Original Hash | Sanitized Hash | Sanitized Text |`,
+    `|---:|---|---|---|---|---|`,
+    ...audit.entries.map(
+      (entry) =>
+        `| ${entry.tick} | ${profiles[entry.speaker].name} | ${entry.changed ? 'yes' : 'no'} | \`${entry.originalHash}\` | \`${entry.sanitizedHash}\` | ${entry.sanitizedText} |`,
     ),
     ``,
   ];

@@ -52,6 +52,12 @@ jobs:
       - name: Reveal schedule verifier smoke test
         run: npm run verify-reveal-schedule -- ./artifacts/airlock-reveal-schedule-airlock-stage-zero-demo.json
 
+      - name: Sanitizer audit smoke test
+        run: npm run sanitizer-audit -- airlock-stage-zero-demo
+
+      - name: Sanitizer audit verifier smoke test
+        run: npm run verify-sanitizer-audit -- ./artifacts/airlock-sanitizer-audit-airlock-stage-zero-demo.json
+
       - name: Stage 0 evaluation smoke test
         run: npm run stage0-evaluation
 
