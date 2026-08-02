@@ -5,6 +5,8 @@ import {
   auditDigests,
   buildArtifactCatalog,
   buildArtifactCatalogReport,
+  buildBalancePatchSchedule,
+  buildBalancePatchScheduleMarkdown,
   buildBalanceSummary,
   buildAuditBundle,
   buildChallengePacket,
@@ -15,6 +17,8 @@ import {
   buildInferenceReceipts,
   buildInferenceReceiptsMarkdown,
   buildLadderReport,
+  buildMarketReadiness,
+  buildMarketReadinessMarkdown,
   buildMatchReport,
   buildOperatorReadiness,
   buildOperatorReadinessMarkdown,
@@ -39,11 +43,13 @@ import {
   runLadderPreview,
   runMatch,
   verifyAuditBundle,
+  verifyBalancePatchSchedule,
   verifyBalanceSummary,
   verifyCertifiedEventFeed,
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyLadderSummary,
+  verifyMarketReadiness,
   verifyOperatorReadiness,
   verifyPickemReceipt,
   verifyRevealSchedule,
@@ -227,6 +233,55 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('feedHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies a precommitted balance patch schedule', () => {
+    const first = buildBalancePatchSchedule('stage1-preview.test');
+    const second = buildBalancePatchSchedule('stage1-preview.test');
+    const markdown = buildBalancePatchScheduleMarkdown(first);
+    const verified = verifyBalancePatchSchedule(first);
+    const tampered = verifyBalancePatchSchedule({
+      ...first,
+      scheduleHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.balance_patch_schedule.stage1.preview.v1');
+    expect(first.cadence.activationPolicy).toBe('activate-only-listed-mutations');
+    expect(first.mutations.length).toBeGreaterThan(3);
+    expect(first.mutations.every((mutation) => mutation.operatorDiscretion === 'none-precommitted-only')).toBe(true);
+    expect(first.scheduleHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Balance Patch Schedule');
+    expect(markdown).toContain('## Mutations');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('scheduleHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies market readiness with real-money markets blocked by default', () => {
+    const first = buildMarketReadiness('airlock-stage-zero-demo');
+    const second = buildMarketReadiness('airlock-stage-zero-demo');
+    const markdown = buildMarketReadinessMarkdown(first);
+    const verified = verifyMarketReadiness(first);
+    const tampered = verifyMarketReadiness({
+      ...first,
+      readinessHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.market_readiness.stage2.v1');
+    expect(first.mode).toBe('real-money-blocked');
+    expect(first.policy.directConsumerBetting).toBe('not-implemented');
+    expect(first.gates.some((gate) => gate.status === 'blocked')).toBe(true);
+    expect(first.evidence.certifiedFeed.events.length).toBeGreaterThan(0);
+    expect(first.readinessHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Market Readiness');
+    expect(markdown).toContain('## Gates');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('readinessHash does not match deterministic replay.');
   });
 
   it('builds a versioned season manifest for Stage 1 previews', () => {

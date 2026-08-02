@@ -4,6 +4,8 @@ import {
   buildArtifactCatalog,
   buildArtifactCatalogReport,
   buildAuditBundle,
+  buildBalancePatchSchedule,
+  buildBalancePatchScheduleMarkdown,
   buildBalanceSummary,
   buildChallengePacket,
   buildCertifiedEventFeed,
@@ -13,6 +15,8 @@ import {
   buildInferenceReceipts,
   buildInferenceReceiptsMarkdown,
   buildLadderReport,
+  buildMarketReadiness,
+  buildMarketReadinessMarkdown,
   buildOperatorReadiness,
   buildOperatorReadinessMarkdown,
   buildRevealSchedule,
@@ -32,11 +36,13 @@ import {
   runLadderPreview,
   runMatch,
   verifyAuditBundle,
+  verifyBalancePatchSchedule,
   verifyBalanceSummary,
   verifyCertifiedEventFeed,
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyLadderSummary,
+  verifyMarketReadiness,
   verifyOperatorReadiness,
   verifyRevealSchedule,
   verifySanitizerAudit,
@@ -59,12 +65,14 @@ const manifest = sampleManifest as AuthoredAgentManifest;
 
 const match = runMatch(seed);
 const audit = buildAuditBundle(match, seed);
+const balancePatchSchedule = buildBalancePatchSchedule(seasonId);
 const challenge = buildChallengePacket(seed);
 const eventFeed = buildCertifiedEventFeed(seed);
 const balance = buildBalanceSummary(100, 'stage-zero-ci');
 const fallbackDrill = buildFallbackDrill(seed);
 const inferenceReceipts = buildInferenceReceipts(seed);
 const ladder = runLadderPreview(32, 'stage-one-ci');
+const marketReadiness = buildMarketReadiness(seed);
 const operatorReadiness = buildOperatorReadiness(seed, 100, 'stage-zero-ci');
 const revealSchedule = buildRevealSchedule(seed);
 const sanitizerAudit = buildSanitizerAudit(seed);
@@ -78,6 +86,8 @@ const catalog = buildArtifactCatalog();
 
 const outputs = [
   writeJson('airlock-audit-airlock-stage-zero-demo.json', audit),
+  writeJson('airlock-balance-patch-schedule-stage1-preview.001.json', balancePatchSchedule),
+  writeMarkdown('airlock-balance-patch-schedule-stage1-preview.001.md', buildBalancePatchScheduleMarkdown(balancePatchSchedule)),
   writeJson('airlock-challenge-airlock-stage-zero-demo.json', challenge),
   writeJson('airlock-event-feed-airlock-stage-zero-demo.json', eventFeed),
   writeMarkdown('airlock-event-feed-airlock-stage-zero-demo.md', buildCertifiedEventFeedMarkdown(eventFeed)),
@@ -88,6 +98,8 @@ const outputs = [
   writeMarkdown('airlock-inference-receipts-airlock-stage-zero-demo.md', buildInferenceReceiptsMarkdown(inferenceReceipts)),
   writeJson('airlock-ladder-32.json', ladder),
   writeMarkdown('airlock-ladder-32.md', buildLadderReport(ladder)),
+  writeJson('airlock-market-readiness-airlock-stage-zero-demo.json', marketReadiness),
+  writeMarkdown('airlock-market-readiness-airlock-stage-zero-demo.md', buildMarketReadinessMarkdown(marketReadiness)),
   writeJson('airlock-operator-readiness.json', operatorReadiness),
   writeMarkdown('airlock-operator-readiness.md', buildOperatorReadinessMarkdown(operatorReadiness)),
   writeJson('airlock-reveal-schedule-airlock-stage-zero-demo.json', revealSchedule),
@@ -110,6 +122,7 @@ const outputs = [
 
 const checks = [
   { name: 'audit', ...verifyAuditBundle(audit) },
+  { name: 'balance-patch-schedule', ...verifyBalancePatchSchedule(balancePatchSchedule) },
   { name: 'challenge', ok: challenge.verification.ok, errors: challenge.verification.errors },
   { name: 'event-feed', ...verifyCertifiedEventFeed(eventFeed) },
   { name: 'balance-guard', ...evaluateBalance(balance) },
@@ -117,6 +130,7 @@ const checks = [
   { name: 'fallback-drill', ...verifyFallbackDrill(fallbackDrill) },
   { name: 'inference-receipts', ...verifyInferenceReceipts(inferenceReceipts) },
   { name: 'ladder', ...verifyLadderSummary(ladder) },
+  { name: 'market-readiness', ...verifyMarketReadiness(marketReadiness) },
   { name: 'operator-readiness', ...verifyOperatorReadiness(operatorReadiness) },
   { name: 'reveal-schedule', ...verifyRevealSchedule(revealSchedule) },
   { name: 'sanitizer-audit', ...verifySanitizerAudit(sanitizerAudit) },

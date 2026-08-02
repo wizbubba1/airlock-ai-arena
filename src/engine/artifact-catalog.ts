@@ -45,6 +45,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Reviewer-facing go/no-go summary combining balance, seed coverage, show pack readiness, and transcript legibility gates.',
     },
     {
+      name: 'Balance patch schedule',
+      schema: 'airlock.balance_patch_schedule.stage1.preview.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-balance-patch-schedule-stage1-preview.001.json',
+      generateCommand: 'npm run balance-patch-schedule -- stage1-preview.001',
+      verifyCommand: 'npm run verify-balance-patch-schedule -- ./artifacts/airlock-balance-patch-schedule-stage1-preview.001.json',
+      purpose: 'Precommitted Stage 1 balance mutation schedule for P5-style anti-fragility without operator-discretionary patches.',
+    },
+    {
       name: 'Operator readiness',
       schema: 'airlock.operator_readiness.stage0.v1',
       format: 'json',
@@ -52,6 +61,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       generateCommand: 'npm run operator-readiness',
       verifyCommand: 'npm run verify-operator-readiness -- ./artifacts/airlock-operator-readiness.json',
       purpose: 'Single readiness checklist over Stage 0 product gates plus P1/P2/P4/P9 evidence artifacts.',
+    },
+    {
+      name: 'Market readiness',
+      schema: 'airlock.market_readiness.stage2.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-market-readiness-airlock-stage-zero-demo.json',
+      generateCommand: 'npm run market-readiness -- airlock-stage-zero-demo',
+      verifyCommand: 'npm run verify-market-readiness -- ./artifacts/airlock-market-readiness-airlock-stage-zero-demo.json',
+      purpose: 'Stage 2 gate artifact that keeps real-money markets blocked unless counsel, jurisdiction, operator, and responsible-play evidence hashes are supplied.',
     },
     {
       name: 'Challenge packet',

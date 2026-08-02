@@ -3,6 +3,7 @@ export { agentIds, graph, profiles, rooms } from './content';
 export { ruleset } from './ruleset';
 export { auditDigests, digest, stableStringify } from './audit';
 export { buildArtifactCatalog } from './artifact-catalog';
+export { buildBalancePatchSchedule } from './balance-patch-schedule';
 export { buildBalanceSummary, evaluateBalance, roundBalance } from './balance';
 export { buildAuditBundle, buildTickCommitments } from './bundle';
 export { buildChallengePacket } from './challenge';
@@ -11,10 +12,12 @@ export { buildFallbackDrill } from './fallback-drill';
 export { buildInferenceReceipts } from './inference-receipts';
 export {
   buildArtifactCatalogReport,
+  buildBalancePatchScheduleMarkdown,
   buildCertifiedEventFeedMarkdown,
   buildFallbackDrillMarkdown,
   buildInferenceReceiptsMarkdown,
   buildLadderReport,
+  buildMarketReadinessMarkdown,
   buildMatchReport,
   buildOperatorReadinessMarkdown,
   buildRevealScheduleMarkdown,
@@ -25,6 +28,7 @@ export {
   buildTranscriptQualityMarkdown,
 } from './report';
 export { runLadderPreview } from './ladder';
+export { buildMarketReadiness } from './market-readiness';
 export { buildPickemReceipt, parseAgentPick, verifyPickemReceipt } from './pickem';
 export { buildOperatorReadiness } from './readiness';
 export { buildRevealSchedule, buildRevealScheduleFromMatch } from './reveal-schedule';
@@ -36,11 +40,13 @@ export { buildStage0Evaluation } from './stage0-evaluation';
 export { buildTranscriptQualityReport } from './transcript-quality';
 export {
   verifyAuditBundle,
+  verifyBalancePatchSchedule,
   verifyBalanceSummary,
   verifyCertifiedEventFeed,
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyLadderSummary,
+  verifyMarketReadiness,
   verifyOperatorReadiness,
   verifyRevealSchedule,
   verifySanitizerAudit,

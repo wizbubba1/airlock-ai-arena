@@ -2,10 +2,12 @@ import { agentIds, profiles } from './content';
 import { buildAuditBundle } from './bundle';
 import { ruleset } from './ruleset';
 import type { ArtifactCatalog } from './artifact-catalog';
+import type { BalancePatchSchedule } from './balance-patch-schedule';
 import type { CertifiedEventFeed } from './event-feed';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
+import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
 import type { RevealSchedule } from './reveal-schedule';
 import type { SanitizerAudit } from './sanitizer-audit';
@@ -142,6 +144,46 @@ export function buildCertifiedEventFeedMarkdown(feed: CertifiedEventFeed): strin
     `Winner: ${feed.terminal.winner}`,
     `Reason: ${feed.terminal.reason}`,
     `Saboteurs: ${feed.terminal.saboteurs.map((id) => profiles[id].name).join(', ')}`,
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildBalancePatchScheduleMarkdown(schedule: BalancePatchSchedule): string {
+  const lines: string[] = [
+    `# AIRLOCK Balance Patch Schedule`,
+    ``,
+    `Season: \`${schedule.seasonId}\``,
+    `Schema: \`${schedule.schema}\``,
+    `Base ruleset: \`${schedule.baseRuleset}\``,
+    `Schedule hash: \`${schedule.scheduleHash}\``,
+    ``,
+    `## Cadence`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Window days | ${schedule.cadence.windowDays} |`,
+    `| Announcement | ${schedule.cadence.announcementPolicy} |`,
+    `| Activation | ${schedule.cadence.activationPolicy} |`,
+    ``,
+    `## Guardrails`,
+    ``,
+    `| Metric | Value |`,
+    `|---|---:|`,
+    `| Min Technician win rate | ${schedule.guardrails.minTechnicianWinRate} |`,
+    `| Max Technician win rate | ${schedule.guardrails.maxTechnicianWinRate} |`,
+    `| Min average meetings | ${schedule.guardrails.minAverageMeetings} |`,
+    `| Max average meetings | ${schedule.guardrails.maxAverageMeetings} |`,
+    ``,
+    `## Mutations`,
+    ``,
+    `| Window | Target | Trigger | Change | Discretion |`,
+    `|---|---|---|---|---|`,
+    ...schedule.mutations.map(
+      (mutation) =>
+        `| ${mutation.patchWindow} | ${mutation.target} | ${mutation.trigger} | ${mutation.change} | ${mutation.operatorDiscretion} |`,
+    ),
     ``,
   ];
 
@@ -498,6 +540,44 @@ export function buildOperatorReadinessMarkdown(readiness: OperatorReadiness): st
     `| Reveal schedule | \`${readiness.revealSchedule.scheduleHash}\` |`,
     `| Sanitizer audit | \`${readiness.sanitizerAudit.auditHash}\` |`,
     `| Fallback drill | \`${readiness.fallbackDrill.drillHash}\` |`,
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildMarketReadinessMarkdown(readiness: MarketReadiness): string {
+  const lines: string[] = [
+    `# AIRLOCK Market Readiness`,
+    ``,
+    `Seed: \`${readiness.seed}\``,
+    `Schema: \`${readiness.schema}\``,
+    `Mode: **${readiness.mode}**`,
+    `Readiness hash: \`${readiness.readinessHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Default rail | ${readiness.policy.defaultRail} |`,
+    `| Real-money markets | ${readiness.policy.realMoneyMarkets} |`,
+    `| Direct consumer betting | ${readiness.policy.directConsumerBetting} |`,
+    ``,
+    `## Gates`,
+    ``,
+    `| Gate | Status | Summary |`,
+    `|---|---|---|`,
+    ...readiness.gates.map((gate) => `| ${gate.id} | ${gate.status} | ${gate.summary} |`),
+    ``,
+    `## Evidence`,
+    ``,
+    `| Artifact | Hash |`,
+    `|---|---|`,
+    `| Certified feed | \`${readiness.evidence.certifiedFeed.feedHash}\` |`,
+    `| Counsel memo | ${readiness.evidence.counselMemoHash ? `\`${readiness.evidence.counselMemoHash}\`` : 'missing'} |`,
+    `| Jurisdiction policy | ${readiness.evidence.jurisdictionPolicyHash ? `\`${readiness.evidence.jurisdictionPolicyHash}\`` : 'missing'} |`,
+    `| Licensed operator | ${readiness.evidence.licensedOperatorHash ? `\`${readiness.evidence.licensedOperatorHash}\`` : 'missing'} |`,
+    `| Responsible play | ${readiness.evidence.responsiblePlayPolicyHash ? `\`${readiness.evidence.responsiblePlayPolicyHash}\`` : 'missing'} |`,
     ``,
   ];
 

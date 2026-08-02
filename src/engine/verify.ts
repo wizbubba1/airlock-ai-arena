@@ -1,9 +1,11 @@
+import { buildBalancePatchSchedule } from './balance-patch-schedule';
 import { buildBalanceSummary } from './balance';
 import { buildAuditBundle } from './bundle';
 import { buildCertifiedEventFeed } from './event-feed';
 import { buildFallbackDrill } from './fallback-drill';
 import { buildInferenceReceipts } from './inference-receipts';
 import { runLadderPreview } from './ladder';
+import { buildMarketReadiness } from './market-readiness';
 import { buildOperatorReadiness } from './readiness';
 import { runMatch } from './match';
 import { buildRevealSchedule } from './reveal-schedule';
@@ -13,12 +15,14 @@ import { buildSeasonManifest } from './season';
 import { buildShowPack } from './show-pack';
 import { buildStage0Evaluation } from './stage0-evaluation';
 import { buildTranscriptQualityReport } from './transcript-quality';
+import type { BalancePatchSchedule } from './balance-patch-schedule';
 import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
 import type { CertifiedEventFeed } from './event-feed';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
+import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
 import type { RevealSchedule } from './reveal-schedule';
 import type { SanitizerAudit } from './sanitizer-audit';
@@ -41,6 +45,13 @@ export interface BalanceVerificationResult {
   seedPrefix: string;
   errors: string[];
   expected: BalanceSummary;
+}
+
+export interface BalancePatchScheduleVerificationResult {
+  ok: boolean;
+  seasonId: string;
+  errors: string[];
+  expected: BalancePatchSchedule;
 }
 
 export interface CertifiedEventFeedVerificationResult {
@@ -77,6 +88,13 @@ export interface OperatorReadinessVerificationResult {
   seed: string;
   errors: string[];
   expected: OperatorReadiness;
+}
+
+export interface MarketReadinessVerificationResult {
+  ok: boolean;
+  seed: string;
+  errors: string[];
+  expected: MarketReadiness;
 }
 
 export interface SeedIndexVerificationResult {
@@ -163,6 +181,30 @@ export function verifyBalanceSummary(summary: BalanceSummary): BalanceVerificati
     ok: errors.length === 0,
     matchCount: summary.matchCount,
     seedPrefix: summary.seedPrefix,
+    errors,
+    expected,
+  };
+}
+
+export function verifyBalancePatchSchedule(schedule: BalancePatchSchedule): BalancePatchScheduleVerificationResult {
+  const expected = buildBalancePatchSchedule(schedule.seasonId);
+  const errors: string[] = [];
+
+  compare('schema', schedule.schema, expected.schema, errors);
+  compare('baseRuleset', schedule.baseRuleset, expected.baseRuleset, errors);
+  compare('cadence', schedule.cadence, expected.cadence, errors);
+  compare('guardrails', schedule.guardrails, expected.guardrails, errors);
+  compare('mutations', schedule.mutations, expected.mutations, errors);
+  compare('scheduleHash', schedule.scheduleHash, expected.scheduleHash, errors);
+
+  if (schedule.mutations.length === 0) errors.push('balance patch schedule has no precommitted mutations.');
+  if (schedule.mutations.some((mutation) => mutation.operatorDiscretion !== 'none-precommitted-only')) {
+    errors.push('balance patch schedule contains operator-discretionary mutations.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    seasonId: schedule.seasonId,
     errors,
     expected,
   };
@@ -266,6 +308,41 @@ export function verifyOperatorReadiness(readiness: OperatorReadiness): OperatorR
 
   if (readiness.gates.length !== 5) errors.push('operator readiness must contain five gates.');
   if (readiness.gates.some((gate) => gate.status !== 'pass')) errors.push('one or more operator readiness gates failed.');
+
+  return {
+    ok: errors.length === 0,
+    seed: readiness.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyMarketReadiness(readiness: MarketReadiness): MarketReadinessVerificationResult {
+  const options = {
+    ...(readiness.evidence.counselMemoHash ? { counselMemoHash: readiness.evidence.counselMemoHash } : {}),
+    ...(readiness.evidence.jurisdictionPolicyHash ? { jurisdictionPolicyHash: readiness.evidence.jurisdictionPolicyHash } : {}),
+    ...(readiness.evidence.licensedOperatorHash ? { licensedOperatorHash: readiness.evidence.licensedOperatorHash } : {}),
+    ...(readiness.evidence.responsiblePlayPolicyHash
+      ? { responsiblePlayPolicyHash: readiness.evidence.responsiblePlayPolicyHash }
+      : {}),
+  };
+  const expected = buildMarketReadiness(readiness.seed, options);
+  const errors: string[] = [];
+
+  compare('schema', readiness.schema, expected.schema, errors);
+  compare('mode', readiness.mode, expected.mode, errors);
+  compare('policy', readiness.policy, expected.policy, errors);
+  compare('evidence', readiness.evidence, expected.evidence, errors);
+  compare('gates', readiness.gates, expected.gates, errors);
+  compare('readinessHash', readiness.readinessHash, expected.readinessHash, errors);
+
+  if (readiness.policy.directConsumerBetting !== 'not-implemented') {
+    errors.push('direct consumer betting must remain unimplemented in this artifact.');
+  }
+  if (readiness.gates.length !== 5) errors.push('market readiness must contain five gates.');
+  if (readiness.mode === 'b2b-feed-ready' && readiness.gates.some((gate) => gate.status !== 'pass')) {
+    errors.push('b2b-feed-ready mode requires every gate to pass.');
+  }
 
   return {
     ok: errors.length === 0,

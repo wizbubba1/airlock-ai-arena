@@ -61,6 +61,8 @@ npm run verify-all
 npm run artifact-catalog
 npm run simulate
 npm run audit -- airlock-stage-zero-demo
+npm run balance-patch-schedule -- stage1-preview.001
+npm run verify-balance-patch-schedule -- ./artifacts/airlock-balance-patch-schedule-stage1-preview.001.json
 npm run challenge -- airlock-stage-zero-demo
 npm run event-feed -- airlock-stage-zero-demo
 npm run verify-event-feed -- ./artifacts/airlock-event-feed-airlock-stage-zero-demo.json
@@ -78,6 +80,8 @@ npm run sanitizer-audit -- airlock-stage-zero-demo
 npm run verify-sanitizer-audit -- ./artifacts/airlock-sanitizer-audit-airlock-stage-zero-demo.json
 npm run stage0-evaluation
 npm run verify-stage0-evaluation -- ./artifacts/airlock-stage0-evaluation.json
+npm run market-readiness -- airlock-stage-zero-demo
+npm run verify-market-readiness -- ./artifacts/airlock-market-readiness-airlock-stage-zero-demo.json
 npm run operator-readiness
 npm run verify-operator-readiness -- ./artifacts/airlock-operator-readiness.json
 npm run pickem -- airlock-stage-zero-demo vanta kepler
@@ -105,6 +109,8 @@ npm run dev
 `npm run audit -- <seed>` writes a reproducible JSON audit bundle to `artifacts/` unless you pass an explicit output path as the second argument.
 `npm run verify-all` regenerates the core artifact set and runs the deterministic verifier path in one command.
 `npm run artifact-catalog` writes JSON and Markdown indexes of every generated artifact, its schema, command, verifier, and review purpose.
+`npm run balance-patch-schedule -- <season-id>` writes JSON and Markdown precommitted balance-patch schedules for Stage 1 preview seasons.
+`npm run verify-balance-patch-schedule -- <balance-patch-schedule.json>` reconstructs the season schedule and fails if guardrails, mutations, or schedule hash drift.
 `npm run challenge -- <seed>` writes a challenge packet containing the audit bundle plus deterministic replay verification evidence.
 `npm run event-feed -- <seed>` writes JSON and Markdown certified public event-feed artifacts for media or licensed-market partner review.
 `npm run verify-event-feed -- <event-feed.json>` reruns the seeded feed and fails if policy, commitments, public events, terminal data, or feed hash drift.
@@ -122,6 +128,8 @@ npm run dev
 `npm run verify-sanitizer-audit -- <sanitizer-audit.json>` reruns the seeded sanitizer audit and fails if policy, speech entries, sanitized hashes, or audit hash drift.
 `npm run stage0-evaluation` writes a reviewer-facing go/no-go summary combining balance, seed coverage, show pack readiness, and transcript legibility gates.
 `npm run verify-stage0-evaluation -- <stage0-evaluation.json>` reruns the evaluation inputs and fails if any gate, aggregate, artifact, or evaluation hash drifts.
+`npm run market-readiness -- <seed>` writes a Stage 2 market gate artifact that keeps real-money markets blocked unless counsel, jurisdiction, operator, and responsible-play evidence hashes are supplied.
+`npm run verify-market-readiness -- <market-readiness.json>` reruns the seeded market-readiness bundle and fails if policy, gates, evidence, or readiness hash drift.
 `npm run operator-readiness` writes a single JSON and Markdown readiness checklist over the Stage 0 product gates plus P1/P2/P4/P9 evidence artifacts.
 `npm run verify-operator-readiness -- <operator-readiness.json>` reruns the readiness bundle and fails if any gate, nested artifact, recommendation, or readiness hash drifts.
 `npm run pickem -- <seed> <agent-id> <agent-id>` writes a spectator pick'em receipt with the actual Saboteurs, score, transcript hash, and receipt hash.

@@ -31,6 +31,12 @@ jobs:
       - name: Audit bundle smoke test
         run: npm run audit -- airlock-stage-zero-demo
 
+      - name: Balance patch schedule smoke test
+        run: npm run balance-patch-schedule -- stage1-preview.001
+
+      - name: Balance patch schedule verifier smoke test
+        run: npm run verify-balance-patch-schedule -- ./artifacts/airlock-balance-patch-schedule-stage1-preview.001.json
+
       - name: Challenge packet smoke test
         run: npm run challenge -- airlock-stage-zero-demo
 
@@ -87,6 +93,12 @@ jobs:
 
       - name: Operator readiness verifier smoke test
         run: npm run verify-operator-readiness -- ./artifacts/airlock-operator-readiness.json
+
+      - name: Market readiness smoke test
+        run: npm run market-readiness -- airlock-stage-zero-demo
+
+      - name: Market readiness verifier smoke test
+        run: npm run verify-market-readiness -- ./artifacts/airlock-market-readiness-airlock-stage-zero-demo.json
 
       - name: Pickem receipt smoke test
         run: npm run pickem -- airlock-stage-zero-demo vanta kepler
