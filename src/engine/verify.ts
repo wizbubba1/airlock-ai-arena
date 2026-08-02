@@ -1,5 +1,6 @@
 import { buildBalanceSummary } from './balance';
 import { buildAuditBundle } from './bundle';
+import { buildCertifiedEventFeed } from './event-feed';
 import { buildFallbackDrill } from './fallback-drill';
 import { buildInferenceReceipts } from './inference-receipts';
 import { runLadderPreview } from './ladder';
@@ -14,6 +15,7 @@ import { buildStage0Evaluation } from './stage0-evaluation';
 import { buildTranscriptQualityReport } from './transcript-quality';
 import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
+import type { CertifiedEventFeed } from './event-feed';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
@@ -39,6 +41,13 @@ export interface BalanceVerificationResult {
   seedPrefix: string;
   errors: string[];
   expected: BalanceSummary;
+}
+
+export interface CertifiedEventFeedVerificationResult {
+  ok: boolean;
+  seed: string;
+  errors: string[];
+  expected: CertifiedEventFeed;
 }
 
 export interface FallbackDrillVerificationResult {
@@ -154,6 +163,33 @@ export function verifyBalanceSummary(summary: BalanceSummary): BalanceVerificati
     ok: errors.length === 0,
     matchCount: summary.matchCount,
     seedPrefix: summary.seedPrefix,
+    errors,
+    expected,
+  };
+}
+
+export function verifyCertifiedEventFeed(feed: CertifiedEventFeed): CertifiedEventFeedVerificationResult {
+  const expected = buildCertifiedEventFeed(feed.seed);
+  const errors: string[] = [];
+
+  compare('schema', feed.schema, expected.schema, errors);
+  compare('policy', feed.policy, expected.policy, errors);
+  compare('commitments', feed.commitments, expected.commitments, errors);
+  compare('events', feed.events, expected.events, errors);
+  compare('terminal', feed.terminal, expected.terminal, errors);
+  compare('feedHash', feed.feedHash, expected.feedHash, errors);
+
+  if (feed.events.length === 0) errors.push('certified event feed has no events.');
+  if (/"role"|"saboteurs"/.test(JSON.stringify(feed.events))) {
+    errors.push('certified event feed events contain private role fields.');
+  }
+  if (!feed.policy.excludes.includes('chain_of_thought')) {
+    errors.push('certified event feed policy must exclude chain-of-thought.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    seed: feed.seed,
     errors,
     expected,
   };

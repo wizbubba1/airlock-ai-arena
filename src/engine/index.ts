@@ -6,10 +6,12 @@ export { buildArtifactCatalog } from './artifact-catalog';
 export { buildBalanceSummary, evaluateBalance, roundBalance } from './balance';
 export { buildAuditBundle, buildTickCommitments } from './bundle';
 export { buildChallengePacket } from './challenge';
+export { buildCertifiedEventFeed } from './event-feed';
 export { buildFallbackDrill } from './fallback-drill';
 export { buildInferenceReceipts } from './inference-receipts';
 export {
   buildArtifactCatalogReport,
+  buildCertifiedEventFeedMarkdown,
   buildFallbackDrillMarkdown,
   buildInferenceReceiptsMarkdown,
   buildLadderReport,
@@ -35,6 +37,7 @@ export { buildTranscriptQualityReport } from './transcript-quality';
 export {
   verifyAuditBundle,
   verifyBalanceSummary,
+  verifyCertifiedEventFeed,
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyLadderSummary,

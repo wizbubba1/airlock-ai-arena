@@ -8,6 +8,8 @@ import {
   buildBalanceSummary,
   buildAuditBundle,
   buildChallengePacket,
+  buildCertifiedEventFeed,
+  buildCertifiedEventFeedMarkdown,
   buildFallbackDrill,
   buildFallbackDrillMarkdown,
   buildInferenceReceipts,
@@ -38,6 +40,7 @@ import {
   runMatch,
   verifyAuditBundle,
   verifyBalanceSummary,
+  verifyCertifiedEventFeed,
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyLadderSummary,
@@ -197,6 +200,33 @@ describe('AIRLOCK deterministic engine', () => {
     expect(packet.verification.errors).toEqual([]);
     expect(packet.verification.actualTranscriptHash).toBe(packet.auditBundle.commitments.transcriptHash);
     expect(packet.verification.expectedTranscriptHash).toBe(packet.auditBundle.commitments.transcriptHash);
+  });
+
+  it('builds and verifies a certified public event feed', () => {
+    const first = buildCertifiedEventFeed('airlock-stage-zero-demo');
+    const second = buildCertifiedEventFeed('airlock-stage-zero-demo');
+    const markdown = buildCertifiedEventFeedMarkdown(first);
+    const verified = verifyCertifiedEventFeed(first);
+    const tampered = verifyCertifiedEventFeed({
+      ...first,
+      feedHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.certified_event_feed.stage0.v1');
+    expect(first.policy.roleDisclosure).toBe('terminal-only');
+    expect(first.policy.excludes).toContain('chain_of_thought');
+    expect(first.events.length).toBeGreaterThan(0);
+    expect(first.events[0].sequence).toBe(1);
+    expect(first.events[0].eventHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(first.commitments.transcriptHash).toBe('sha256:f9c6b80b0724833cd855b85b01aa6a38bad063384bfda3b7e9d71a4868149667');
+    expect(first.feedHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Certified Event Feed');
+    expect(markdown).toContain('## Terminal');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('feedHash does not match deterministic replay.');
   });
 
   it('builds a versioned season manifest for Stage 1 previews', () => {

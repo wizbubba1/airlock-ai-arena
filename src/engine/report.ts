@@ -2,6 +2,7 @@ import { agentIds, profiles } from './content';
 import { buildAuditBundle } from './bundle';
 import { ruleset } from './ruleset';
 import type { ArtifactCatalog } from './artifact-catalog';
+import type { CertifiedEventFeed } from './event-feed';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
@@ -95,6 +96,52 @@ export function buildArtifactCatalogReport(catalog: ArtifactCatalog): string {
     `## Review Use`,
     ``,
     ...catalog.entries.map((entry) => `- **${entry.name}:** ${entry.purpose}`),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildCertifiedEventFeedMarkdown(feed: CertifiedEventFeed): string {
+  const lines: string[] = [
+    `# AIRLOCK Certified Event Feed`,
+    ``,
+    `Seed: \`${feed.seed}\``,
+    `Schema: \`${feed.schema}\``,
+    `Feed hash: \`${feed.feedHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Feed type | ${feed.policy.feedType} |`,
+    `| Role disclosure | ${feed.policy.roleDisclosure} |`,
+    `| Consumer | ${feed.policy.consumer} |`,
+    `| Excludes | ${feed.policy.excludes.join(', ')} |`,
+    ``,
+    `## Commitments`,
+    ``,
+    `| Field | Hash |`,
+    `|---|---|`,
+    `| Transcript | \`${feed.commitments.transcriptHash}\` |`,
+    `| Market | \`${feed.commitments.marketHash}\` |`,
+    `| Public snapshots | \`${feed.commitments.snapshotHash}\` |`,
+    `| Entropy | \`${feed.commitments.entropyHash}\` |`,
+    ``,
+    `## Feed Events`,
+    ``,
+    `| Seq | Tick | Kind | Speaker | Public Text | Event Hash |`,
+    `|---:|---:|---|---|---|---|`,
+    ...feed.events.map(
+      (event) =>
+        `| ${event.sequence} | ${event.tick} | ${event.kind} | ${event.speaker ? profiles[event.speaker].name : 'system'} | ${event.publicText} | \`${event.eventHash}\` |`,
+    ),
+    ``,
+    `## Terminal`,
+    ``,
+    `Winner: ${feed.terminal.winner}`,
+    `Reason: ${feed.terminal.reason}`,
+    `Saboteurs: ${feed.terminal.saboteurs.map((id) => profiles[id].name).join(', ')}`,
     ``,
   ];
 

@@ -83,6 +83,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run challenge -- <seed>` writes a single challenge packet containing the audit bundle plus deterministic replay verification evidence. This is the Stage 0 stand-in for the optimistic challenge workflow in the patched product spec.
 
+`npm run event-feed -- <seed>` writes JSON and Markdown certified public feed artifacts for media or licensed-market partner review. The feed contains public transcript events, public market commitments, and terminal-only role disclosure.
+
 `npm run fallback-drill -- <seed>` writes JSON and Markdown timeout drill artifacts for action, speech, vote, and affected micro-pool fallback behavior.
 
 `npm run inference-receipts -- <seed>` writes JSON and Markdown speech-generation receipt artifacts for prompt hashes, output hashes, token counts, logprob commitments, and receipt hashes. This is the Stage 0 stand-in for P1 attested inference receipts.

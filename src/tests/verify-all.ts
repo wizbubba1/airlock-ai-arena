@@ -6,6 +6,8 @@ import {
   buildAuditBundle,
   buildBalanceSummary,
   buildChallengePacket,
+  buildCertifiedEventFeed,
+  buildCertifiedEventFeedMarkdown,
   buildFallbackDrill,
   buildFallbackDrillMarkdown,
   buildInferenceReceipts,
@@ -31,6 +33,7 @@ import {
   runMatch,
   verifyAuditBundle,
   verifyBalanceSummary,
+  verifyCertifiedEventFeed,
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyLadderSummary,
@@ -57,6 +60,7 @@ const manifest = sampleManifest as AuthoredAgentManifest;
 const match = runMatch(seed);
 const audit = buildAuditBundle(match, seed);
 const challenge = buildChallengePacket(seed);
+const eventFeed = buildCertifiedEventFeed(seed);
 const balance = buildBalanceSummary(100, 'stage-zero-ci');
 const fallbackDrill = buildFallbackDrill(seed);
 const inferenceReceipts = buildInferenceReceipts(seed);
@@ -75,6 +79,8 @@ const catalog = buildArtifactCatalog();
 const outputs = [
   writeJson('airlock-audit-airlock-stage-zero-demo.json', audit),
   writeJson('airlock-challenge-airlock-stage-zero-demo.json', challenge),
+  writeJson('airlock-event-feed-airlock-stage-zero-demo.json', eventFeed),
+  writeMarkdown('airlock-event-feed-airlock-stage-zero-demo.md', buildCertifiedEventFeedMarkdown(eventFeed)),
   writeJson('airlock-balance-ci.json', balance),
   writeJson('airlock-fallback-drill-airlock-stage-zero-demo.json', fallbackDrill),
   writeMarkdown('airlock-fallback-drill-airlock-stage-zero-demo.md', buildFallbackDrillMarkdown(fallbackDrill)),
@@ -105,6 +111,7 @@ const outputs = [
 const checks = [
   { name: 'audit', ...verifyAuditBundle(audit) },
   { name: 'challenge', ok: challenge.verification.ok, errors: challenge.verification.errors },
+  { name: 'event-feed', ...verifyCertifiedEventFeed(eventFeed) },
   { name: 'balance-guard', ...evaluateBalance(balance) },
   { name: 'balance', ...verifyBalanceSummary(balance) },
   { name: 'fallback-drill', ...verifyFallbackDrill(fallbackDrill) },

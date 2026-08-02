@@ -62,6 +62,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Single-file optimistic fairness packet containing an audit bundle and deterministic replay verification evidence.',
     },
     {
+      name: 'Certified event feed',
+      schema: 'airlock.certified_event_feed.stage0.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-event-feed-airlock-stage-zero-demo.json',
+      generateCommand: 'npm run event-feed -- airlock-stage-zero-demo',
+      verifyCommand: 'npm run verify-event-feed -- ./artifacts/airlock-event-feed-airlock-stage-zero-demo.json',
+      purpose: 'Public transcript and market feed artifact for media or licensed-market partner review, with terminal-only role disclosure.',
+    },
+    {
       name: 'Match report',
       schema: 'airlock.report.stage0.markdown',
       format: 'markdown',

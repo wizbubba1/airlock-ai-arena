@@ -34,6 +34,12 @@ jobs:
       - name: Challenge packet smoke test
         run: npm run challenge -- airlock-stage-zero-demo
 
+      - name: Certified event feed smoke test
+        run: npm run event-feed -- airlock-stage-zero-demo
+
+      - name: Certified event feed verifier smoke test
+        run: npm run verify-event-feed -- ./artifacts/airlock-event-feed-airlock-stage-zero-demo.json
+
       - name: Fallback drill smoke test
         run: npm run fallback-drill -- airlock-stage-zero-demo
 

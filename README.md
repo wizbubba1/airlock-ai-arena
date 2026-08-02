@@ -62,6 +62,8 @@ npm run artifact-catalog
 npm run simulate
 npm run audit -- airlock-stage-zero-demo
 npm run challenge -- airlock-stage-zero-demo
+npm run event-feed -- airlock-stage-zero-demo
+npm run verify-event-feed -- ./artifacts/airlock-event-feed-airlock-stage-zero-demo.json
 npm run fallback-drill -- airlock-stage-zero-demo
 npm run verify-fallback-drill -- ./artifacts/airlock-fallback-drill-airlock-stage-zero-demo.json
 npm run inference-receipts -- airlock-stage-zero-demo
@@ -104,6 +106,8 @@ npm run dev
 `npm run verify-all` regenerates the core artifact set and runs the deterministic verifier path in one command.
 `npm run artifact-catalog` writes JSON and Markdown indexes of every generated artifact, its schema, command, verifier, and review purpose.
 `npm run challenge -- <seed>` writes a challenge packet containing the audit bundle plus deterministic replay verification evidence.
+`npm run event-feed -- <seed>` writes JSON and Markdown certified public event-feed artifacts for media or licensed-market partner review.
+`npm run verify-event-feed -- <event-feed.json>` reruns the seeded feed and fails if policy, commitments, public events, terminal data, or feed hash drift.
 `npm run fallback-drill -- <seed>` writes JSON and Markdown timeout drill artifacts for action, speech, vote, and micro-pool void fallbacks.
 `npm run verify-fallback-drill -- <fallback-drill.json>` reruns the seeded fallback drill and fails if policy, entries, fallback hashes, or drill hash drift.
 `npm run inference-receipts -- <seed>` writes JSON and Markdown speech-generation receipt artifacts for prompt hashes, output hashes, token counts, logprob commitments, and receipt hashes.
