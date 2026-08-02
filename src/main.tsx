@@ -21,6 +21,8 @@ import {
 import {
   agentIds,
   auditDigests,
+  buildArtifactCatalog,
+  buildArtifactCatalogReport,
   buildBalanceSummary,
   buildAuditBundle,
   buildChallengePacket,
@@ -88,6 +90,7 @@ function App() {
   const ladderVerification = useMemo(() => verifyLadderSummary(ladder), [ladder]);
   const seasonManifest = useMemo(() => buildSeasonManifest('stage1-preview.001'), []);
   const showPack = useMemo(() => buildShowPack([seed, `${seed}-show-1`, `${seed}-show-2`, `${seed}-show-3`]), [seed]);
+  const artifactCatalog = useMemo(() => buildArtifactCatalog(), []);
 
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -157,6 +160,16 @@ function App() {
   function downloadShowPackReport() {
     const blob = new Blob([buildShowPackReport(showPack)], { type: 'text/markdown' });
     downloadBlob(blob, `airlock-show-pack-${seed}.md`);
+  }
+
+  function downloadArtifactCatalogJson() {
+    const blob = new Blob([JSON.stringify(artifactCatalog, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, 'airlock-artifact-catalog.json');
+  }
+
+  function downloadArtifactCatalogReport() {
+    const blob = new Blob([buildArtifactCatalogReport(artifactCatalog)], { type: 'text/markdown' });
+    downloadBlob(blob, 'airlock-artifact-catalog.md');
   }
 
   function downloadBlob(blob: Blob, filename: string) {
@@ -581,6 +594,14 @@ function App() {
             <h2>Authoring Gate</h2>
             <div className="button-pair">
               <span>{seasonManifest.seasonId}</span>
+              <button className="icon-button" onClick={downloadArtifactCatalogReport} type="button">
+                <Download size={18} />
+                Catalog
+              </button>
+              <button className="icon-button" onClick={downloadArtifactCatalogJson} type="button">
+                <Download size={18} />
+                Index
+              </button>
               <button className="icon-button" onClick={downloadSeasonManifest} type="button">
                 <Download size={18} />
                 Season
@@ -614,6 +635,10 @@ function App() {
               </div>
             </dl>
             <div className="authoring-commitments">
+              <p>
+                <span>Artifact catalog</span>
+                <code>{artifactCatalog.catalogHash}</code>
+              </p>
               <p>
                 <span>Prompt commitment</span>
                 <code>{samplePromptCommitment}</code>
