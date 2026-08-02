@@ -55,6 +55,9 @@ jobs:
       - name: Balance report smoke test
         run: npm run balance:check
 
+      - name: Balance verifier smoke test
+        run: npm run verify-balance -- ./artifacts/airlock-balance-ci.json
+
       - name: Ladder preview smoke test
         run: npm run ladder -- 32 stage-one-ci
 

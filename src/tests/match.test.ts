@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import {
   agentIds,
   auditDigests,
+  buildBalanceSummary,
   buildAuditBundle,
   buildChallengePacket,
   buildLadderReport,
@@ -20,6 +21,7 @@ import {
   runLadderPreview,
   runMatch,
   verifyAuditBundle,
+  verifyBalanceSummary,
   verifyLadderSummary,
   verifyPickemReceipt,
   verifySeedIndex,
@@ -272,6 +274,23 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.ok).toBe(true);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('pickem receipt does not match deterministic replay.');
+  });
+
+  it('verifies balance summaries against deterministic replay', () => {
+    const summary = buildBalanceSummary(12, 'balance-verify');
+    const verified = verifyBalanceSummary(summary);
+    const tampered = verifyBalanceSummary({
+      ...summary,
+      wins: {
+        ...summary.wins,
+        technician: summary.wins.technician + 1,
+      },
+    });
+
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('wins does not match deterministic replay.');
   });
 
   it('builds a deterministic Stage 0 show pack', () => {

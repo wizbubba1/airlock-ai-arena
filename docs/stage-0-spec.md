@@ -134,6 +134,7 @@ npm run verify-seed-index -- ./artifacts/airlock-seed-index.json
 npm run show-pack
 npm run verify-show-pack -- ./artifacts/airlock-show-pack.json
 npm run balance -- 100 stage-zero-ci
+npm run verify-balance -- ./artifacts/airlock-balance-ci.json
 npm run ladder -- 32 stage-one-ci
 npm run verify-ladder -- ./artifacts/airlock-ladder-32.json
 npm run season -- stage1-preview.001

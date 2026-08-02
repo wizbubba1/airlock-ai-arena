@@ -1,8 +1,10 @@
+import { buildBalanceSummary } from './balance';
 import { buildAuditBundle } from './bundle';
 import { runLadderPreview } from './ladder';
 import { runMatch } from './match';
 import { buildSeedIndex } from './seed-index';
 import { buildShowPack } from './show-pack';
+import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
 import type { LadderSummary } from './ladder';
 import type { SeedIndex } from './seed-index';
@@ -13,6 +15,14 @@ export interface AuditVerificationResult {
   seed: string;
   errors: string[];
   expected: AuditBundle;
+}
+
+export interface BalanceVerificationResult {
+  ok: boolean;
+  matchCount: number;
+  seedPrefix: string;
+  errors: string[];
+  expected: BalanceSummary;
 }
 
 export interface LadderVerificationResult {
@@ -53,6 +63,25 @@ export function verifyAuditBundle(bundle: AuditBundle): AuditVerificationResult 
   return {
     ok: errors.length === 0,
     seed: bundle.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyBalanceSummary(summary: BalanceSummary): BalanceVerificationResult {
+  const expected = buildBalanceSummary(summary.matchCount, summary.seedPrefix);
+  const errors: string[] = [];
+
+  compare('schema', summary.schema, expected.schema, errors);
+  compare('wins', summary.wins, expected.wins, errors);
+  compare('averages', summary.averages, expected.averages, errors);
+  compare('saboteurPairs', summary.saboteurPairs, expected.saboteurPairs, errors);
+  compare('terminalReasons', summary.terminalReasons, expected.terminalReasons, errors);
+
+  return {
+    ok: errors.length === 0,
+    matchCount: summary.matchCount,
+    seedPrefix: summary.seedPrefix,
     errors,
     expected,
   };

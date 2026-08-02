@@ -67,6 +67,7 @@ npm run show-pack
 npm run verify-show-pack -- ./artifacts/airlock-show-pack.json
 npm run balance -- 1000 stage-zero
 npm run balance:check
+npm run verify-balance -- ./artifacts/airlock-balance-ci.json
 npm run ladder -- 64 stage-one-preview
 npm run verify-ladder -- ./artifacts/airlock-ladder-64.json
 npm run season -- stage1-preview.001
@@ -89,6 +90,7 @@ npm run dev
 `npm run verify-show-pack -- <show-pack.json>` reruns the show pack seeds and fails if any summary, excerpt, result, or hash differs.
 `npm run balance -- <count> <seed-prefix>` writes a many-match balance report with win rates, match-length averages, terminal reasons, and Saboteur pair frequencies.
 `npm run balance:check` runs the CI balance guard and fails if the simulator drifts into an obviously broken meta.
+`npm run verify-balance -- <balance-summary.json>` reruns the batch and fails if any aggregate result differs.
 `npm run ladder -- <count> <seed-prefix>` writes deterministic Stage 1 preview ladder JSON and Markdown reports with Elo-style standings across repeated seeded matches.
 `npm run verify-ladder -- <ladder-summary.json>` reruns the deterministic ladder preview and fails if standings or match records drift.
 `npm run season -- <season-id>` writes a versioned season manifest covering ruleset, model policy, authoring requirements, ladder settings, and audit policy.
