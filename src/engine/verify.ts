@@ -8,6 +8,7 @@ import { buildInferenceReceipts } from './inference-receipts';
 import { runLadderPreview } from './ladder';
 import { buildMarketReadiness } from './market-readiness';
 import { buildOperatorReadiness } from './readiness';
+import { buildPromptRevealPolicy } from './prompt-reveal-policy';
 import { runMatch } from './match';
 import { buildRevealSchedule } from './reveal-schedule';
 import { buildSanitizerAudit } from './sanitizer-audit';
@@ -26,6 +27,7 @@ import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
 import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
+import type { PromptRevealPolicy } from './prompt-reveal-policy';
 import type { RevealSchedule } from './reveal-schedule';
 import type { SanitizerAudit } from './sanitizer-audit';
 import type { SeedIndex } from './seed-index';
@@ -104,6 +106,13 @@ export interface MarketReadinessVerificationResult {
   seed: string;
   errors: string[];
   expected: MarketReadiness;
+}
+
+export interface PromptRevealPolicyVerificationResult {
+  ok: boolean;
+  seasonId: string;
+  errors: string[];
+  expected: PromptRevealPolicy;
 }
 
 export interface SeedIndexVerificationResult {
@@ -390,6 +399,34 @@ export function verifyMarketReadiness(readiness: MarketReadiness): MarketReadine
   return {
     ok: errors.length === 0,
     seed: readiness.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyPromptRevealPolicy(policy: PromptRevealPolicy): PromptRevealPolicyVerificationResult {
+  const expected = buildPromptRevealPolicy(policy.seasonId);
+  const errors: string[] = [];
+
+  compare('schema', policy.schema, expected.schema, errors);
+  compare('policy', policy.policy, expected.policy, errors);
+  compare('stages', policy.stages, expected.stages, errors);
+  compare('protectedAuthorMoat', policy.protectedAuthorMoat, expected.protectedAuthorMoat, errors);
+  compare('promptRevealHash', policy.promptRevealHash, expected.promptRevealHash, errors);
+
+  if (!policy.policy.commitmentRequired) errors.push('prompt commitments must be required before season lock.');
+  if (policy.policy.publicRevealLagSeasons < 2) errors.push('public prompt reveal lag must be at least two seasons.');
+  if (policy.policy.livePromptPublication !== 'forbidden') errors.push('live prompt publication must remain forbidden.');
+  if (!policy.stages.some((stage) => stage.id === 'post-match-audit' && stage.audience.includes('auditor'))) {
+    errors.push('prompt reveal policy must include auditor-only post-match access.');
+  }
+  if (!policy.stages.some((stage) => stage.id === 'public-lagged-reveal')) {
+    errors.push('prompt reveal policy must include a lagged public archive reveal.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    seasonId: policy.seasonId,
     errors,
     expected,
   };

@@ -24,6 +24,8 @@ import {
   buildMatchReport,
   buildOperatorReadiness,
   buildOperatorReadinessMarkdown,
+  buildPromptRevealPolicy,
+  buildPromptRevealPolicyMarkdown,
   buildPickemReceipt,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
@@ -55,6 +57,7 @@ import {
   verifyMarketReadiness,
   verifyOperatorReadiness,
   verifyPickemReceipt,
+  verifyPromptRevealPolicy,
   verifyRevealSchedule,
   verifySanitizerAudit,
   verifySeasonManifest,
@@ -313,6 +316,33 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('controlsHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies the prompt reveal policy', () => {
+    const first = buildPromptRevealPolicy('stage1-preview.test');
+    const second = buildPromptRevealPolicy('stage1-preview.test');
+    const markdown = buildPromptRevealPolicyMarkdown(first);
+    const verified = verifyPromptRevealPolicy(first);
+    const tampered = verifyPromptRevealPolicy({
+      ...first,
+      promptRevealHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.prompt_reveal_policy.stage1.preview.v1');
+    expect(first.policy.commitmentRequired).toBe(true);
+    expect(first.policy.publicRevealLagSeasons).toBe(2);
+    expect(first.policy.livePromptPublication).toBe('forbidden');
+    expect(first.stages).toHaveLength(4);
+    expect(first.stages.map((stage) => stage.id)).toContain('public-lagged-reveal');
+    expect(first.protectedAuthorMoat.privatePromptCapCharacters).toBe(4000);
+    expect(first.promptRevealHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Prompt Reveal Policy');
+    expect(markdown).toContain('## Author Moat');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('promptRevealHash does not match deterministic replay.');
   });
 
   it('builds a versioned season manifest for Stage 1 previews', () => {

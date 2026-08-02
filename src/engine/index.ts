@@ -22,6 +22,7 @@ export {
   buildMarketReadinessMarkdown,
   buildMatchReport,
   buildOperatorReadinessMarkdown,
+  buildPromptRevealPolicyMarkdown,
   buildRevealScheduleMarkdown,
   buildSanitizerAuditMarkdown,
   buildSeedIndexReport,
@@ -32,6 +33,7 @@ export {
 export { runLadderPreview } from './ladder';
 export { buildMarketReadiness } from './market-readiness';
 export { buildPickemReceipt, parseAgentPick, verifyPickemReceipt } from './pickem';
+export { buildPromptRevealPolicy } from './prompt-reveal-policy';
 export { buildOperatorReadiness } from './readiness';
 export { buildRevealSchedule, buildRevealScheduleFromMatch } from './reveal-schedule';
 export { buildSanitizerAudit, sanitizeSpeech } from './sanitizer-audit';
@@ -51,6 +53,7 @@ export {
   verifyLadderSummary,
   verifyMarketReadiness,
   verifyOperatorReadiness,
+  verifyPromptRevealPolicy,
   verifyRevealSchedule,
   verifySanitizerAudit,
   verifySeasonManifest,

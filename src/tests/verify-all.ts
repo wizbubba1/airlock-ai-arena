@@ -21,6 +21,8 @@ import {
   buildMarketReadinessMarkdown,
   buildOperatorReadiness,
   buildOperatorReadinessMarkdown,
+  buildPromptRevealPolicy,
+  buildPromptRevealPolicyMarkdown,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
   buildSanitizerAudit,
@@ -47,6 +49,7 @@ import {
   verifyLadderSummary,
   verifyMarketReadiness,
   verifyOperatorReadiness,
+  verifyPromptRevealPolicy,
   verifyRevealSchedule,
   verifySanitizerAudit,
   verifySeasonManifest,
@@ -78,6 +81,7 @@ const inferenceReceipts = buildInferenceReceipts(seed);
 const ladder = runLadderPreview(32, 'stage-one-ci');
 const marketReadiness = buildMarketReadiness(seed);
 const operatorReadiness = buildOperatorReadiness(seed, 100, 'stage-zero-ci');
+const promptRevealPolicy = buildPromptRevealPolicy(seasonId);
 const revealSchedule = buildRevealSchedule(seed);
 const sanitizerAudit = buildSanitizerAudit(seed);
 const season = buildSeasonManifest(seasonId);
@@ -108,6 +112,8 @@ const outputs = [
   writeMarkdown('airlock-market-readiness-airlock-stage-zero-demo.md', buildMarketReadinessMarkdown(marketReadiness)),
   writeJson('airlock-operator-readiness.json', operatorReadiness),
   writeMarkdown('airlock-operator-readiness.md', buildOperatorReadinessMarkdown(operatorReadiness)),
+  writeJson('airlock-prompt-reveal-policy-stage1-preview.001.json', promptRevealPolicy),
+  writeMarkdown('airlock-prompt-reveal-policy-stage1-preview.001.md', buildPromptRevealPolicyMarkdown(promptRevealPolicy)),
   writeJson('airlock-reveal-schedule-airlock-stage-zero-demo.json', revealSchedule),
   writeMarkdown('airlock-reveal-schedule-airlock-stage-zero-demo.md', buildRevealScheduleMarkdown(revealSchedule)),
   writeJson('airlock-sanitizer-audit-airlock-stage-zero-demo.json', sanitizerAudit),
@@ -139,6 +145,7 @@ const checks = [
   { name: 'ladder', ...verifyLadderSummary(ladder) },
   { name: 'market-readiness', ...verifyMarketReadiness(marketReadiness) },
   { name: 'operator-readiness', ...verifyOperatorReadiness(operatorReadiness) },
+  { name: 'prompt-reveal-policy', ...verifyPromptRevealPolicy(promptRevealPolicy) },
   { name: 'reveal-schedule', ...verifyRevealSchedule(revealSchedule) },
   { name: 'sanitizer-audit', ...verifySanitizerAudit(sanitizerAudit) },
   { name: 'season', ...verifySeasonManifest(season) },

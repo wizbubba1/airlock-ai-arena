@@ -43,6 +43,12 @@ jobs:
       - name: Collusion controls verifier smoke test
         run: npm run verify-collusion-controls -- ./artifacts/airlock-collusion-controls-stage1-preview.001.json
 
+      - name: Prompt reveal policy smoke test
+        run: npm run prompt-reveal-policy -- stage1-preview.001
+
+      - name: Prompt reveal policy verifier smoke test
+        run: npm run verify-prompt-reveal-policy -- ./artifacts/airlock-prompt-reveal-policy-stage1-preview.001.json
+
       - name: Challenge packet smoke test
         run: npm run challenge -- airlock-stage-zero-demo
 

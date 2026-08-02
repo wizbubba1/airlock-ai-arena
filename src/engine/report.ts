@@ -10,6 +10,7 @@ import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
 import type { MarketReadiness } from './market-readiness';
 import type { OperatorReadiness } from './readiness';
+import type { PromptRevealPolicy } from './prompt-reveal-policy';
 import type { RevealSchedule } from './reveal-schedule';
 import type { SanitizerAudit } from './sanitizer-audit';
 import type { SeedIndex } from './seed-index';
@@ -629,6 +630,44 @@ export function buildMarketReadinessMarkdown(readiness: MarketReadiness): string
     `| Jurisdiction policy | ${readiness.evidence.jurisdictionPolicyHash ? `\`${readiness.evidence.jurisdictionPolicyHash}\`` : 'missing'} |`,
     `| Licensed operator | ${readiness.evidence.licensedOperatorHash ? `\`${readiness.evidence.licensedOperatorHash}\`` : 'missing'} |`,
     `| Responsible play | ${readiness.evidence.responsiblePlayPolicyHash ? `\`${readiness.evidence.responsiblePlayPolicyHash}\`` : 'missing'} |`,
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildPromptRevealPolicyMarkdown(policy: PromptRevealPolicy): string {
+  const lines: string[] = [
+    `# AIRLOCK Prompt Reveal Policy`,
+    ``,
+    `Season: \`${policy.seasonId}\``,
+    `Schema: \`${policy.schema}\``,
+    `Policy hash: \`${policy.promptRevealHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Commitment required | ${policy.policy.commitmentRequired} |`,
+    `| Public reveal lag | ${policy.policy.publicRevealLagSeasons} seasons |`,
+    `| Live prompt publication | ${policy.policy.livePromptPublication} |`,
+    `| Audit access | ${policy.policy.auditAccess} |`,
+    `| Challenge access | ${policy.policy.challengeAccess} |`,
+    ``,
+    `## Stages`,
+    ``,
+    `| Stage | Timing | Audience | Material | Purpose |`,
+    `|---|---|---|---|---|`,
+    ...policy.stages.map((stage) => `| ${stage.id} | ${stage.timing} | ${stage.audience} | ${stage.material} | ${stage.purpose} |`),
+    ``,
+    `## Author Moat`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Private prompt cap | ${policy.protectedAuthorMoat.privatePromptCapCharacters} characters |`,
+    `| Public personality card | ${policy.protectedAuthorMoat.publicPersonalityCard} |`,
+    `| Public match history | ${policy.protectedAuthorMoat.publicMatchHistory} |`,
+    `| Private prompt reuse window | ${policy.protectedAuthorMoat.privatePromptReuseWindow} |`,
     ``,
   ];
 

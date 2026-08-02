@@ -81,6 +81,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Stage 1 anti-collusion economics artifact covering superlinear entry bonds, speech-sanitizer controls, throw-detection metrics, and escrow forfeiture paths.',
     },
     {
+      name: 'Prompt reveal policy',
+      schema: 'airlock.prompt_reveal_policy.stage1.preview.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-prompt-reveal-policy-stage1-preview.001.json',
+      generateCommand: 'npm run prompt-reveal-policy -- stage1-preview.001',
+      verifyCommand: 'npm run verify-prompt-reveal-policy -- ./artifacts/airlock-prompt-reveal-policy-stage1-preview.001.json',
+      purpose: 'Stage 1 prompt reveal artifact for P3: pre-season commitments, auditor-only prompt access, challenge mediation, and two-season lagged public reveal.',
+    },
+    {
       name: 'Challenge packet',
       schema: 'airlock.challenge.stage0.v1',
       format: 'json',
