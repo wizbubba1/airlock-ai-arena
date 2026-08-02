@@ -46,5 +46,8 @@ jobs:
       - name: Ladder preview smoke test
         run: npm run ladder -- 32 stage-one-ci
 
+      - name: Ladder verifier smoke test
+        run: npm run verify-ladder -- ./artifacts/airlock-ladder-32.json
+
       - name: Build
         run: npm run build

@@ -12,6 +12,7 @@ import {
   runLadderPreview,
   runMatch,
   verifyAuditBundle,
+  verifyLadderSummary,
 } from '../engine';
 import goodManifest from './fixtures/agents/vanta-author.json';
 import badManifest from './fixtures/agents/bad-agent.json';
@@ -170,6 +171,26 @@ describe('AIRLOCK deterministic engine', () => {
     expect(report).toContain('## Standings');
     expect(report).toContain('## Match Log');
     expect(report).toContain('| Rank | Agent | Rating | Record | Roles |');
+  });
+
+  it('verifies a ladder summary against deterministic replay', () => {
+    const summary = runLadderPreview(8, 'ladder-verify');
+    const verified = verifyLadderSummary(summary);
+    const tampered = verifyLadderSummary({
+      ...summary,
+      standings: [
+        {
+          ...summary.standings[0],
+          rating: summary.standings[0].rating + 1,
+        },
+        ...summary.standings.slice(1),
+      ],
+    });
+
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('standings does not match deterministic replay.');
   });
 
   it('defines bounded house-agent policy profiles', () => {

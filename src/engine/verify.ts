@@ -1,12 +1,22 @@
 import { buildAuditBundle } from './bundle';
+import { runLadderPreview } from './ladder';
 import { runMatch } from './match';
 import type { AuditBundle } from './bundle';
+import type { LadderSummary } from './ladder';
 
 export interface AuditVerificationResult {
   ok: boolean;
   seed: string;
   errors: string[];
   expected: AuditBundle;
+}
+
+export interface LadderVerificationResult {
+  ok: boolean;
+  matchCount: number;
+  seedPrefix: string;
+  errors: string[];
+  expected: LadderSummary;
 }
 
 export function verifyAuditBundle(bundle: AuditBundle): AuditVerificationResult {
@@ -25,6 +35,23 @@ export function verifyAuditBundle(bundle: AuditBundle): AuditVerificationResult 
   return {
     ok: errors.length === 0,
     seed: bundle.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyLadderSummary(summary: LadderSummary): LadderVerificationResult {
+  const expected = runLadderPreview(summary.matchCount, summary.seedPrefix);
+  const errors: string[] = [];
+
+  compare('schema', summary.schema, expected.schema, errors);
+  compare('standings', summary.standings, expected.standings, errors);
+  compare('matches', summary.matches, expected.matches, errors);
+
+  return {
+    ok: errors.length === 0,
+    matchCount: summary.matchCount,
+    seedPrefix: summary.seedPrefix,
     errors,
     expected,
   };

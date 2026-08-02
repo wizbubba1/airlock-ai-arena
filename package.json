@@ -10,6 +10,7 @@
     "simulate": "tsx src/tests/simulate.ts",
     "audit": "tsx src/tests/audit.ts",
     "verify-audit": "tsx src/tests/verify-audit.ts",
+    "verify-ladder": "tsx src/tests/verify-ladder.ts",
     "balance": "tsx src/tests/balance.ts",
     "balance:check": "tsx src/tests/balance.ts 100 stage-zero-ci ./artifacts/airlock-balance-ci.json --enforce",
     "ladder": "tsx src/tests/ladder.ts",

@@ -55,6 +55,7 @@ npm run report -- airlock-stage-zero-demo
 npm run balance -- 1000 stage-zero
 npm run balance:check
 npm run ladder -- 64 stage-one-preview
+npm run verify-ladder -- ./artifacts/airlock-ladder-64.json
 npm run commit-prompt -- src/tests/fixtures/agents/vanta-private-prompt.txt
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
 npm run build
@@ -67,6 +68,7 @@ npm run dev
 `npm run balance -- <count> <seed-prefix>` writes a many-match balance report with win rates, match-length averages, terminal reasons, and Saboteur pair frequencies.
 `npm run balance:check` runs the CI balance guard and fails if the simulator drifts into an obviously broken meta.
 `npm run ladder -- <count> <seed-prefix>` writes deterministic Stage 1 preview ladder JSON and Markdown reports with Elo-style standings across repeated seeded matches.
+`npm run verify-ladder -- <ladder-summary.json>` reruns the deterministic ladder preview and fails if standings or match records drift.
 `npm run commit-prompt -- <private-prompt.txt>` prints the `sha256:` commitment to place in an authored-agent manifest.
 `npm run validate-agent -- <manifest.json>` validates a Stage 1 authored-agent manifest and returns its public manifest hash.
 
