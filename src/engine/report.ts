@@ -15,6 +15,7 @@ import type { RevealSchedule } from './reveal-schedule';
 import type { SanitizerAudit } from './sanitizer-audit';
 import type { SeedIndex } from './seed-index';
 import type { ShowPack } from './show-pack';
+import type { StageGatePolicy } from './stage-gate-policy';
 import type { Stage0Evaluation } from './stage0-evaluation';
 import type { TranscriptQualityReport } from './transcript-quality';
 import type { MatchState } from './types';
@@ -668,6 +669,40 @@ export function buildPromptRevealPolicyMarkdown(policy: PromptRevealPolicy): str
     `| Public personality card | ${policy.protectedAuthorMoat.publicPersonalityCard} |`,
     `| Public match history | ${policy.protectedAuthorMoat.publicMatchHistory} |`,
     `| Private prompt reuse window | ${policy.protectedAuthorMoat.privatePromptReuseWindow} |`,
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildStageGatePolicyMarkdown(policy: StageGatePolicy): string {
+  const lines: string[] = [
+    `# AIRLOCK Stage Gate Policy`,
+    ``,
+    `Program: \`${policy.programId}\``,
+    `Schema: \`${policy.schema}\``,
+    `Policy hash: \`${policy.policyHash}\``,
+    ``,
+    `## Sequencing`,
+    ``,
+    policy.sequencing.map((stage, index) => `${index + 1}. ${stage}`).join('\n'),
+    ``,
+    `## Principles`,
+    ``,
+    `| Principle | Value |`,
+    `|---|---|`,
+    `| Betting last | ${policy.principles.bettingLast} |`,
+    `| Independent stage exit | ${policy.principles.independentStageExit} |`,
+    `| Counsel before real-money scope | ${policy.principles.counselBeforeRealMoneyScope} |`,
+    ``,
+    `## Metrics`,
+    ``,
+    `| Metric | Stage | Threshold | Source | Action on miss |`,
+    `|---|---|---|---|---|`,
+    ...policy.metrics.map(
+      (metric) =>
+        `| ${metric.id} | ${metric.stage} | ${metric.threshold} | ${metric.sourceArtifact} | ${metric.actionOnMiss} |`,
+    ),
     ``,
   ];
 

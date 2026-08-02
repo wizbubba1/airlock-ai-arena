@@ -15,6 +15,7 @@ import { buildSanitizerAudit } from './sanitizer-audit';
 import { buildSeedIndex } from './seed-index';
 import { buildSeasonManifest } from './season';
 import { buildShowPack } from './show-pack';
+import { buildStageGatePolicy } from './stage-gate-policy';
 import { buildStage0Evaluation } from './stage0-evaluation';
 import { buildTranscriptQualityReport } from './transcript-quality';
 import type { BalancePatchSchedule } from './balance-patch-schedule';
@@ -33,6 +34,7 @@ import type { SanitizerAudit } from './sanitizer-audit';
 import type { SeedIndex } from './seed-index';
 import type { SeasonManifest } from './season';
 import type { ShowPack } from './show-pack';
+import type { StageGatePolicy } from './stage-gate-policy';
 import type { Stage0Evaluation } from './stage0-evaluation';
 import type { TranscriptQualityReport } from './transcript-quality';
 
@@ -134,6 +136,13 @@ export interface ShowPackVerificationResult {
   seeds: string[];
   errors: string[];
   expected: ShowPack;
+}
+
+export interface StageGatePolicyVerificationResult {
+  ok: boolean;
+  programId: string;
+  errors: string[];
+  expected: StageGatePolicy;
 }
 
 export interface TranscriptQualityVerificationResult {
@@ -500,6 +509,36 @@ export function verifyShowPack(pack: ShowPack): ShowPackVerificationResult {
   return {
     ok: errors.length === 0,
     seeds,
+    errors,
+    expected,
+  };
+}
+
+export function verifyStageGatePolicy(policy: StageGatePolicy): StageGatePolicyVerificationResult {
+  const expected = buildStageGatePolicy(policy.programId);
+  const errors: string[] = [];
+
+  compare('schema', policy.schema, expected.schema, errors);
+  compare('sequencing', policy.sequencing, expected.sequencing, errors);
+  compare('principles', policy.principles, expected.principles, errors);
+  compare('metrics', policy.metrics, expected.metrics, errors);
+  compare('policyHash', policy.policyHash, expected.policyHash, errors);
+
+  if (policy.sequencing.at(-1) !== 'stage-2-market') errors.push('Stage 2 market must remain last in the sequence.');
+  if (!policy.principles.bettingLast) errors.push('stage gate policy must keep betting last.');
+  if (!policy.principles.counselBeforeRealMoneyScope) {
+    errors.push('stage gate policy must require counsel before real-money market scope.');
+  }
+  if (!policy.metrics.some((metric) => metric.actionOnMiss === 'stop')) {
+    errors.push('stage gate policy must include a stop action for failed core-loop metrics.');
+  }
+  if (!policy.metrics.some((metric) => metric.actionOnMiss === 'pivot-to-b2b-feed')) {
+    errors.push('stage gate policy must include a B2B-feed pivot path for Stage 2 misses.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    programId: policy.programId,
     errors,
     expected,
   };

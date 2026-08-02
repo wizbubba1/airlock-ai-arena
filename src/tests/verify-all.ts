@@ -32,6 +32,8 @@ import {
   buildSeasonManifest,
   buildShowPack,
   buildShowPackReport,
+  buildStageGatePolicy,
+  buildStageGatePolicyMarkdown,
   buildStage0Evaluation,
   buildStage0EvaluationMarkdown,
   buildTranscriptQualityMarkdown,
@@ -55,6 +57,7 @@ import {
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,
+  verifyStageGatePolicy,
   verifyStage0Evaluation,
   verifyTranscriptQualityReport,
 } from '../engine';
@@ -87,6 +90,7 @@ const sanitizerAudit = buildSanitizerAudit(seed);
 const season = buildSeasonManifest(seasonId);
 const seedIndex = buildSeedIndex();
 const showPack = buildShowPack();
+const stageGatePolicy = buildStageGatePolicy();
 const transcriptQuality = buildTranscriptQualityReport(seed);
 const stage0Evaluation = buildStage0Evaluation(seed, 100, 'stage-zero-ci');
 const agentSubmission = buildAgentSubmissionPacket(manifest, seasonId);
@@ -123,6 +127,8 @@ const outputs = [
   writeMarkdown('airlock-seed-index.md', buildSeedIndexReport(seedIndex)),
   writeJson('airlock-show-pack.json', showPack),
   writeMarkdown('airlock-show-pack.md', buildShowPackReport(showPack)),
+  writeJson('airlock-stage-gate-policy-airlock-roadmap.001.json', stageGatePolicy),
+  writeMarkdown('airlock-stage-gate-policy-airlock-roadmap.001.md', buildStageGatePolicyMarkdown(stageGatePolicy)),
   writeJson('airlock-transcript-quality-airlock-stage-zero-demo.json', transcriptQuality),
   writeMarkdown('airlock-transcript-quality-airlock-stage-zero-demo.md', buildTranscriptQualityMarkdown(transcriptQuality)),
   writeJson('airlock-stage0-evaluation.json', stage0Evaluation),
@@ -151,6 +157,7 @@ const checks = [
   { name: 'season', ...verifySeasonManifest(season) },
   { name: 'seed-index', ...verifySeedIndex(seedIndex) },
   { name: 'show-pack', ...verifyShowPack(showPack) },
+  { name: 'stage-gate-policy', ...verifyStageGatePolicy(stageGatePolicy) },
   { name: 'transcript-quality', ...verifyTranscriptQualityReport(transcriptQuality) },
   { name: 'stage0-evaluation', ...verifyStage0Evaluation(stage0Evaluation) },
   { name: 'agent-submission', ...verifyAgentSubmissionPacket(agentSubmission) },

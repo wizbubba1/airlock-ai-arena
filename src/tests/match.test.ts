@@ -36,6 +36,8 @@ import {
   buildSeedIndexReport,
   buildShowPack,
   buildShowPackReport,
+  buildStageGatePolicy,
+  buildStageGatePolicyMarkdown,
   buildStage0Evaluation,
   buildStage0EvaluationMarkdown,
   buildTickCommitments,
@@ -63,6 +65,7 @@ import {
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,
+  verifyStageGatePolicy,
   verifyStage0Evaluation,
   verifyTranscriptQualityReport,
 } from '../engine';
@@ -343,6 +346,33 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('promptRevealHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies the staged roadmap gate policy', () => {
+    const first = buildStageGatePolicy('airlock-roadmap.test');
+    const second = buildStageGatePolicy('airlock-roadmap.test');
+    const markdown = buildStageGatePolicyMarkdown(first);
+    const verified = verifyStageGatePolicy(first);
+    const tampered = verifyStageGatePolicy({
+      ...first,
+      policyHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.stage_gate_policy.v1');
+    expect(first.sequencing).toEqual(['stage-0-show', 'stage-1-ladder', 'stage-2-market']);
+    expect(first.principles.bettingLast).toBe(true);
+    expect(first.principles.counselBeforeRealMoneyScope).toBe(true);
+    expect(first.metrics.length).toBeGreaterThanOrEqual(6);
+    expect(first.metrics.some((metric) => metric.actionOnMiss === 'stop')).toBe(true);
+    expect(first.metrics.some((metric) => metric.actionOnMiss === 'pivot-to-b2b-feed')).toBe(true);
+    expect(first.policyHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Stage Gate Policy');
+    expect(markdown).toContain('## Metrics');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('policyHash does not match deterministic replay.');
   });
 
   it('builds a versioned season manifest for Stage 1 previews', () => {

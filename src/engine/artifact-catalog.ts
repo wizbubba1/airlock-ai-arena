@@ -90,6 +90,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Stage 1 prompt reveal artifact for P3: pre-season commitments, auditor-only prompt access, challenge mediation, and two-season lagged public reveal.',
     },
     {
+      name: 'Stage gate policy',
+      schema: 'airlock.stage_gate_policy.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-stage-gate-policy-airlock-roadmap.001.json',
+      generateCommand: 'npm run stage-gate-policy -- airlock-roadmap.001',
+      verifyCommand: 'npm run verify-stage-gate-policy -- ./artifacts/airlock-stage-gate-policy-airlock-roadmap.001.json',
+      purpose: 'Roadmap gate artifact for Show -> Ladder -> Market sequencing, explicit kill criteria, hold-stage decisions, and B2B-feed pivot conditions.',
+    },
+    {
       name: 'Challenge packet',
       schema: 'airlock.challenge.stage0.v1',
       format: 'json',

@@ -27,6 +27,7 @@ export {
   buildSanitizerAuditMarkdown,
   buildSeedIndexReport,
   buildShowPackReport,
+  buildStageGatePolicyMarkdown,
   buildStage0EvaluationMarkdown,
   buildTranscriptQualityMarkdown,
 } from './report';
@@ -40,6 +41,7 @@ export { buildSanitizerAudit, sanitizeSpeech } from './sanitizer-audit';
 export { buildSeasonManifest } from './season';
 export { buildSeedIndex, canonicalSeeds } from './seed-index';
 export { buildShowPack, defaultShowSeeds } from './show-pack';
+export { buildStageGatePolicy } from './stage-gate-policy';
 export { buildStage0Evaluation } from './stage0-evaluation';
 export { buildTranscriptQualityReport } from './transcript-quality';
 export {
@@ -59,6 +61,7 @@ export {
   verifySeasonManifest,
   verifySeedIndex,
   verifyShowPack,
+  verifyStageGatePolicy,
   verifyStage0Evaluation,
   verifyTranscriptQualityReport,
 } from './verify';
