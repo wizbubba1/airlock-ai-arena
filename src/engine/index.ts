@@ -8,12 +8,14 @@ export { buildBalanceSummary, evaluateBalance, roundBalance } from './balance';
 export { buildAuditBundle, buildTickCommitments } from './bundle';
 export { buildChallengePacket } from './challenge';
 export { buildCertifiedEventFeed } from './event-feed';
+export { buildCollusionControls } from './collusion-controls';
 export { buildFallbackDrill } from './fallback-drill';
 export { buildInferenceReceipts } from './inference-receipts';
 export {
   buildArtifactCatalogReport,
   buildBalancePatchScheduleMarkdown,
   buildCertifiedEventFeedMarkdown,
+  buildCollusionControlsMarkdown,
   buildFallbackDrillMarkdown,
   buildInferenceReceiptsMarkdown,
   buildLadderReport,
@@ -43,6 +45,7 @@ export {
   verifyBalancePatchSchedule,
   verifyBalanceSummary,
   verifyCertifiedEventFeed,
+  verifyCollusionControls,
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyLadderSummary,

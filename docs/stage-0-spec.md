@@ -91,6 +91,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run balance-patch-schedule -- <season-id>` writes JSON and Markdown precommitted balance-patch schedules for Stage 1 preview seasons. The artifact keeps mid-season mutations reviewable without giving the operator discretionary patch power.
 
+`npm run collusion-controls -- <season-id>` writes JSON and Markdown anti-collusion control artifacts for Stage 1 preview seasons. The artifact covers superlinear entry bonds, speech-sanitizer controls, throw-detection metrics, and season escrow actions.
+
 `npm run market-readiness -- <seed>` writes JSON and Markdown Stage 2 market gate artifacts. Real-money markets remain blocked unless counsel, jurisdiction policy, licensed-operator, responsible-play, and certified-feed evidence are present.
 
 `npm run report -- <seed>` writes a human-readable Markdown report over the same match.
@@ -162,6 +164,8 @@ npm run fallback-drill -- airlock-stage-zero-demo
 npm run verify-fallback-drill -- ./artifacts/airlock-fallback-drill-airlock-stage-zero-demo.json
 npm run balance-patch-schedule -- stage1-preview.001
 npm run verify-balance-patch-schedule -- ./artifacts/airlock-balance-patch-schedule-stage1-preview.001.json
+npm run collusion-controls -- stage1-preview.001
+npm run verify-collusion-controls -- ./artifacts/airlock-collusion-controls-stage1-preview.001.json
 npm run market-readiness -- airlock-stage-zero-demo
 npm run verify-market-readiness -- ./artifacts/airlock-market-readiness-airlock-stage-zero-demo.json
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json

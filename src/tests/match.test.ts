@@ -12,6 +12,8 @@ import {
   buildChallengePacket,
   buildCertifiedEventFeed,
   buildCertifiedEventFeedMarkdown,
+  buildCollusionControls,
+  buildCollusionControlsMarkdown,
   buildFallbackDrill,
   buildFallbackDrillMarkdown,
   buildInferenceReceipts,
@@ -46,6 +48,7 @@ import {
   verifyBalancePatchSchedule,
   verifyBalanceSummary,
   verifyCertifiedEventFeed,
+  verifyCollusionControls,
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyLadderSummary,
@@ -282,6 +285,34 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('readinessHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies Stage 1 collusion controls', () => {
+    const first = buildCollusionControls('stage1-preview.test');
+    const second = buildCollusionControls('stage1-preview.test');
+    const markdown = buildCollusionControlsMarkdown(first);
+    const verified = verifyCollusionControls(first);
+    const tampered = verifyCollusionControls({
+      ...first,
+      controlsHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.collusion_controls.stage1.preview.v1');
+    expect(first.scope.bettingPolicy).toBe('authors-blocked-from-own-match-pools');
+    expect(first.scope.escrowPolicy).toBe('season-escrow-with-throw-detection-forfeit');
+    expect(first.bondTiers).toHaveLength(3);
+    expect(first.bondTiers[2].bondMultiple).toBeGreaterThan(first.bondTiers[1].bondMultiple);
+    expect(first.steganographyControls.exactTokenSignals).toBe('dampened-before-agent-context');
+    expect(first.throwDetection.some((metric) => metric.action === 'forfeit-season-escrow')).toBe(true);
+    expect(first.monitoredAgents).toEqual(agentIds);
+    expect(first.controlsHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Collusion Controls');
+    expect(markdown).toContain('## Throw Detection');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('controlsHash does not match deterministic replay.');
   });
 
   it('builds a versioned season manifest for Stage 1 previews', () => {

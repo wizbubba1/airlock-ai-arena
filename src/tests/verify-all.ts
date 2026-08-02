@@ -10,6 +10,8 @@ import {
   buildChallengePacket,
   buildCertifiedEventFeed,
   buildCertifiedEventFeedMarkdown,
+  buildCollusionControls,
+  buildCollusionControlsMarkdown,
   buildFallbackDrill,
   buildFallbackDrillMarkdown,
   buildInferenceReceipts,
@@ -39,6 +41,7 @@ import {
   verifyBalancePatchSchedule,
   verifyBalanceSummary,
   verifyCertifiedEventFeed,
+  verifyCollusionControls,
   verifyFallbackDrill,
   verifyInferenceReceipts,
   verifyLadderSummary,
@@ -67,6 +70,7 @@ const match = runMatch(seed);
 const audit = buildAuditBundle(match, seed);
 const balancePatchSchedule = buildBalancePatchSchedule(seasonId);
 const challenge = buildChallengePacket(seed);
+const collusionControls = buildCollusionControls(seasonId);
 const eventFeed = buildCertifiedEventFeed(seed);
 const balance = buildBalanceSummary(100, 'stage-zero-ci');
 const fallbackDrill = buildFallbackDrill(seed);
@@ -89,6 +93,8 @@ const outputs = [
   writeJson('airlock-balance-patch-schedule-stage1-preview.001.json', balancePatchSchedule),
   writeMarkdown('airlock-balance-patch-schedule-stage1-preview.001.md', buildBalancePatchScheduleMarkdown(balancePatchSchedule)),
   writeJson('airlock-challenge-airlock-stage-zero-demo.json', challenge),
+  writeJson('airlock-collusion-controls-stage1-preview.001.json', collusionControls),
+  writeMarkdown('airlock-collusion-controls-stage1-preview.001.md', buildCollusionControlsMarkdown(collusionControls)),
   writeJson('airlock-event-feed-airlock-stage-zero-demo.json', eventFeed),
   writeMarkdown('airlock-event-feed-airlock-stage-zero-demo.md', buildCertifiedEventFeedMarkdown(eventFeed)),
   writeJson('airlock-balance-ci.json', balance),
@@ -124,6 +130,7 @@ const checks = [
   { name: 'audit', ...verifyAuditBundle(audit) },
   { name: 'balance-patch-schedule', ...verifyBalancePatchSchedule(balancePatchSchedule) },
   { name: 'challenge', ok: challenge.verification.ok, errors: challenge.verification.errors },
+  { name: 'collusion-controls', ...verifyCollusionControls(collusionControls) },
   { name: 'event-feed', ...verifyCertifiedEventFeed(eventFeed) },
   { name: 'balance-guard', ...evaluateBalance(balance) },
   { name: 'balance', ...verifyBalanceSummary(balance) },

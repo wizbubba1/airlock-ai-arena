@@ -2,6 +2,7 @@ import { buildBalancePatchSchedule } from './balance-patch-schedule';
 import { buildBalanceSummary } from './balance';
 import { buildAuditBundle } from './bundle';
 import { buildCertifiedEventFeed } from './event-feed';
+import { buildCollusionControls } from './collusion-controls';
 import { buildFallbackDrill } from './fallback-drill';
 import { buildInferenceReceipts } from './inference-receipts';
 import { runLadderPreview } from './ladder';
@@ -19,6 +20,7 @@ import type { BalancePatchSchedule } from './balance-patch-schedule';
 import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
 import type { CertifiedEventFeed } from './event-feed';
+import type { CollusionControls } from './collusion-controls';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
@@ -59,6 +61,13 @@ export interface CertifiedEventFeedVerificationResult {
   seed: string;
   errors: string[];
   expected: CertifiedEventFeed;
+}
+
+export interface CollusionControlsVerificationResult {
+  ok: boolean;
+  seasonId: string;
+  errors: string[];
+  expected: CollusionControls;
 }
 
 export interface FallbackDrillVerificationResult {
@@ -232,6 +241,40 @@ export function verifyCertifiedEventFeed(feed: CertifiedEventFeed): CertifiedEve
   return {
     ok: errors.length === 0,
     seed: feed.seed,
+    errors,
+    expected,
+  };
+}
+
+export function verifyCollusionControls(controls: CollusionControls): CollusionControlsVerificationResult {
+  const expected = buildCollusionControls(controls.seasonId);
+  const errors: string[] = [];
+
+  compare('schema', controls.schema, expected.schema, errors);
+  compare('scope', controls.scope, expected.scope, errors);
+  compare('bondTiers', controls.bondTiers, expected.bondTiers, errors);
+  compare('steganographyControls', controls.steganographyControls, expected.steganographyControls, errors);
+  compare('throwDetection', controls.throwDetection, expected.throwDetection, errors);
+  compare('monitoredAgents', controls.monitoredAgents, expected.monitoredAgents, errors);
+  compare('controlsHash', controls.controlsHash, expected.controlsHash, errors);
+
+  if (controls.bondTiers.length < 3) errors.push('collusion controls must define at least three bond tiers.');
+  if (!controls.bondTiers.every((tier, index, tiers) => index === 0 || tier.bondMultiple > tiers[index - 1].bondMultiple)) {
+    errors.push('bond tiers must scale superlinearly as owned agents increase.');
+  }
+  if (controls.scope.bettingPolicy !== 'authors-blocked-from-own-match-pools') {
+    errors.push('authors must remain blocked from own-match pools.');
+  }
+  if (controls.steganographyControls.exactTokenSignals !== 'dampened-before-agent-context') {
+    errors.push('exact-token signals must be dampened before agent context.');
+  }
+  if (!controls.throwDetection.some((metric) => metric.action === 'forfeit-season-escrow')) {
+    errors.push('throw detection must include a season-escrow forfeiture path.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    seasonId: controls.seasonId,
     errors,
     expected,
   };

@@ -63,6 +63,8 @@ npm run simulate
 npm run audit -- airlock-stage-zero-demo
 npm run balance-patch-schedule -- stage1-preview.001
 npm run verify-balance-patch-schedule -- ./artifacts/airlock-balance-patch-schedule-stage1-preview.001.json
+npm run collusion-controls -- stage1-preview.001
+npm run verify-collusion-controls -- ./artifacts/airlock-collusion-controls-stage1-preview.001.json
 npm run challenge -- airlock-stage-zero-demo
 npm run event-feed -- airlock-stage-zero-demo
 npm run verify-event-feed -- ./artifacts/airlock-event-feed-airlock-stage-zero-demo.json
@@ -111,6 +113,8 @@ npm run dev
 `npm run artifact-catalog` writes JSON and Markdown indexes of every generated artifact, its schema, command, verifier, and review purpose.
 `npm run balance-patch-schedule -- <season-id>` writes JSON and Markdown precommitted balance-patch schedules for Stage 1 preview seasons.
 `npm run verify-balance-patch-schedule -- <balance-patch-schedule.json>` reconstructs the season schedule and fails if guardrails, mutations, or schedule hash drift.
+`npm run collusion-controls -- <season-id>` writes JSON and Markdown anti-collusion control artifacts for entry bonds, speech-sanitizer controls, throw-detection metrics, and season escrow actions.
+`npm run verify-collusion-controls -- <collusion-controls.json>` reconstructs the controls and fails if bond tiers, policies, detection metrics, monitored agents, or controls hash drift.
 `npm run challenge -- <seed>` writes a challenge packet containing the audit bundle plus deterministic replay verification evidence.
 `npm run event-feed -- <seed>` writes JSON and Markdown certified public event-feed artifacts for media or licensed-market partner review.
 `npm run verify-event-feed -- <event-feed.json>` reruns the seeded feed and fails if policy, commitments, public events, terminal data, or feed hash drift.

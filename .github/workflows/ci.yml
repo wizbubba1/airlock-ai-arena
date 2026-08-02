@@ -37,6 +37,12 @@ jobs:
       - name: Balance patch schedule verifier smoke test
         run: npm run verify-balance-patch-schedule -- ./artifacts/airlock-balance-patch-schedule-stage1-preview.001.json
 
+      - name: Collusion controls smoke test
+        run: npm run collusion-controls -- stage1-preview.001
+
+      - name: Collusion controls verifier smoke test
+        run: npm run verify-collusion-controls -- ./artifacts/airlock-collusion-controls-stage1-preview.001.json
+
       - name: Challenge packet smoke test
         run: npm run challenge -- airlock-stage-zero-demo
 

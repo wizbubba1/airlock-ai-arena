@@ -4,6 +4,7 @@ import { ruleset } from './ruleset';
 import type { ArtifactCatalog } from './artifact-catalog';
 import type { BalancePatchSchedule } from './balance-patch-schedule';
 import type { CertifiedEventFeed } from './event-feed';
+import type { CollusionControls } from './collusion-controls';
 import type { FallbackDrill } from './fallback-drill';
 import type { InferenceReceipts } from './inference-receipts';
 import type { LadderSummary } from './ladder';
@@ -184,6 +185,56 @@ export function buildBalancePatchScheduleMarkdown(schedule: BalancePatchSchedule
       (mutation) =>
         `| ${mutation.patchWindow} | ${mutation.target} | ${mutation.trigger} | ${mutation.change} | ${mutation.operatorDiscretion} |`,
     ),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildCollusionControlsMarkdown(controls: CollusionControls): string {
+  const lines: string[] = [
+    `# AIRLOCK Collusion Controls`,
+    ``,
+    `Season: \`${controls.seasonId}\``,
+    `Schema: \`${controls.schema}\``,
+    `Controls hash: \`${controls.controlsHash}\``,
+    ``,
+    `## Scope`,
+    ``,
+    `| Policy | Value |`,
+    `|---|---|`,
+    `| Identity | ${controls.scope.verifiedIdentityPolicy} |`,
+    `| Betting | ${controls.scope.bettingPolicy} |`,
+    `| Sanitizer | ${controls.scope.sanitizerPolicy} |`,
+    `| Escrow | ${controls.scope.escrowPolicy} |`,
+    ``,
+    `## Bond Tiers`,
+    ``,
+    `| Owned agents | Bond multiple | Review | Summary |`,
+    `|---:|---:|---|---|`,
+    ...controls.bondTiers.map(
+      (tier) => `| ${tier.ownedAgents} | ${tier.bondMultiple}x | ${tier.reviewLevel} | ${tier.summary} |`,
+    ),
+    ``,
+    `## Steganography Controls`,
+    ``,
+    `| Control | Value |`,
+    `|---|---|`,
+    `| Speech sanitizer | ${controls.steganographyControls.speechSanitizer} |`,
+    `| Exact-token signals | ${controls.steganographyControls.exactTokenSignals} |`,
+    `| Spectator visibility | ${controls.steganographyControls.spectatorVisibility} |`,
+    ``,
+    `## Throw Detection`,
+    ``,
+    `| Metric | Signal | Threshold | Action |`,
+    `|---|---|---|---|`,
+    ...controls.throwDetection.map(
+      (metric) => `| ${metric.id} | ${metric.signal} | ${metric.threshold} | ${metric.action} |`,
+    ),
+    ``,
+    `## Coverage`,
+    ``,
+    `Monitored agents: ${controls.monitoredAgents.map((id) => profiles[id].name).join(', ')}`,
     ``,
   ];
 

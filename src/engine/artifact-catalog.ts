@@ -72,6 +72,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Stage 2 gate artifact that keeps real-money markets blocked unless counsel, jurisdiction, operator, and responsible-play evidence hashes are supplied.',
     },
     {
+      name: 'Collusion controls',
+      schema: 'airlock.collusion_controls.stage1.preview.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-collusion-controls-stage1-preview.001.json',
+      generateCommand: 'npm run collusion-controls -- stage1-preview.001',
+      verifyCommand: 'npm run verify-collusion-controls -- ./artifacts/airlock-collusion-controls-stage1-preview.001.json',
+      purpose: 'Stage 1 anti-collusion economics artifact covering superlinear entry bonds, speech-sanitizer controls, throw-detection metrics, and escrow forfeiture paths.',
+    },
+    {
       name: 'Challenge packet',
       schema: 'airlock.challenge.stage0.v1',
       format: 'json',
