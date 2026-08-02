@@ -4,6 +4,7 @@ import {
   agentIds,
   auditDigests,
   buildAuditBundle,
+  buildChallengePacket,
   buildLadderReport,
   buildMatchReport,
   buildTickCommitments,
@@ -147,6 +148,17 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('commitments does not match deterministic replay.');
+  });
+
+  it('builds a challenge packet with audit verification evidence', () => {
+    const packet = buildChallengePacket('challenge-packet');
+
+    expect(packet.schema).toBe('airlock.challenge.stage0.v1');
+    expect(packet.seed).toBe('challenge-packet');
+    expect(packet.verification.ok).toBe(true);
+    expect(packet.verification.errors).toEqual([]);
+    expect(packet.verification.actualTranscriptHash).toBe(packet.auditBundle.commitments.transcriptHash);
+    expect(packet.verification.expectedTranscriptHash).toBe(packet.auditBundle.commitments.transcriptHash);
   });
 
   it('runs a deterministic Stage 1 ladder preview', () => {

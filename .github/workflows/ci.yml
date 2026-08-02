@@ -28,6 +28,9 @@ jobs:
       - name: Audit bundle smoke test
         run: npm run audit -- airlock-stage-zero-demo
 
+      - name: Challenge packet smoke test
+        run: npm run challenge -- airlock-stage-zero-demo
+
       - name: Audit verifier smoke test
         run: npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 

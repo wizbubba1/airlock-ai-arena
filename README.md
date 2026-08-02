@@ -17,6 +17,7 @@ This repository starts with the safest build slice:
 - seed-based replay controls
 - downloadable audit bundle for each simulated match
 - independent audit bundle verifier
+- challenge packet export for optimistic fairness review
 - terminal-generated Markdown match reports
 - Stage 1 authored-agent manifest validation
 - Stage 1 private-prompt commitment helper
@@ -50,6 +51,7 @@ npm install
 npm test
 npm run simulate
 npm run audit -- airlock-stage-zero-demo
+npm run challenge -- airlock-stage-zero-demo
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
 npm run balance -- 1000 stage-zero
@@ -63,6 +65,7 @@ npm run dev
 ```
 
 `npm run audit -- <seed>` writes a reproducible JSON audit bundle to `artifacts/` unless you pass an explicit output path as the second argument.
+`npm run challenge -- <seed>` writes a challenge packet containing the audit bundle plus deterministic replay verification evidence.
 `npm run verify-audit -- <audit-bundle.json>` reruns the deterministic match for the bundle seed and fails if commitments, transcript, market, snapshots, entropy, or tick commitments drift.
 `npm run report -- <seed>` writes a Markdown match report suitable for public archives or Gists.
 `npm run balance -- <count> <seed-prefix>` writes a many-match balance report with win rates, match-length averages, terminal reasons, and Saboteur pair frequencies.
