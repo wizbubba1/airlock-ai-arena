@@ -8,6 +8,8 @@ import {
   buildBalanceSummary,
   buildAuditBundle,
   buildChallengePacket,
+  buildFallbackDrill,
+  buildFallbackDrillMarkdown,
   buildLadderReport,
   buildMatchReport,
   buildPickemReceipt,
@@ -32,6 +34,7 @@ import {
   runMatch,
   verifyAuditBundle,
   verifyBalanceSummary,
+  verifyFallbackDrill,
   verifyLadderSummary,
   verifyPickemReceipt,
   verifyRevealSchedule,
@@ -564,6 +567,32 @@ describe('AIRLOCK deterministic engine', () => {
     expect(verified.errors).toEqual([]);
     expect(tampered.ok).toBe(false);
     expect(tampered.errors).toContain('auditHash does not match deterministic replay.');
+  });
+
+  it('builds and verifies a deterministic fallback drill', () => {
+    const first = buildFallbackDrill('airlock-stage-zero-demo', 8000);
+    const second = buildFallbackDrill('airlock-stage-zero-demo', 8000);
+    const markdown = buildFallbackDrillMarkdown(first);
+    const verified = verifyFallbackDrill(first);
+    const tampered = verifyFallbackDrill({
+      ...first,
+      drillHash: 'sha256:0000000000000000000000000000000000000000000000000000000000000000',
+    });
+
+    expect(second).toEqual(first);
+    expect(first.schema).toBe('airlock.fallback_drill.stage0.v1');
+    expect(first.policy.timeoutMs).toBe(8000);
+    expect(first.policy.poolPolicy).toBe('void-affected-micro-pools');
+    expect(first.entries).toHaveLength(4);
+    expect(first.entries.some((entry) => entry.fallback.kind === 'meeting-speech')).toBe(true);
+    expect(first.entries.some((entry) => entry.fallback.kind === 'vote')).toBe(true);
+    expect(first.drillHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(markdown).toContain('# AIRLOCK Fallback Drill');
+    expect(markdown).toContain('## Drill Entries');
+    expect(verified.ok).toBe(true);
+    expect(verified.errors).toEqual([]);
+    expect(tampered.ok).toBe(false);
+    expect(tampered.errors).toContain('drillHash does not match deterministic replay.');
   });
 
   it('validates authored-agent manifests for the Stage 1 ladder path', () => {

@@ -2,6 +2,7 @@ import { agentIds, profiles } from './content';
 import { buildAuditBundle } from './bundle';
 import { ruleset } from './ruleset';
 import type { ArtifactCatalog } from './artifact-catalog';
+import type { FallbackDrill } from './fallback-drill';
 import type { LadderSummary } from './ladder';
 import type { RevealSchedule } from './reveal-schedule';
 import type { SanitizerAudit } from './sanitizer-audit';
@@ -354,6 +355,44 @@ export function buildSanitizerAuditMarkdown(audit: SanitizerAudit): string {
   ];
 
   return `${lines.join('\n')}\n`;
+}
+
+export function buildFallbackDrillMarkdown(drill: FallbackDrill): string {
+  const lines: string[] = [
+    `# AIRLOCK Fallback Drill`,
+    ``,
+    `Seed: \`${drill.seed}\``,
+    `Schema: \`${drill.schema}\``,
+    `Drill hash: \`${drill.drillHash}\``,
+    ``,
+    `## Policy`,
+    ``,
+    `| Field | Value |`,
+    `|---|---|`,
+    `| Timeout | ${drill.policy.timeoutMs}ms |`,
+    `| Action fallback | ${drill.policy.actionFallback} |`,
+    `| Speech fallback | ${drill.policy.speechFallback} |`,
+    `| Vote fallback | ${drill.policy.voteFallback} |`,
+    `| Pool policy | ${drill.policy.poolPolicy} |`,
+    ``,
+    `## Drill Entries`,
+    ``,
+    `| Tick | Phase | Agent | Fallback | Affected Pools | Entry Hash |`,
+    `|---:|---|---|---|---|---|`,
+    ...drill.entries.map(
+      (entry) =>
+        `| ${entry.tick} | ${entry.phase} | ${profiles[entry.agent].name} | ${fallbackLabel(entry.fallback)} | ${entry.affectedPools.join(', ') || 'none'} | \`${entry.entryHash}\` |`,
+    ),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+function fallbackLabel(fallback: FallbackDrill['entries'][number]['fallback']): string {
+  if (fallback.kind === 'action-intent') return fallback.intent.kind;
+  if (fallback.kind === 'vote') return fallback.target ? `vote ${profiles[fallback.target].name}` : 'skip vote';
+  return fallback.text;
 }
 
 function status(ok: boolean): string {

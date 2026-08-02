@@ -6,6 +6,8 @@ import {
   buildAuditBundle,
   buildBalanceSummary,
   buildChallengePacket,
+  buildFallbackDrill,
+  buildFallbackDrillMarkdown,
   buildLadderReport,
   buildRevealSchedule,
   buildRevealScheduleMarkdown,
@@ -25,6 +27,7 @@ import {
   runMatch,
   verifyAuditBundle,
   verifyBalanceSummary,
+  verifyFallbackDrill,
   verifyLadderSummary,
   verifyRevealSchedule,
   verifySanitizerAudit,
@@ -49,6 +52,7 @@ const match = runMatch(seed);
 const audit = buildAuditBundle(match, seed);
 const challenge = buildChallengePacket(seed);
 const balance = buildBalanceSummary(100, 'stage-zero-ci');
+const fallbackDrill = buildFallbackDrill(seed);
 const ladder = runLadderPreview(32, 'stage-one-ci');
 const revealSchedule = buildRevealSchedule(seed);
 const sanitizerAudit = buildSanitizerAudit(seed);
@@ -64,6 +68,8 @@ const outputs = [
   writeJson('airlock-audit-airlock-stage-zero-demo.json', audit),
   writeJson('airlock-challenge-airlock-stage-zero-demo.json', challenge),
   writeJson('airlock-balance-ci.json', balance),
+  writeJson('airlock-fallback-drill-airlock-stage-zero-demo.json', fallbackDrill),
+  writeMarkdown('airlock-fallback-drill-airlock-stage-zero-demo.md', buildFallbackDrillMarkdown(fallbackDrill)),
   writeJson('airlock-ladder-32.json', ladder),
   writeMarkdown('airlock-ladder-32.md', buildLadderReport(ladder)),
   writeJson('airlock-reveal-schedule-airlock-stage-zero-demo.json', revealSchedule),
@@ -89,6 +95,7 @@ const checks = [
   { name: 'challenge', ok: challenge.verification.ok, errors: challenge.verification.errors },
   { name: 'balance-guard', ...evaluateBalance(balance) },
   { name: 'balance', ...verifyBalanceSummary(balance) },
+  { name: 'fallback-drill', ...verifyFallbackDrill(fallbackDrill) },
   { name: 'ladder', ...verifyLadderSummary(ladder) },
   { name: 'reveal-schedule', ...verifyRevealSchedule(revealSchedule) },
   { name: 'sanitizer-audit', ...verifySanitizerAudit(sanitizerAudit) },

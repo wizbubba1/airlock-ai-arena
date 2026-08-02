@@ -34,6 +34,12 @@ jobs:
       - name: Challenge packet smoke test
         run: npm run challenge -- airlock-stage-zero-demo
 
+      - name: Fallback drill smoke test
+        run: npm run fallback-drill -- airlock-stage-zero-demo
+
+      - name: Fallback drill verifier smoke test
+        run: npm run verify-fallback-drill -- ./artifacts/airlock-fallback-drill-airlock-stage-zero-demo.json
+
       - name: Audit verifier smoke test
         run: npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 

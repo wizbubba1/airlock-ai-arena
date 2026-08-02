@@ -6,8 +6,10 @@ export { buildArtifactCatalog } from './artifact-catalog';
 export { buildBalanceSummary, evaluateBalance, roundBalance } from './balance';
 export { buildAuditBundle, buildTickCommitments } from './bundle';
 export { buildChallengePacket } from './challenge';
+export { buildFallbackDrill } from './fallback-drill';
 export {
   buildArtifactCatalogReport,
+  buildFallbackDrillMarkdown,
   buildLadderReport,
   buildMatchReport,
   buildRevealScheduleMarkdown,
@@ -29,6 +31,7 @@ export { buildTranscriptQualityReport } from './transcript-quality';
 export {
   verifyAuditBundle,
   verifyBalanceSummary,
+  verifyFallbackDrill,
   verifyLadderSummary,
   verifyRevealSchedule,
   verifySanitizerAudit,

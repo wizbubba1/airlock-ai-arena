@@ -88,6 +88,15 @@ export function buildArtifactCatalog(): ArtifactCatalog {
       purpose: 'Deterministic meeting-speech sanitizer audit for reviewing anti-steganography policy before agents receive speech.',
     },
     {
+      name: 'Fallback drill',
+      schema: 'airlock.fallback_drill.stage0.v1',
+      format: 'json',
+      defaultPath: './artifacts/airlock-fallback-drill-airlock-stage-zero-demo.json',
+      generateCommand: 'npm run fallback-drill -- airlock-stage-zero-demo',
+      verifyCommand: 'npm run verify-fallback-drill -- ./artifacts/airlock-fallback-drill-airlock-stage-zero-demo.json',
+      purpose: 'Deterministic timeout drill showing action, speech, vote, and micro-pool void fallbacks for inference failures.',
+    },
+    {
       name: "Pick'em receipt",
       schema: 'airlock.pickem.stage0.v1',
       format: 'json',

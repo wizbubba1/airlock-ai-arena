@@ -1,5 +1,6 @@
 import { buildBalanceSummary } from './balance';
 import { buildAuditBundle } from './bundle';
+import { buildFallbackDrill } from './fallback-drill';
 import { runLadderPreview } from './ladder';
 import { runMatch } from './match';
 import { buildRevealSchedule } from './reveal-schedule';
@@ -11,6 +12,7 @@ import { buildStage0Evaluation } from './stage0-evaluation';
 import { buildTranscriptQualityReport } from './transcript-quality';
 import type { BalanceSummary } from './balance';
 import type { AuditBundle } from './bundle';
+import type { FallbackDrill } from './fallback-drill';
 import type { LadderSummary } from './ladder';
 import type { RevealSchedule } from './reveal-schedule';
 import type { SanitizerAudit } from './sanitizer-audit';
@@ -33,6 +35,13 @@ export interface BalanceVerificationResult {
   seedPrefix: string;
   errors: string[];
   expected: BalanceSummary;
+}
+
+export interface FallbackDrillVerificationResult {
+  ok: boolean;
+  seed: string;
+  errors: string[];
+  expected: FallbackDrill;
 }
 
 export interface LadderVerificationResult {
@@ -127,6 +136,28 @@ export function verifyBalanceSummary(summary: BalanceSummary): BalanceVerificati
     ok: errors.length === 0,
     matchCount: summary.matchCount,
     seedPrefix: summary.seedPrefix,
+    errors,
+    expected,
+  };
+}
+
+export function verifyFallbackDrill(drill: FallbackDrill): FallbackDrillVerificationResult {
+  const expected = buildFallbackDrill(drill.seed, drill.policy.timeoutMs);
+  const errors: string[] = [];
+
+  compare('schema', drill.schema, expected.schema, errors);
+  compare('policy', drill.policy, expected.policy, errors);
+  compare('entries', drill.entries, expected.entries, errors);
+  compare('drillHash', drill.drillHash, expected.drillHash, errors);
+
+  if (drill.entries.length === 0) errors.push('fallback drill has no entries.');
+  if (drill.entries.some((entry) => entry.voidPolicy !== drill.policy.poolPolicy)) {
+    errors.push('one or more fallback entries do not use the configured pool void policy.');
+  }
+
+  return {
+    ok: errors.length === 0,
+    seed: drill.seed,
     errors,
     expected,
   };

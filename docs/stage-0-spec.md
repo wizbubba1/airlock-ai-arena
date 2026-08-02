@@ -83,6 +83,8 @@ Stage 0 entropy is deterministic and local. It is not a replacement for drand, b
 
 `npm run challenge -- <seed>` writes a single challenge packet containing the audit bundle plus deterministic replay verification evidence. This is the Stage 0 stand-in for the optimistic challenge workflow in the patched product spec.
 
+`npm run fallback-drill -- <seed>` writes JSON and Markdown timeout drill artifacts for action, speech, vote, and affected micro-pool fallback behavior.
+
 `npm run report -- <seed>` writes a human-readable Markdown report over the same match.
 
 `npm run transcript-quality -- <seed>` writes JSON and Markdown reports for content-health metrics: speech, votes, reports, danger beats, repairs, market events, and meeting density.
@@ -146,6 +148,8 @@ npm run verify-all
 npm run artifact-catalog
 npm run audit -- airlock-stage-zero-demo
 npm run challenge -- airlock-stage-zero-demo
+npm run fallback-drill -- airlock-stage-zero-demo
+npm run verify-fallback-drill -- ./artifacts/airlock-fallback-drill-airlock-stage-zero-demo.json
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
 npm run transcript-quality -- airlock-stage-zero-demo

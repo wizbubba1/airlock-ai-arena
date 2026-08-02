@@ -62,6 +62,8 @@ npm run artifact-catalog
 npm run simulate
 npm run audit -- airlock-stage-zero-demo
 npm run challenge -- airlock-stage-zero-demo
+npm run fallback-drill -- airlock-stage-zero-demo
+npm run verify-fallback-drill -- ./artifacts/airlock-fallback-drill-airlock-stage-zero-demo.json
 npm run verify-audit -- ./artifacts/airlock-audit-airlock-stage-zero-demo.json
 npm run report -- airlock-stage-zero-demo
 npm run transcript-quality -- airlock-stage-zero-demo
@@ -98,6 +100,8 @@ npm run dev
 `npm run verify-all` regenerates the core artifact set and runs the deterministic verifier path in one command.
 `npm run artifact-catalog` writes JSON and Markdown indexes of every generated artifact, its schema, command, verifier, and review purpose.
 `npm run challenge -- <seed>` writes a challenge packet containing the audit bundle plus deterministic replay verification evidence.
+`npm run fallback-drill -- <seed>` writes JSON and Markdown timeout drill artifacts for action, speech, vote, and micro-pool void fallbacks.
+`npm run verify-fallback-drill -- <fallback-drill.json>` reruns the seeded fallback drill and fails if policy, entries, fallback hashes, or drill hash drift.
 `npm run verify-audit -- <audit-bundle.json>` reruns the deterministic match for the bundle seed and fails if commitments, transcript, market, snapshots, entropy, or tick commitments drift.
 `npm run report -- <seed>` writes a Markdown match report suitable for public archives or Gists.
 `npm run transcript-quality -- <seed>` writes JSON and Markdown content-health reports for transcript event mix and meeting density.
