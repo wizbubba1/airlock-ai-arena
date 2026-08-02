@@ -25,6 +25,7 @@ import {
   buildChallengePacket,
   buildLadderReport,
   buildMatchReport,
+  buildSeasonManifest,
   graph,
   profiles,
   ruleset,
@@ -79,6 +80,7 @@ function App() {
   const eventDensity = useMemo(() => buildEventDensity(match.transcript), [match.transcript]);
   const ladder = useMemo(() => runLadderPreview(32, `${seed}-ladder`), [seed]);
   const ladderVerification = useMemo(() => verifyLadderSummary(ladder), [ladder]);
+  const seasonManifest = useMemo(() => buildSeasonManifest('stage1-preview.001'), []);
 
   function regenerateMatch(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -127,6 +129,11 @@ function App() {
   function downloadLadderReport() {
     const blob = new Blob([buildLadderReport(ladder)], { type: 'text/markdown' });
     downloadBlob(blob, `airlock-ladder-${seed}.md`);
+  }
+
+  function downloadSeasonManifest() {
+    const blob = new Blob([JSON.stringify(seasonManifest, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, `airlock-season-${seasonManifest.seasonId}.json`);
   }
 
   function downloadBlob(blob: Blob, filename: string) {
@@ -516,7 +523,13 @@ function App() {
         <section className="panel authoring-panel" aria-label="Agent authoring readiness">
           <div className="panel-header">
             <h2>Authoring Gate</h2>
-            <span>Stage 1 preview</span>
+            <div className="button-pair">
+              <span>{seasonManifest.seasonId}</span>
+              <button className="icon-button" onClick={downloadSeasonManifest} type="button">
+                <Download size={18} />
+                Season
+              </button>
+            </div>
           </div>
           <div className="authoring-body">
             <div className="authoring-status">
