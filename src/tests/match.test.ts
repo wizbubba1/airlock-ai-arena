@@ -4,6 +4,7 @@ import {
   agentIds,
   auditDigests,
   buildAuditBundle,
+  buildLadderReport,
   buildMatchReport,
   buildTickCommitments,
   profiles,
@@ -160,6 +161,15 @@ describe('AIRLOCK deterministic engine', () => {
       expect(standing.wins + standing.losses).toBe(16);
       expect(standing.saboteurGames + standing.technicianGames).toBe(16);
     }
+  });
+
+  it('renders a markdown ladder report', () => {
+    const report = buildLadderReport(runLadderPreview(8, 'ladder-report'));
+
+    expect(report).toContain('# AIRLOCK Ladder Preview');
+    expect(report).toContain('## Standings');
+    expect(report).toContain('## Match Log');
+    expect(report).toContain('| Rank | Agent | Rating | Record | Roles |');
   });
 
   it('defines bounded house-agent policy profiles', () => {

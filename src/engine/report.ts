@@ -1,6 +1,7 @@
 import { agentIds, profiles } from './content';
 import { buildAuditBundle } from './bundle';
 import { ruleset } from './ruleset';
+import type { LadderSummary } from './ladder';
 import type { MatchState } from './types';
 
 export function buildMatchReport(match: MatchState, seed: string): string {
@@ -59,6 +60,39 @@ export function buildMatchReport(match: MatchState, seed: string): string {
     `|---:|---:|---:|---:|---|`,
     ...bundle.tickCommitments.map(
       (entry) => `| ${entry.tick} | ${entry.eventCount} | ${entry.snapshotCount} | ${entry.marketCount} | \`${entry.commitment}\` |`,
+    ),
+    ``,
+  ];
+
+  return `${lines.join('\n')}\n`;
+}
+
+export function buildLadderReport(summary: LadderSummary): string {
+  const lines: string[] = [
+    `# AIRLOCK Ladder Preview`,
+    ``,
+    `Seed prefix: \`${summary.seedPrefix}\``,
+    `Matches: ${summary.matchCount}`,
+    `Schema: \`${summary.schema}\``,
+    ``,
+    `## Standings`,
+    ``,
+    `| Rank | Agent | Rating | Record | Roles |`,
+    `|---:|---|---:|---:|---:|`,
+    ...summary.standings.map(
+      (standing, index) =>
+        `| ${index + 1} | ${standing.name} | ${standing.rating} | ${standing.wins}-${standing.losses} | S${standing.saboteurGames} / T${standing.technicianGames} |`,
+    ),
+    ``,
+    `## Match Log`,
+    ``,
+    `| Match | Seed | Winner | Ticks | Meetings | Saboteurs |`,
+    `|---:|---|---|---:|---:|---|`,
+    ...summary.matches.map(
+      (match, index) =>
+        `| ${index + 1} | \`${match.seed}\` | ${match.winner} | ${match.ticks} | ${match.meetings} | ${match.saboteurs
+          .map((id) => profiles[id].name)
+          .join(', ')} |`,
     ),
     ``,
   ];
