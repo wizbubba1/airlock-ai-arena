@@ -25,6 +25,7 @@ import {
   buildChallengePacket,
   buildLadderReport,
   buildMatchReport,
+  buildPickemReceipt,
   buildSeasonManifest,
   graph,
   profiles,
@@ -69,6 +70,7 @@ function App() {
   const selectedStatus = selected.alive ? 'active' : 'ejected';
   const saboteurs = agentIds.filter((id) => match.agents[id].role === 'saboteur');
   const pickScore = isRevealed ? picks.filter((id) => saboteurs.includes(id)).length : undefined;
+  const pickemReceipt = useMemo(() => (picks.length === 2 ? buildPickemReceipt(seed, picks) : undefined), [picks, seed]);
   const auditBundle = buildAuditBundle(match, seed);
   const auditVerification = useMemo(() => verifyAuditBundle(auditBundle), [auditBundle]);
   const challengePacket = useMemo(() => buildChallengePacket(seed), [seed]);
@@ -119,6 +121,12 @@ function App() {
   function downloadMatchReport() {
     const blob = new Blob([buildMatchReport(match, seed)], { type: 'text/markdown' });
     downloadBlob(blob, `airlock-report-${seed}.md`);
+  }
+
+  function downloadPickemReceipt() {
+    if (!pickemReceipt) return;
+    const blob = new Blob([JSON.stringify(pickemReceipt, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, `airlock-pickem-${seed}.json`);
   }
 
   function downloadLadderPreview() {
@@ -402,6 +410,21 @@ function App() {
               <p>{isRevealed ? 'Pick result' : 'Top suspicion'}</p>
               <strong>{isRevealed ? `${pickScore}/2 correct` : profiles[topSuspects[0]].name}</strong>
             </div>
+          </div>
+          <div className="pickem-receipt">
+            <div>
+              <span>Receipt</span>
+              <strong>{pickemReceipt ? (isRevealed ? `${pickemReceipt.score}/2 verified` : 'ready when revealed') : 'choose two suspects'}</strong>
+            </div>
+            <button className="icon-button" disabled={!pickemReceipt} onClick={downloadPickemReceipt} type="button">
+              <Download size={18} />
+              Receipt
+            </button>
+            {pickemReceipt && (
+              <code title={pickemReceipt.receiptHash}>
+                {pickemReceipt.receiptHash.slice(0, 18)}...{pickemReceipt.receiptHash.slice(-8)}
+              </code>
+            )}
           </div>
           <div className="bars">
             {topSuspects.map((id) => {
