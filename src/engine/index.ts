@@ -6,5 +6,6 @@ export { buildAuditBundle, buildTickCommitments } from './bundle';
 export { buildChallengePacket } from './challenge';
 export { buildLadderReport, buildMatchReport } from './report';
 export { runLadderPreview } from './ladder';
+export { buildSeasonManifest } from './season';
 export { verifyAuditBundle, verifyLadderSummary } from './verify';
 export type * from './types';

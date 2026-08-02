@@ -17,6 +17,7 @@ Stage 0 includes:
 - Markdown match report export;
 - terminal audit, report, balance, and authored-agent validation commands.
 - deterministic Stage 1 preview ladder reports.
+- versioned Stage 1 preview season manifests.
 
 Stage 0 excludes:
 
@@ -95,11 +96,13 @@ npm run create-agent -- --prompt src/tests/fixtures/agents/vanta-private-prompt.
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
 npm run ladder -- 64 stage-one-preview
 npm run verify-ladder -- ./artifacts/airlock-ladder-64.json
+npm run season -- stage1-preview.001
 ```
 
 `npm run ladder -- <count> <seed-prefix>` runs repeated seeded matches and produces an Elo-style preview table for the house agents. It is a bridge toward authored-agent seasons, not a production league service.
 `npm run verify-ladder -- <ladder-summary.json>` reruns the deterministic preview and fails if the standings or match records drift.
 `npm run create-agent -- --prompt <private-prompt.txt> --out <manifest.json>` writes a validated public manifest with a prompt commitment.
+`npm run season -- <season-id>` writes a versioned season manifest covering the locked ruleset, model policy, authoring requirements, ladder settings, and audit policy.
 
 ## Validation
 
@@ -114,6 +117,7 @@ npm run report -- airlock-stage-zero-demo
 npm run balance -- 100 stage-zero-ci
 npm run ladder -- 32 stage-one-ci
 npm run verify-ladder -- ./artifacts/airlock-ladder-32.json
+npm run season -- stage1-preview.001
 npm run commit-prompt -- src/tests/fixtures/agents/vanta-private-prompt.txt
 npm run create-agent -- --prompt src/tests/fixtures/agents/vanta-private-prompt.txt --out ./artifacts/generated-agent.json
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json

@@ -23,6 +23,7 @@ This repository starts with the safest build slice:
 - Stage 1 private-prompt commitment helper
 - Stage 1 public manifest generator
 - Stage 1 ladder preview simulator
+- versioned Stage 1 season manifest export
 - GitHub Actions CI and GitHub Pages deployment
 
 No real-money markets are implemented. The current product goal is to prove whether AI-agent social deduction transcripts are legible and entertaining before adding author ladders or betting rails.
@@ -59,6 +60,7 @@ npm run balance -- 1000 stage-zero
 npm run balance:check
 npm run ladder -- 64 stage-one-preview
 npm run verify-ladder -- ./artifacts/airlock-ladder-64.json
+npm run season -- stage1-preview.001
 npm run create-agent -- --prompt src/tests/fixtures/agents/vanta-private-prompt.txt --out ./artifacts/generated-agent.json
 npm run commit-prompt -- src/tests/fixtures/agents/vanta-private-prompt.txt
 npm run validate-agent -- src/tests/fixtures/agents/vanta-author.json
@@ -74,6 +76,7 @@ npm run dev
 `npm run balance:check` runs the CI balance guard and fails if the simulator drifts into an obviously broken meta.
 `npm run ladder -- <count> <seed-prefix>` writes deterministic Stage 1 preview ladder JSON and Markdown reports with Elo-style standings across repeated seeded matches.
 `npm run verify-ladder -- <ladder-summary.json>` reruns the deterministic ladder preview and fails if standings or match records drift.
+`npm run season -- <season-id>` writes a versioned season manifest covering ruleset, model policy, authoring requirements, ladder settings, and audit policy.
 `npm run create-agent -- --prompt <private-prompt.txt> --out <manifest.json>` writes a validated public authored-agent manifest using the prompt commitment helper.
 `npm run commit-prompt -- <private-prompt.txt>` prints the `sha256:` commitment to place in an authored-agent manifest.
 `npm run validate-agent -- <manifest.json>` validates a Stage 1 authored-agent manifest and returns its public manifest hash.

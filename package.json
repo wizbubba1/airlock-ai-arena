@@ -15,6 +15,7 @@
     "balance": "tsx src/tests/balance.ts",
     "balance:check": "tsx src/tests/balance.ts 100 stage-zero-ci ./artifacts/airlock-balance-ci.json --enforce",
     "ladder": "tsx src/tests/ladder.ts",
+    "season": "tsx src/tests/season.ts",
     "report": "tsx src/tests/report.ts",
     "create-agent": "tsx src/tests/create-agent.ts",
     "commit-prompt": "tsx src/tests/commit-prompt.ts",

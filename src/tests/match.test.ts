@@ -7,6 +7,7 @@ import {
   buildChallengePacket,
   buildLadderReport,
   buildMatchReport,
+  buildSeasonManifest,
   buildTickCommitments,
   profiles,
   ruleset,
@@ -159,6 +160,17 @@ describe('AIRLOCK deterministic engine', () => {
     expect(packet.verification.errors).toEqual([]);
     expect(packet.verification.actualTranscriptHash).toBe(packet.auditBundle.commitments.transcriptHash);
     expect(packet.verification.expectedTranscriptHash).toBe(packet.auditBundle.commitments.transcriptHash);
+  });
+
+  it('builds a versioned season manifest for Stage 1 previews', () => {
+    const manifest = buildSeasonManifest('stage1-preview.test');
+
+    expect(manifest.schema).toBe('airlock.season.manifest.v1');
+    expect(manifest.seasonId).toBe('stage1-preview.test');
+    expect(manifest.ruleset.id).toBe(ruleset.id);
+    expect(manifest.ladder.entrants).toHaveLength(agentIds.length);
+    expect(manifest.manifestHash).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(manifest.auditPolicy.deterministicReplayRequired).toBe(true);
   });
 
   it('runs a deterministic Stage 1 ladder preview', () => {

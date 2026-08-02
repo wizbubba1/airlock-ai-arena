@@ -55,5 +55,8 @@ jobs:
       - name: Ladder verifier smoke test
         run: npm run verify-ladder -- ./artifacts/airlock-ladder-32.json
 
+      - name: Season manifest smoke test
+        run: npm run season -- stage1-preview.001
+
       - name: Build
         run: npm run build
