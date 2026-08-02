@@ -22,6 +22,7 @@ import {
   agentIds,
   auditDigests,
   buildAuditBundle,
+  buildChallengePacket,
   buildLadderReport,
   buildMatchReport,
   graph,
@@ -69,6 +70,7 @@ function App() {
   const pickScore = isRevealed ? picks.filter((id) => saboteurs.includes(id)).length : undefined;
   const auditBundle = buildAuditBundle(match, seed);
   const auditVerification = useMemo(() => verifyAuditBundle(auditBundle), [auditBundle]);
+  const challengePacket = useMemo(() => buildChallengePacket(seed), [seed]);
   const digests = auditDigests(match);
   const sampleManifestResult = validateAgentManifest(sampleManifest);
   const samplePromptCommitment = promptCommitment(samplePrivatePrompt);
@@ -105,6 +107,11 @@ function App() {
   function downloadAuditBundle() {
     const blob = new Blob([JSON.stringify(auditBundle, null, 2)], { type: 'application/json' });
     downloadBlob(blob, `airlock-audit-${seed}.json`);
+  }
+
+  function downloadChallengePacket() {
+    const blob = new Blob([JSON.stringify(challengePacket, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, `airlock-challenge-${seed}.json`);
   }
 
   function downloadMatchReport() {
@@ -267,6 +274,10 @@ function App() {
               <button className="icon-button" onClick={downloadMatchReport} type="button">
                 <Download size={18} />
                 Report
+              </button>
+              <button className="icon-button" onClick={downloadChallengePacket} type="button">
+                <Download size={18} />
+                Challenge
               </button>
               <button className="icon-button" onClick={downloadAuditBundle} type="button">
                 <Download size={18} />
