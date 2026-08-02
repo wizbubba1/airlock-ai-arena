@@ -12,6 +12,8 @@ import {
   buildSeasonManifest,
   buildShowPack,
   buildShowPackReport,
+  buildTranscriptQualityMarkdown,
+  buildTranscriptQualityReport,
   evaluateBalance,
   runLadderPreview,
   runMatch,
@@ -41,6 +43,11 @@ const ladder = runLadderPreview(32, 'stage-one-ci');
 const season = buildSeasonManifest(seasonId);
 const seedIndex = buildSeedIndex();
 const showPack = buildShowPack();
+const transcriptQuality = buildTranscriptQualityReport(seed);
+const transcriptQualityErrors = [
+  transcriptQuality.events.total > 0 ? null : 'transcript has no events.',
+  transcriptQuality.events.speech > 0 ? null : 'transcript has no speech events.',
+].filter((error): error is string => error !== null);
 const agentSubmission = buildAgentSubmissionPacket(manifest, seasonId);
 const catalog = buildArtifactCatalog();
 
@@ -55,6 +62,8 @@ const outputs = [
   writeMarkdown('airlock-seed-index.md', buildSeedIndexReport(seedIndex)),
   writeJson('airlock-show-pack.json', showPack),
   writeMarkdown('airlock-show-pack.md', buildShowPackReport(showPack)),
+  writeJson('airlock-transcript-quality-airlock-stage-zero-demo.json', transcriptQuality),
+  writeMarkdown('airlock-transcript-quality-airlock-stage-zero-demo.md', buildTranscriptQualityMarkdown(transcriptQuality)),
   writeJson('airlock-agent-submission.json', agentSubmission),
   writeJson('airlock-artifact-catalog.json', catalog),
   writeMarkdown('airlock-artifact-catalog.md', buildArtifactCatalogReport(catalog)),
@@ -69,6 +78,7 @@ const checks = [
   { name: 'season', ...verifySeasonManifest(season) },
   { name: 'seed-index', ...verifySeedIndex(seedIndex) },
   { name: 'show-pack', ...verifyShowPack(showPack) },
+  { name: 'transcript-quality', ok: transcriptQualityErrors.length === 0, errors: transcriptQualityErrors },
   { name: 'agent-submission', ...verifyAgentSubmissionPacket(agentSubmission) },
 ];
 
